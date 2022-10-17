@@ -9,7 +9,22 @@ from torch.nn import LeakyReLU
 
 
 class FCBlock(Module):
-    """Fully connected block."""
+    """Fully connected block.
+
+    Parameters
+    ----------
+    in_feats : int
+        Number of input features to the block.
+    out_feats : int
+        Number of output features to the block.
+    batch_norm : bool
+        Should we add a batch norm to the block.
+    dropout_prob : float
+        The dropout probability (won't be included if zero).
+    neagtive_slope : float
+        The negative slope to use in the `LeakyReLU`.
+
+    """
 
     def __init__(
         self,
