@@ -5,6 +5,10 @@ from torch import Tensor
 from torch.nn import Module, Sequential, Linear, BatchNorm1d, Dropout
 from torch.nn import LeakyReLU
 
+from torch_tools.models._argument_processing import process_num_feats
+from torch_tools.models._argument_processing import process_boolean_arg
+from torch_tools.models._argument_processing import process_dropout_prob
+
 # pylint: disable=too-many-arguments
 
 
@@ -40,7 +44,11 @@ class DenseBlock(Module):
         """Build `FCBlock`."""
         super().__init__()
         self._fwd_seq = self._get_layers(
-            in_feats, out_feats, batch_norm, dropout_prob, negative_slope,
+            process_num_feats(in_feats),
+            process_num_feats(out_feats),
+            process_boolean_arg(batch_norm),
+            process_dropout_prob(dropout_prob),
+            negative_slope,
         )
 
     @staticmethod
