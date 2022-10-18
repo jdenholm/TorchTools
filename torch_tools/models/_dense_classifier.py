@@ -21,7 +21,7 @@ class DenseNetwork(Module):
     hidden_sizes : Tuple[int], optional
         The sizes of the hidden layers (or None).
     dropout_prob : float, optional
-        The Dropout probability at each layer (Not included if zero).
+        The Dropout probability at each layer (not included if zero).
     batchnorm : bool, optional
         Should we include batch norm layers in the dense blocks?
 
