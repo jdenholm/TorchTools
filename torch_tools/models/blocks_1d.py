@@ -9,7 +9,9 @@ from torch.nn import LeakyReLU
 
 
 class DenseBlock(Module):
-    """Fully connected block.
+    """Fully connected dense block.
+
+    Linear -> BatchNorm (optional) -> Dropout (optional) -> LeakyReLU
 
     Parameters
     ----------
@@ -22,7 +24,8 @@ class DenseBlock(Module):
     dropout_prob : float
         The dropout probability (won't be included if zero).
     neagtive_slope : float
-        The negative slope to use in the `LeakyReLU`.
+        The negative slope to use in the `LeakyReLU`
+        (set zero for normal ReLU).
 
     """
 
