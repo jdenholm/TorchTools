@@ -2,13 +2,13 @@
 from typing import List
 
 from torch import Tensor
-from torch.nn import Module, Sequential, Linear, BatchNorm1d, Dropout1d
+from torch.nn import Module, Sequential, Linear, BatchNorm1d, Dropout
 from torch.nn import LeakyReLU
 
 # pylint: disable=too-many-arguments
 
 
-class FCBlock(Module):
+class DenseBlock(Module):
     """Fully connected block.
 
     Parameters
@@ -37,11 +37,7 @@ class FCBlock(Module):
         """Build `FCBlock`."""
         super().__init__()
         self._fwd_seq = self._get_layers(
-            in_feats,
-            out_feats,
-            batch_norm,
-            dropout_prob,
-            negative_slope,
+            in_feats, out_feats, batch_norm, dropout_prob, negative_slope,
         )
 
     @staticmethod
@@ -80,7 +76,7 @@ class FCBlock(Module):
             layer_list.append(BatchNorm1d(out_feats))
 
         if dropout_prob != 0.0:
-            layer_list.append(Dropout1d(p=dropout_prob))
+            layer_list.append(Dropout(p=dropout_prob))
 
         layer_list.append(LeakyReLU(negative_slope=negative_slope))
 
