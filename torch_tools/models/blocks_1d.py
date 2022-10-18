@@ -27,7 +27,10 @@ class DenseBlock(Module):
         Should we add a batch norm to the block.
     dropout_prob : float
         The dropout probability (won't be included if zero).
-    neagtive_slope : float
+    final_block : bool
+        If True, we don't include batch norm, dropout
+        or an activation.
+    negative_slope : float
         The negative slope to use in the `LeakyReLU`
         (set zero for normal ReLU).
 
@@ -39,6 +42,7 @@ class DenseBlock(Module):
         out_feats: int,
         batch_norm: bool = True,
         dropout_prob: float = 0.5,
+        final_block: bool = True,
         negative_slope: float = 0.2,
     ):
         """Build `FCBlock`."""
@@ -48,6 +52,7 @@ class DenseBlock(Module):
             process_num_feats(out_feats),
             process_boolean_arg(batch_norm),
             process_dropout_prob(dropout_prob),
+            process_boolean_arg(final_block),
             negative_slope,
         )
 
@@ -57,6 +62,7 @@ class DenseBlock(Module):
         out_feats: int,
         batch_norm: bool,
         dropout_prob: float,
+        final: bool,
         negative_slope: float,
     ) -> Sequential:
         """Return the block's layers in a `Sequential`.
@@ -71,6 +77,8 @@ class DenseBlock(Module):
             Should we include a batchnorm after the linear layer?
         dropout_prob : float
             Dropout probability (if zero, we don't include the layer).
+        final : bool
+            Should the batchnorm, dropout and activation be included?
         negative_slope : float
             The negative slope to use in the `LeakyReLU`.
 
@@ -83,13 +91,14 @@ class DenseBlock(Module):
         layer_list: List[Module]
         layer_list = [Linear(in_feats, out_feats)]
 
-        if batch_norm is True:
+        if batch_norm is True and final is False:
             layer_list.append(BatchNorm1d(out_feats))
 
-        if dropout_prob != 0.0:
+        if dropout_prob != 0.0 and final is False:
             layer_list.append(Dropout(p=dropout_prob))
 
-        layer_list.append(LeakyReLU(negative_slope=negative_slope))
+        if final is False:
+            layer_list.append(LeakyReLU(negative_slope=negative_slope))
 
         return Sequential(*layer_list)
 
