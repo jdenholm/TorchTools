@@ -15,7 +15,8 @@ from torch_tools.models._argument_processing import process_dropout_prob
 class DenseBlock(Module):
     """Fully connected dense block.
 
-    Linear -> BatchNorm (optional) -> Dropout (optional) -> LeakyReLU
+    Linear -> BatchNorm (optional) -> Dropout (optional)
+    -> LeakyReLU (optional)
 
     Parameters
     ----------
