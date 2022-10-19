@@ -80,7 +80,6 @@ class DenseNetwork(Module):
         in_sizes = feature_sizes[:-1]
         out_sizes = feature_sizes[1:]
         finals = len(hidden_feats) * [False] + [True]
-        print(finals)
 
         blocks = []
         for in_size, out_size, final in zip(in_sizes, out_sizes, finals):
