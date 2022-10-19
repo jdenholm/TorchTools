@@ -56,3 +56,18 @@ def test_dense_block_out_feats_values():
         _ = DenseBlock(in_feats=10, out_feats=0)
     with pytest.raises(ValueError):
         _ = DenseBlock(in_feats=10, out_feats=-1)
+
+
+def test_dense_blocks_batch_norm_arg_types():
+    """Test types accepted by `batch_norm` arg of `DenseBlock`."""
+    # Should work with bool
+    _ = DenseBlock(in_feats=10, out_feats=1, batch_norm=True)
+    _ = DenseBlock(in_feats=10, out_feats=2, batch_norm=False)
+
+    # Should break with non-bool
+    with pytest.raises(TypeError):
+        _ = DenseBlock(in_feats=10, out_feats=1, batch_norm=1)
+    with pytest.raises(TypeError):
+        _ = DenseBlock(in_feats=10, out_feats=1, batch_norm="True")
+    with pytest.raises(TypeError):
+        _ = DenseBlock(in_feats=10, out_feats=1, batch_norm=10.0)
