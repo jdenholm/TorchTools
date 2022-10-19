@@ -1,10 +1,10 @@
 """A fully connected classifier model."""
-from typing import Optional, Tuple, List, Union
+from typing import Optional, Tuple, Union
 
 from torch import Tensor
 from torch.nn import Module, Sequential
 
-from torch_tools.models.blocks_1d import DenseBlock
+from torch_tools.models._blocks_1d import DenseBlock
 
 # pylint: disable=too-many-arguments
 
@@ -32,18 +32,24 @@ class DenseNetwork(Module):
         in_feats: int,
         out_feats: int,
         hidden_sizes: Optional[Tuple[int, ...]] = None,
-        dropout_prob: float = 0.1,
+        dropout_prob: float = 0.25,
         batchnorm: bool = True,
     ):
         """Build `DenseClassifier`."""
         super().__init__()
         self._fwd_seq = self._get_dense_blocks(
-            in_feats, out_feats, dropout_prob, batchnorm, hidden_sizes=hidden_sizes,
+            in_feats,
+            out_feats,
+            dropout_prob,
+            batchnorm,
+            hidden_sizes=hidden_sizes,
         )
 
     @staticmethod
     def _get_feature_sizes(
-        in_feats: int, out_feats: int, hidden_sizes: Union[Tuple[int, ...], None],
+        in_feats: int,
+        out_feats: int,
+        hidden_sizes: Union[Tuple[int, ...], None],
     ) -> Tuple[Tuple[int, ...], Tuple[int, ...]]:
         """List the input and output sizes of each block.
 
@@ -98,7 +104,9 @@ class DenseNetwork(Module):
 
         """
         in_sizes, out_sizes = self._get_feature_sizes(
-            in_feats, out_feats, hidden_sizes,
+            in_feats,
+            out_feats,
+            hidden_sizes,
         )
         finals = (len(in_sizes) - 1) * [False] + [True]
 
