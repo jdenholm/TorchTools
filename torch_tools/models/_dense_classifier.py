@@ -38,15 +38,38 @@ class DenseNetwork(Module):
         """Build `DenseClassifier`."""
         super().__init__()
         self._fwd_seq = self._get_dense_blocks(
-            in_feats,
-            out_feats,
-            dropout_prob,
-            batchnorm,
-            hidden_sizes=hidden_sizes,
+            in_feats, out_feats, dropout_prob, batchnorm, hidden_sizes=hidden_sizes,
         )
 
     @staticmethod
+    def _get_feature_sizes(
+        in_feats: int, out_feats: int, hidden_sizes: Union[Tuple[int, ...], None],
+    ) -> Tuple[Tuple[int, ...], Tuple[int, ...]]:
+        """List the input and output sizes of each block.
+
+        Parameters
+        ----------
+        in_feats : int
+            Number of input features to the network.
+        out_feats : int
+            Number of output features the model should produce.
+        hidden_sizes : Tuple[int, ...] or None
+            The sizes of the hidden layers.
+
+        Returns
+        -------
+        Tuple[int, ...]
+            Tuple of input feature sizes to each block.
+        Tuple[int, ...]
+            Tuple of output sizes for each block.
+
+        """
+        hidden_feats = hidden_sizes if hidden_sizes is not None else ()
+        feature_sizes = (in_feats,) + hidden_feats + (out_feats,)
+        return feature_sizes[:-1], feature_sizes[1:]
+
     def _get_dense_blocks(
+        self,
         in_feats: int,
         out_feats: int,
         dropout_prob: float,
@@ -74,12 +97,10 @@ class DenseNetwork(Module):
             All of the model's layers stacked in a `Sequential`.
 
         """
-        hidden_feats = hidden_sizes if hidden_sizes is not None else []
-        feature_sizes = [in_feats] + list(hidden_feats) + [out_feats]
-
-        in_sizes = feature_sizes[:-1]
-        out_sizes = feature_sizes[1:]
-        finals = len(hidden_feats) * [False] + [True]
+        in_sizes, out_sizes = self._get_feature_sizes(
+            in_feats, out_feats, hidden_sizes,
+        )
+        finals = (len(in_sizes) - 1) * [False] + [True]
 
         blocks = []
         for in_size, out_size, final in zip(in_sizes, out_sizes, finals):
