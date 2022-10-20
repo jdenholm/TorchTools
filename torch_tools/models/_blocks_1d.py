@@ -8,6 +8,7 @@ from torch.nn import LeakyReLU
 from torch_tools.models._argument_processing import process_num_feats
 from torch_tools.models._argument_processing import process_boolean_arg
 from torch_tools.models._argument_processing import process_dropout_prob
+from torch_tools.models._argument_processing import process_negative_slope_arg
 
 # pylint: disable=too-many-arguments
 
@@ -43,7 +44,7 @@ class DenseBlock(Module):
         out_feats: int,
         batch_norm: bool = True,
         dropout_prob: float = 0.5,
-        final_block: bool = True,
+        final_block: bool = False,
         negative_slope: float = 0.2,
     ):
         """Build `FCBlock`."""
@@ -54,7 +55,7 @@ class DenseBlock(Module):
             process_boolean_arg(batch_norm),
             process_dropout_prob(dropout_prob),
             process_boolean_arg(final_block),
-            negative_slope,
+            process_negative_slope_arg(negative_slope),
         )
 
     @staticmethod
