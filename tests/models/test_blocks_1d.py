@@ -111,3 +111,16 @@ def test_dense_block_final_block_argument_type():
         _ = DenseBlock(in_feats=10, out_feats=2, final_block=1)
     with pytest.raises(TypeError):
         _ = DenseBlock(in_feats=10, out_feats=2, final_block="True")
+
+
+def test_dense_block_negative_slope_argument_type():
+    """Type-check the `negative_slope` argument of `DenseBlock`."""
+    # Should work with float
+    _ = DenseBlock(in_feats=10, out_feats=2, negative_slope=0.0)
+    _ = DenseBlock(in_feats=10, out_feats=2, negative_slope=1.0)
+
+    # Should break with non-float
+    with pytest.raises(TypeError):
+        _ = DenseBlock(in_feats=10, out_feats=2, negative_slope=1)
+    with pytest.raises(TypeError):
+        _ = DenseBlock(in_feats=10, out_feats=2, negative_slope=1j)

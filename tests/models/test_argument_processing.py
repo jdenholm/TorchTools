@@ -76,3 +76,19 @@ def test_process_dropout_argument_values():
         _ = ap.process_dropout_prob(1.0)
     with pytest.raises(ValueError):
         _ = ap.process_dropout_prob(1.0001)
+
+
+def test_negative_slope_argument_type():
+    """Test `ap.process_negative_slope_argument`'s type checking."""
+    # Should work with floats
+    _ = ap.process_negative_slope_arg(-1.0)
+    _ = ap.process_negative_slope_arg(0.0)
+    _ = ap.process_negative_slope_arg(1.0)
+
+    # Should break with non-float
+    with pytest.raises(TypeError):
+        _ = ap.process_negative_slope_arg(1)
+    with pytest.raises(TypeError):
+        _ = ap.process_negative_slope_arg(1j)
+    with pytest.raises(TypeError):
+        _ = ap.process_negative_slope_arg("I'm batman.")
