@@ -91,7 +91,7 @@ class DenseNetwork(Module):
         out_feats : int
             Number of output classes the final block should produce.
         dropout_prob : float
-            The dropout probability (if zero, no included).
+            The dropout probability (if zero, not included).
         batch_norms : bool
             Should we include batchnorms in the DenseBlocks?
         hidden_sizes : Tuple[int], optional
