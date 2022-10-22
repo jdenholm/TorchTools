@@ -1,7 +1,7 @@
 """Test the contents of blocks in `torch_tools.models._blocks1d.`"""
 # pylint: disable=protected-access
 
-from torch.nn import Linear, BatchNorm1d, LeakyReLU, Dropout1d
+from torch.nn import Linear, BatchNorm1d, LeakyReLU, Dropout
 
 from torch_tools.models._blocks_1d import DenseBlock
 
@@ -26,7 +26,7 @@ def test_contents_of_dense_block_when_full():
     assert isinstance(block._fwd_seq[1], BatchNorm1d)
 
     msg = "Third layer should be dropout."
-    assert isinstance(block._fwd_seq[2], Dropout1d)
+    assert isinstance(block._fwd_seq[2], Dropout)
 
     msg = "Final layer should be leaky relu."
     assert isinstance(block._fwd_seq[3], LeakyReLU)
@@ -49,7 +49,7 @@ def test_contents_of_dense_block_with_no_batchnorm():
     assert isinstance((block._fwd_seq[0]), Linear), msg
 
     msg = "Second layer should be dropout."
-    assert isinstance(block._fwd_seq[1], Dropout1d)
+    assert isinstance(block._fwd_seq[1], Dropout)
 
     msg = "Final layer should be leaky relu."
     assert isinstance(block._fwd_seq[2], LeakyReLU)
