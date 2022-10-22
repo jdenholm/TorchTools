@@ -119,3 +119,69 @@ class DenseBlock(Module):
 
         """
         return self._fwd_seq(batch)
+
+
+class InputBlock(Module):
+    """Block for modifying the inputs before they pass through a model.
+
+    Parameters
+    ----------
+    in_feats : int
+        The number of input features to the block.
+    batch_norm : bool
+        Should we apply batch-normalisation to the inputs?
+    dropout : float
+        Should we apply dropout to the inputs?
+
+    """
+
+    def __init__(self, in_feats: int, batch_norm: bool, dropout: float):
+        """Build `InputBlock`."""
+        super().__init__()
+        self._fwd_seq = self._get_layers(
+            process_num_feats(in_feats),
+            process_boolean_arg(batch_norm),
+            process_dropout_prob(dropout),
+        )
+
+    def _get_layers(
+        self,
+        in_feats: int,
+        batch_norm: bool,
+        dropout: float,
+    ) -> Sequential:
+        """Get the block's layers.
+
+        Parameters
+        ----------
+        in_feats : int
+            The number of input features to the block.
+        batch_norm : bool
+            Should we apply batch-normalisation to the inputs?
+        dropout : float
+            Should we apply dropout to the inputs?
+
+        """
+        layers: List[Module]
+        layers = []
+        if batch_norm is True:
+            layers.append(BatchNorm1d(in_feats))
+        if dropout != 0:
+            layers.append(Dropout(p=dropout))
+        return Sequential(*layers)
+
+    def forward(self, batch: Tensor) -> Tensor:
+        """Pass `batch` through the block.
+
+        Parameters
+        ----------
+        batch : Tensor
+            A mini-batch of inputs
+
+        Returns
+        -------
+        Tensor
+            The result of passing `batch` through the model.
+
+        """
+        return self._fwd_seq(batch)
