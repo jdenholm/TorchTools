@@ -1,10 +1,10 @@
 """A fully connected neural network model."""
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, List
 
 from torch import Tensor
-from torch.nn import Module, Sequential
+from torch.nn import Module, Sequential, BatchNorm1d, Dropout
 
-from torch_tools.models._blocks_1d import DenseBlock
+from torch_tools.models._blocks_1d import DenseBlock, InputBlock
 
 # pylint: disable=too-many-arguments
 
@@ -18,12 +18,21 @@ class DenseNetwork(Module):
         Number of input features to the model.
     out_feats : int
         Number of output features (classes).
+    input_bnorm : bool, optional
+        Should we apply batch-normalisation to the input batches?
+    input_dropout : float, optional
+        The dropout probability to apply to the inputs (not included if zero).
     hidden_sizes : Tuple[int], optional
         The sizes of the hidden layers (or None).
-    dropout_prob : float, optional
-        The Dropout probability at each layer (not included if zero).
-    batchnorm : bool, optional
-        Should we include batch norm layers in the dense blocks?
+    hidden_dropout : float, optional
+        The Dropout probability at each hidden layer (not included if zero).
+    hidden_bnorm : bool, optional
+        Should we include batch norms in the hidden layers?
+
+    Examples
+    --------
+    TODO: add some examples.
+
 
     """
 
@@ -31,17 +40,22 @@ class DenseNetwork(Module):
         self,
         in_feats: int,
         out_feats: int,
+        input_bnorm: bool = True,
+        input_dropout: float = 0.25,
         hidden_sizes: Optional[Tuple[int, ...]] = None,
-        dropout_prob: float = 0.25,
-        batchnorm: bool = True,
+        hidden_dropout: float = 0.25,
+        hidden_bnorm: bool = True,
     ):
         """Build `DenseClassifier`."""
         super().__init__()
-        self._fwd_seq = self._get_dense_blocks(
+
+        self._input_block = InputBlock(in_feats, input_bnorm, input_dropout)
+
+        self._dense_blocks = self._list_dense_blocks(
             in_feats,
             out_feats,
-            dropout_prob,
-            batchnorm,
+            hidden_dropout,
+            hidden_bnorm,
             hidden_sizes=hidden_sizes,
         )
 
@@ -74,7 +88,7 @@ class DenseNetwork(Module):
         feature_sizes = (in_feats,) + hidden_feats + (out_feats,)
         return feature_sizes[:-1], feature_sizes[1:]
 
-    def _get_dense_blocks(
+    def _list_dense_blocks(
         self,
         in_feats: int,
         out_feats: int,
@@ -110,6 +124,7 @@ class DenseNetwork(Module):
         )
         finals = (len(in_sizes) - 1) * [False] + [True]
 
+        blocks: List[Module]
         blocks = []
         for in_size, out_size, final in zip(in_sizes, out_sizes, finals):
             blocks.append(
@@ -137,4 +152,5 @@ class DenseNetwork(Module):
             The result of passing `batch` through the model.
 
         """
-        return self._fwd_seq(batch)
+        input_layer_out = self._input_block(batch)
+        return self._dense_blocks(input_layer_out)
