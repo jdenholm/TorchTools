@@ -20,7 +20,9 @@ class _BaseDataset(Dataset):
         paths to files which will be loaded and converted to tensors by
         downstream transforms.
     targets : Optional[Sequence[Union[str, Path, Tensor, ndarray]]] = None
-        The targets (or ground truths) of the dataset.
+        The targets (or ground truths) of the dataset. `targets` can be
+        any of the allowed type options for `inputs`, or `None`. If `None`,
+        `self.__getitem__` simply returns inputs (useful for inference).
 
     Notes
     -----
