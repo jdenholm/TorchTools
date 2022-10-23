@@ -34,8 +34,6 @@ def test_full_input_block_contents():
 def test_input_block_contents_with_batchnorm_only():
     """Test contents of input block when user asks for batchnorm only.
 
-    Notes
-    -----
     By setting the argument `input_dropout=0.0`, we exclude the dropout
     layer.
 
@@ -60,8 +58,6 @@ def test_input_block_contents_with_batchnorm_only():
 def test_input_block_contents_with_dropout_only():
     """Test the contents of input block when user asks for dropout only.
 
-    Notes
-    -----
     To ask for input dropout only, we set `input_bnorm=False`.
 
     """
@@ -86,11 +82,13 @@ def test_input_batchnorm_number_of_feats_assignment():
     """Test the input batchnorm layer is assigned correct number of feats."""
     msg = "Unexpected number of batchnorm features."
     model = DenseNetwork(123, 2, input_bnorm=True)
-    assert model._input_block._fwd_seq[0].num_features == 123, msg
+    input_bnorm = model._input_block._fwd_seq[0]
+    assert input_bnorm.num_features == 123, msg
 
     msg = "Unexpected number of batchnorm features."
     model = DenseNetwork(321, 2, input_bnorm=True)
-    assert model._input_block._fwd_seq[0].num_features == 321, msg
+    input_bnorm = model._input_block._fwd_seq[0]
+    assert input_bnorm.num_features == 321, msg
 
 
 def test_input_block_dropout_probability_assignment():
@@ -172,8 +170,20 @@ def test_linear_layer_sizes_in_dense_blocks_with_hidden_layers():
 
 
 def test_hidden_block_contents_with_dropout_and_batchnorm():
-    """Test contents of dense blocks with hidden layers, bnroms and dropout."""
-    model = DenseNetwork(in_feats=10, out_feats=2, hidden_sizes=(5, 5, 5))
+    """Test contents of dense blocks with hidden layers, bnroms and dropout.
+
+    The dense blocks should contain:
+
+        Linear -> BatchNorm1d -> Dropout -> LeakyReLU
+
+    """
+    model = DenseNetwork(
+        in_feats=10,
+        out_feats=2,
+        hidden_sizes=(5, 5, 5),
+        hidden_dropout=0.5,
+        hidden_bnorm=True,
+    )
 
     # The final block should only contain a Linear layer, so we chop it off
     non_final_blocks = list(model._dense_blocks.named_children())[:-1]
@@ -194,3 +204,116 @@ def test_hidden_block_contents_with_dropout_and_batchnorm():
 
         msg = "Fourth layer of dense block should be LeakyReLU."
         assert isinstance(block._fwd_seq[3], LeakyReLU), msg
+
+
+def test_hidden_block_contents_with_batchnorm_and_no_dropout():
+    """Test contents of dense blocks with hidden layers and only batchnorm.
+
+    The dense blocks should contain:
+
+        Linear -> BatchNorm1d -> LeakyReLU
+
+    """
+    model = DenseNetwork(
+        in_feats=10,
+        out_feats=2,
+        hidden_dropout=0.0,
+        hidden_bnorm=True,
+    )
+
+    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+
+    for _, block in non_final_blocks:
+
+        msg = "Each non-final block should contain three layers."
+        assert len(block._fwd_seq) == 3, msg
+
+        msg = "The first layer of the dense block should be a Linear."
+        assert isinstance(block._fwd_seq[0], Linear), msg
+
+        msg = "The second layer of the dense block should be BatchNorm1d."
+        assert isinstance(block._fwd_seq[1], BatchNorm1d), msg
+
+        msg = "The final layer of the dense block should be LeakyReLU."
+        assert isinstance(block._fwd_seq[2], LeakyReLU), msg
+
+
+def test_hidden_block_contents_with_dropout_and_no_batchnorm():
+    """Test contents of dense blocks with hidden layers and only dropout.
+
+    The dense blocks should contain:
+
+        Linear -> Dropout -> LeakyReLU
+
+    """
+    model = DenseNetwork(
+        in_feats=10,
+        out_feats=2,
+        hidden_dropout=0.5,
+        hidden_bnorm=False,
+    )
+
+    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+
+    for _, block in non_final_blocks:
+
+        msg = "There should be three layers in the block."
+        assert len(block._fwd_seq) == 3, msg
+
+        msg = "The first layer of the dense block should be Linear."
+        assert isinstance(block._fwd_seq[0], Linear), msg
+
+        msg = "The second layer of the dense block should be Dropout."
+        assert isinstance(block._fwd_seq[1], Dropout), msg
+
+        msg = "The final layer of the dense block should be LeakyReLU."
+        assert isinstance(block._fwd_seq[2], LeakyReLU), msg
+
+
+def test_hidden_block_contents_with_no_dropout_and_no_batch_norm():
+    """Test contents of dense block's hidden layers no dropout/batchnorm.
+
+    The contents of the dense blocks should be:
+
+        Linear -> LeakyReLU
+
+    """
+    model = DenseNetwork(
+        in_feats=10,
+        out_feats=2,
+        hidden_dropout=0.0,
+        hidden_bnorm=False,
+    )
+
+    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+
+    for _, block in non_final_blocks:
+
+        msg = "The dense block should contain two layers."
+        assert len(block._fwd_seq) == 2, msg
+
+        msg = "The first layer of the dense block should be a Linear."
+        assert isinstance(block._fwd_seq[0], Linear), msg
+
+        msg = "The final layer of the dense block should be LeakyReLU."
+        assert isinstance(block._fwd_seq[1], LeakyReLU), msg
+
+
+def test_hidden_batchnorm_number_of_features_are_correct():
+    """Test number of features in the hidden layer batchnorms."""
+    hidden_sizes = (2, 4, 6, 8)
+    model = DenseNetwork(
+        in_feats=10,
+        out_feats=2,
+        hidden_sizes=(2, 4, 6, 8),
+        hidden_bnorm=True,
+        hidden_dropout=0.25,
+    )
+
+    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+
+    for (_, block), bnorm_feats in zip(non_final_blocks, hidden_sizes):
+
+        msg = "Unexpected number of features in hidden block's batch norm."
+        batch_norm = block._fwd_seq[1]
+        assert batch_norm.num_features == bnorm_feats, msg
