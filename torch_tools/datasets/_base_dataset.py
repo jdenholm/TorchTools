@@ -20,7 +20,7 @@ class _BaseDataset(Dataset):
         paths to files which will be loaded and converted to tensors by
         downstream transforms.
     targets : Optional[Sequence[Union[str, Path, Tensor, ndarray]]] = None
-        The targets (oor ground truths) of the dataset.
+        The targets (or ground truths) of the dataset.
 
     Notes
     -----
@@ -132,7 +132,7 @@ class _BaseDataset(Dataset):
             msg += f"'{unique_types}'."
             raise RuntimeError(msg)
 
-    def __getitem__(self, idx: int) -> Tuple[Tensor, ...]:
+    def __getitem__(self, idx: int) -> Union[Tuple[Tensor, ...], Tensor]:
         """Return input or input--target pair.
 
         Parameters
