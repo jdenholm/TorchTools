@@ -9,6 +9,10 @@ To create the necessary conda environment, use:
 
 To install `TorchTools`, use:
 
+```python
+print("Test")
+```
+
 `cd /path/to/TorchTools/`
 
 `pip install -e .`
