@@ -40,7 +40,27 @@ class _BaseDataset(Dataset):
         self.inputs = self._set_inputs(inputs)
         self.targets = self._set_targets(targets)
 
+        self._check_lengths()
+
     _allowed_types = (str, Path, Tensor, ndarray)
+
+    def _check_lengths(self):
+        """Check the lengths of images and targets match.
+
+        Raises
+        ------
+        RuntimeError
+            If the length of `self.inputs` and `self.targets` do not match
+            (and `self.targets` is not None).
+
+        """
+        if self.targets is None:
+            return
+        if len(self.inputs) != len(self.targets):
+            msg = "Inputs and targets should have the same lengths. Inputs "
+            msg += f"has length {len(self.inputs)} and targets has length "
+            msg += f"{len(self.targets)}."
+            raise RuntimeError(msg)
 
     def _set_inputs(
         self,
