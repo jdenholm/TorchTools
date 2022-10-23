@@ -98,6 +98,11 @@ def process_negative_slope_arg(negative_slope: float) -> float:
     float
         `abs(negative_slope)`.
 
+    Raises
+    ------
+    TypeError
+        If `negative_slope` is not a float.
+
     """
     if not isinstance(negative_slope, float):
         msg = f"negative_slope should be float. Got '{type(negative_slope)}'"
