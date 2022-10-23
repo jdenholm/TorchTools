@@ -46,7 +46,7 @@ class DenseBlock(Module):
         final_block: bool = False,
         negative_slope: float = 0.2,
     ):
-        """Build `FCBlock`."""
+        """Build `DenseBlock`."""
         super().__init__()
         self._fwd_seq = self._get_layers(
             process_num_feats(in_feats),
