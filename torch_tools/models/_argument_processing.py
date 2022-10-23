@@ -82,6 +82,7 @@ def process_dropout_prob(prob: float) -> float:
         raise TypeError(f"Expected float argument. Got '{type(prob)}'.")
     if not 0.0 <= prob < 1.0:
         raise ValueError(f"Prob should be on [0.0, 1.0). Got '{prob}'.")
+
     return prob
 
 
@@ -107,4 +108,5 @@ def process_negative_slope_arg(negative_slope: float) -> float:
     if not isinstance(negative_slope, float):
         msg = f"negative_slope should be float. Got '{type(negative_slope)}'"
         raise TypeError(msg)
+
     return abs(negative_slope)
