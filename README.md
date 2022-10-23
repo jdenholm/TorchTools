@@ -13,3 +13,9 @@ To install TorchTools, use:
 cd /path/to/TorchTools/
 pip install -e .
 ```
+
+To run the tests:
+```bash
+conda activate torch-tools
+pytest tests/
+```
