@@ -30,8 +30,7 @@ class DenseBlock(Module):
     dropout_prob : float
         The dropout probability (won't be included if zero).
     final_block : bool
-        If True, we don't include batch norm, dropout
-        or an activation.
+        If `True`, the block only includes a linear layer.
     negative_slope : float
         The negative slope to use in the `LeakyReLU`
         (set zero for normal ReLU).
@@ -78,7 +77,7 @@ class DenseBlock(Module):
         batch_norm : bool
             Should we include a batchnorm after the linear layer?
         dropout_prob : float
-            Dropout probability (if zero, we don't include the layer).
+            Dropout probability (if zero, we don't include dropout).
         final : bool
             Should the batchnorm, dropout and activation be included?
         negative_slope : float
@@ -122,7 +121,7 @@ class DenseBlock(Module):
 
 
 class InputBlock(Module):
-    """Block for modifying the inputs before they pass through a model.
+    """Block for modifying the inputs before they pass through `DenseNetwork`.
 
     Parameters
     ----------
@@ -144,8 +143,8 @@ class InputBlock(Module):
             process_dropout_prob(dropout),
         )
 
+    @staticmethod
     def _get_layers(
-        self,
         in_feats: int,
         batch_norm: bool,
         dropout: float,
@@ -181,7 +180,7 @@ class InputBlock(Module):
         Returns
         -------
         Tensor
-            The result of passing `batch` through the model.
+            The result of passing `batch` through the block.
 
         """
         return self._fwd_seq(batch)
