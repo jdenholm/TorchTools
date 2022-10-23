@@ -1,4 +1,4 @@
-"""Functions for processing arguments models and blocks."""
+"""Functions for processing arguments to models and blocks."""
 
 
 def process_num_feats(num_feats: int) -> int:
