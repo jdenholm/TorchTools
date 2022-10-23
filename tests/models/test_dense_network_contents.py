@@ -1,6 +1,6 @@
 """Test the contents of `torch-tools.models.DenseNetwork`."""
 
-from torch.nn import Dropout, BatchNorm1d
+from torch.nn import Dropout, BatchNorm1d, Linear, LeakyReLU
 
 from torch_tools.models import DenseNetwork
 
@@ -169,3 +169,28 @@ def test_linear_layer_sizes_in_dense_blocks_with_hidden_layers():
 
         msg = "Unexpected number of output features in linear layer."
         assert module._fwd_seq[0].out_features == next(out_sizes), msg
+
+
+def test_hidden_block_contents_with_dropout_and_batchnorm():
+    """Test contents of dense blocks with hidden layers, bnroms and dropout."""
+    model = DenseNetwork(in_feats=10, out_feats=2, hidden_sizes=(5, 5, 5))
+
+    # The final block should only contain a Linear layer, so we chop it off
+    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+
+    for _, block in non_final_blocks:
+
+        msg = "Each non-final block should contain four layers."
+        assert len(block._fwd_seq) == 4, msg
+
+        msg = "First layer of dense block should be Linear."
+        assert isinstance(block._fwd_seq[0], Linear), msg
+
+        msg = "Second layer of dense block should be BatchNorm1d."
+        assert isinstance(block._fwd_seq[1], BatchNorm1d), msg
+
+        msg = "Third layer of dense block should be Dropout."
+        assert isinstance(block._fwd_seq[2], Dropout)
+
+        msg = "Fourth layer of dense block should be LeakyReLU."
+        assert isinstance(block._fwd_seq[3], LeakyReLU), msg
