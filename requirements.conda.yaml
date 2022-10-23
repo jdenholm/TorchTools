@@ -74,6 +74,7 @@ dependencies:
   - pure_eval=0.2.2=pyhd3eb1b0_0
   - py=1.11.0=pyhd3eb1b0_0
   - pycparser=2.21=pyhd3eb1b0_0
+  - pydocstyle=6.1.1=pyhd3eb1b0_0
   - pygments=2.11.2=pyhd3eb1b0_0
   - pylint=2.14.5=py310hecd8cb5_0
   - pyparsing=3.0.9=py310hecd8cb5_0
@@ -85,6 +86,7 @@ dependencies:
   - readline=8.1.2=hca72f7f_1
   - setuptools=63.4.1=py310hecd8cb5_0
   - six=1.16.0=pyhd3eb1b0_1
+  - snowballstemmer=2.2.0=pyhd3eb1b0_0
   - sqlite=3.39.3=h707629a_0
   - stack_data=0.2.0=pyhd3eb1b0_0
   - tk=8.6.12=h5d9f67b_0
