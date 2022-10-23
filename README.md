@@ -9,8 +9,7 @@ conda env create -f requirements.conda.yaml
 ```
 
 To install TorchTools, use:
-
-
-`cd /path/to/TorchTools/`
-
-`pip install -e .`
+```bash
+cd /path/to/TorchTools/
+pip install -e .
+```
