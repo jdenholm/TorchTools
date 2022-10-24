@@ -363,3 +363,29 @@ def test_final_layer_feature_sizes_with_no_hidden_layers():
     # The linear layer in the only dense block should have `out_feats`
     msg = "Output features of only linear layer should be 123."
     assert dense_blocks[0]._fwd_seq[0].out_features == 123, msg
+
+
+def test_final_linear_layer_feature_sizes_with_hidden_layers():
+    """Test the feature sizes of the last linear layer in dense blocks.
+
+    With hidden layers included, the final linear layer should have
+    `hidden_sizes[-1]` input features and `out_feats` output features.
+
+    """
+    in_feats, out_feats = 128, 2
+    hidden_sizes = (63, 32, 666)
+    model = DenseNetwork(
+        in_feats=in_feats,
+        out_feats=out_feats,
+        hidden_sizes=hidden_sizes,
+    )
+
+    final_linear_layer = model._dense_blocks[-1]._fwd_seq[0]
+
+    # The final linear layer should have hiddens_sizes[-1] input features
+    msg = f"Expected {hidden_sizes[-1]} input features."
+    assert final_linear_layer.in_features == hidden_sizes[-1], msg
+
+    # The final linear layer should have `out_feats` out_features.
+    msg = f"Expected {out_feats} output features."
+    assert final_linear_layer.out_features == out_feats, msg
