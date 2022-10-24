@@ -317,3 +317,49 @@ def test_hidden_batchnorm_number_of_features_are_correct():
         msg = "Unexpected number of features in hidden block's batch norm."
         batch_norm = block._fwd_seq[1]
         assert batch_norm.num_features == bnorm_feats, msg
+
+
+def test_hidden_block_dropout_probability_assignment():
+    """Test the dropout porbability in thie hidden blocks is correct."""
+    model = DenseNetwork(
+        in_feats=10,
+        out_feats=2,
+        hidden_sizes=(8, 6, 4),
+        hidden_dropout=0.123456789,
+        hidden_bnorm=True,
+    )
+
+    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+
+    for _, block in non_final_blocks:
+
+        dropout_layer = block._fwd_seq[2]
+        msg = "Unexpected dropout prob in hidden blocks."
+        assert dropout_layer.p == 0.123456789, msg
+
+
+def test_final_layer_feature_sizes_with_no_hidden_layers():
+    """Test the feature sizes of the last linear layer in dense blocks.
+
+    With no hidden layers, the feature sizes of the final (and only) linear
+    layer should be equal to `in_feats` and `out_feats`.
+
+    """
+    model = DenseNetwork(in_feats=987, out_feats=123, hidden_sizes=None)
+
+    dense_blocks = model._dense_blocks
+
+    # There should only be one dense block
+    assert len(dense_blocks) == 1, "Should only be one layer in dense block."
+
+    # There should only be one thing in the only dense block
+    msg = "Dense block should have len 1."
+    assert len(dense_blocks[0]._fwd_seq) == 1, msg
+
+    # The linear layer in the only dense block should have `in_feats`
+    msg = "Input features of only linear layer should be 987."
+    assert dense_blocks[0]._fwd_seq[0].in_features == 987, msg
+
+    # The linear layer in the only dense block should have `out_feats`
+    msg = "Output features of only linear layer should be 123."
+    assert dense_blocks[0]._fwd_seq[0].out_features == 123, msg
