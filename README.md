@@ -1,5 +1,5 @@
 # TorchTools
-Handy PyTorch  datasets and models which should save you some time.
+Handy PyTorch  datasets and models which should save you time.
 
 
 ## Installation
@@ -10,12 +10,12 @@ git clone link-to-be-added
 
 To create the necessary conda environment:
 ```bash
+cd /path/to/TorchTools/
 conda env create -f requirements.conda.yaml
 ```
 
 To install TorchTools:
 ```bash
-cd /path/to/TorchTools/
 conda activate torch-tools
 pip install -e .
 ```
