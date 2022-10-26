@@ -28,6 +28,8 @@ class DenseNetwork(Module):
         The Dropout probability at each hidden layer (not included if zero).
     hidden_bnorm : bool, optional
         Should we include batch norms in the hidden layers?
+    negative_slope : float, optional
+        The negative slope argument to use in the leaky relu layers.
 
     Examples
     --------
@@ -41,10 +43,11 @@ class DenseNetwork(Module):
         in_feats: int,
         out_feats: int,
         input_bnorm: bool = True,
-        input_dropout: float = 0.25,
+        input_dropout: float = 0.1,
         hidden_sizes: Optional[Tuple[int, ...]] = None,
         hidden_dropout: float = 0.25,
         hidden_bnorm: bool = True,
+        negative_slope: float = 0.2,
     ):
         """Build `DenseClassifier`."""
         super().__init__()
@@ -56,6 +59,7 @@ class DenseNetwork(Module):
             out_feats,
             hidden_dropout,
             hidden_bnorm,
+            negative_slope,
             hidden_sizes=hidden_sizes,
         )
 
@@ -94,6 +98,7 @@ class DenseNetwork(Module):
         out_feats: int,
         dropout_prob: float,
         batch_norms: bool,
+        negative_slope: float,
         hidden_sizes: Optional[Tuple[int, ...]] = None,
     ) -> Sequential:
         """List the dense layers in the model.
@@ -108,6 +113,8 @@ class DenseNetwork(Module):
             The dropout probability (if zero, not included).
         batch_norms : bool
             Should we include batchnorms in the DenseBlocks?
+        negative_slope : float
+            The negative slope to use in the leaky relu layers.
         hidden_sizes : Tuple[int], optional
             Sizes of the hidden layers in the model.
 
@@ -134,6 +141,7 @@ class DenseNetwork(Module):
                     final_block=final,
                     dropout_prob=dropout_prob,
                     batch_norm=batch_norms,
+                    negative_slope=negative_slope,
                 )
             )
         return Sequential(*blocks)

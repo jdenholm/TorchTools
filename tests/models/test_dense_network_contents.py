@@ -389,3 +389,21 @@ def test_final_linear_layer_feature_sizes_with_hidden_layers():
     # The final linear layer should have `out_feats` out_features.
     msg = f"Expected {out_feats} output features."
     assert final_linear_layer.out_features == out_feats, msg
+
+
+def test_leaky_relu_negative_slope_assignment():
+    """Test the `negative_slope` value assignment of the leaky relu."""
+    model = DenseNetwork(
+        in_feats=100,
+        out_feats=10,
+        hidden_sizes=(50, 50),
+        negative_slope=0.12345678,
+    )
+
+    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+    for _, block in non_final_blocks:
+
+        leaky_relu = block._fwd_seq[-1]
+
+        msg = "Wrong slope value in leaky relu."
+        assert leaky_relu.negative_slope == 0.12345678, msg
