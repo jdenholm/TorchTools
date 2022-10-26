@@ -18,12 +18,12 @@ class DenseNetwork(Module):
         Number of input features to the model.
     out_feats : int
         Number of output features (classes).
+    hidden_sizes : Tuple[int], optional
+        The sizes of the hidden layers (or None).
     input_bnorm : bool, optional
         Should we apply batch-normalisation to the input batches?
     input_dropout : float, optional
         The dropout probability to apply to the inputs (not included if zero).
-    hidden_sizes : Tuple[int], optional
-        The sizes of the hidden layers (or None).
     hidden_dropout : float, optional
         The Dropout probability at each hidden layer (not included if zero).
     hidden_bnorm : bool, optional
@@ -42,9 +42,9 @@ class DenseNetwork(Module):
         self,
         in_feats: int,
         out_feats: int,
+        hidden_sizes: Optional[Tuple[int, ...]] = None,
         input_bnorm: bool = True,
         input_dropout: float = 0.1,
-        hidden_sizes: Optional[Tuple[int, ...]] = None,
         hidden_dropout: float = 0.25,
         hidden_bnorm: bool = True,
         negative_slope: float = 0.2,
