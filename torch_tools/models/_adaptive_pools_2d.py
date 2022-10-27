@@ -5,7 +5,7 @@ from torch import Tensor, concat
 from torch.nn import AdaptiveAvgPool2d, AdaptiveMaxPool2d, Module
 
 
-class ConcatMaxAvgPool2d(Module):
+class _ConcatMaxAvgPool2d(Module):
     """Adaptive 2D pooling layer.
 
     Parameters
@@ -41,7 +41,7 @@ class ConcatMaxAvgPool2d(Module):
 _options = {
     "avg": AdaptiveAvgPool2d,
     "max": AdaptiveMaxPool2d,
-    "avg-max-concat": ConcatMaxAvgPool2d,
+    "avg-max-concat": _ConcatMaxAvgPool2d,
 }
 
 
