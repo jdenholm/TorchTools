@@ -36,11 +36,13 @@ def get_backbone(option: str, pretrained: bool = True) -> Module:
     option = option.lower()
     _check_encoder_option_is_allowed(option)
 
+    weights = "DEFAULT" if pretrained is True else None
+
     if "vgg" in option:
-        full_vgg = _encoder_options[option](pretrained=pretrained)
+        full_vgg = _encoder_options[option](weights=weights)
         encoder = Sequential(full_vgg.features)
     if "resnet" in option:
-        full_resnet = _encoder_options[option](pretrained=pretrained)
+        full_resnet = _encoder_options[option](weights=weights)
         # The resnet encoder is everything bar the final two children,
         # which are the pool and classification layers.
         encoder = Sequential(*list(full_resnet.children()))[:-2]
