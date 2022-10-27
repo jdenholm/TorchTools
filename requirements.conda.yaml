@@ -129,4 +129,3 @@ dependencies:
   - zeromq=4.3.4
   - zlib=1.2.13
   - zstd=1.5.2
-prefix: /Users/jimdenholm/miniconda3/envs/torch-tools
