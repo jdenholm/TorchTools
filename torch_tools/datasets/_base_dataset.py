@@ -146,7 +146,9 @@ class _BaseDataset(Dataset):
         """
         input_types = list(map(type, inputs))
         unique_types = list(Counter(input_types))
-        all_allowed = all(map(lambda x: x in self._allowed_types, input_types))
+        all_allowed = all(
+            map(lambda x: isinstance(x, self._allowed_types), inputs)
+        )
 
         if not (len(unique_types) == 1 and all_allowed):
             msg = "Expected one unique input type from "
