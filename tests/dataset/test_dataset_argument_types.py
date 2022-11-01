@@ -45,3 +45,20 @@ def test_inputs_with_inconsistent_allowed_types():
     # Should break with allowed types if they are inconsistent
     with pytest.raises(TypeError):
         _ = DataSet(inputs=["mixed", Path("inputs")])
+
+
+def test_targets_with_allowed_types():
+    """Test `DataSet`'s `targets` argument accepts allowed types."""
+    inputs = ["allowed", "inputs", "of", "type", "str"]
+    # Should work with `typing.Sequence` of:
+    # `str`
+    _ = DataSet(inputs=inputs, targets=["1", "2", "3", "4", "5"])
+    # `Path`
+    _ = DataSet(
+        inputs=inputs,
+        targets=[Path("1"), Path("2"), Path("3"), Path("4"), Path("5")],
+    )
+    # `numpy.ndarray`
+    _ = DataSet(inputs=inputs, targets=list((np.zeros((5, 3)))))
+    # `torch.Tensor`
+    _ = DataSet(inputs=inputs, targets=list(torch.zeros(5, 2)))
