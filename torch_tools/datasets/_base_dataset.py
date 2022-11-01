@@ -139,7 +139,7 @@ class _BaseDataset(Dataset):
 
         Raises
         ------
-        RuntimeError
+        TypeError
             If any of the inputs types are not in `self._allowed_types`, or
             there is more than one unique input type.
 
@@ -154,7 +154,7 @@ class _BaseDataset(Dataset):
             msg = "Expected one unique input type from "
             msg += f"'{self._allowed_types}'. Instead got types "
             msg += f"'{unique_types}'."
-            raise RuntimeError(msg)
+            raise TypeError(msg)
 
     def __getitem__(self, idx: int) -> Union[Tuple[Tensor, ...], Tensor]:
         """Return input or input--target pair.
