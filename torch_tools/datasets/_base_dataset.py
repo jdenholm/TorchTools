@@ -57,8 +57,8 @@ class _BaseDataset(Dataset):
         if self.targets is None:
             return
         if len(self.inputs) != len(self.targets):
-            msg = "Inputs and targets should have the same lengths. Inputs "
-            msg += f"has length {len(self.inputs)} and targets has length "
+            msg = "'inputs' and 'targets' should have same length. 'inputs' "
+            msg += f"has length {len(self.inputs)} and 'targets' has length "
             msg += f"{len(self.targets)}."
             raise RuntimeError(msg)
 
@@ -146,9 +146,7 @@ class _BaseDataset(Dataset):
         """
         input_types = list(map(type, inputs))
         unique_types = list(Counter(input_types))
-        all_allowed = all(
-            map(lambda x: isinstance(x, self._allowed_types), inputs)
-        )
+        all_allowed = all(map(lambda x: isinstance(x, self._allowed_types), inputs))
 
         if not (len(unique_types) == 1 and all_allowed):
             msg = "Expected one unique input type from "
