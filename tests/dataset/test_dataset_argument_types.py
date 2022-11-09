@@ -62,3 +62,46 @@ def test_targets_with_allowed_types():
     _ = DataSet(inputs=inputs, targets=list((np.zeros((5, 3)))))
     # `torch.Tensor`
     _ = DataSet(inputs=inputs, targets=list(torch.zeros(5, 2)))
+
+
+def test_targets_with_forbidden_types():
+    """Test `DataSet`'s `targets` argument catches forbidden types."""
+    inputs = ["allowed", "types", "for", "testing"]
+
+    # Should break with non-sequence
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=1)
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets={"not a": "sequence"})
+
+    # Should break with a Sequence of the wrong type
+    # I.e. not a str, path, numpy.ndarray or torch.Tensor.
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=[1, 2, 3, 4])
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=((1,), (2,), (3,), (4,)))
+
+
+def test_target_args_with_inconsisten_allowed_types():
+    """Test `DataSet` with allowed but inconsistent target types."""
+    inputs = ["all", "allowed", "inputs"]
+
+    # Should break with a Sequence of allowed, but inconsistent, types.
+    with pytest.raises(TypeError):
+        _ = DataSet(
+            inputs=inputs,
+            targets=["inconsistent", "but", Path("allowed")],
+        )
+
+
+def test_inputs_and_targets_with_mismatched_lengths():
+    """Test `DataSet` catches mismatched input and target lengths."""
+    # Should work when both are the same length
+    inputs = ["Three", "rings", "for"]
+    targets = ["the", "elven", "kings"]
+
+    _ = DataSet(inputs=inputs, targets=targets)
+
+    # Should break when the lengths don't match
+    with pytest.raises(RuntimeError):
+        _ = DataSet(inputs=inputs, targets=targets[:-1])
