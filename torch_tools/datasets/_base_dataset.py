@@ -154,6 +154,17 @@ class _BaseDataset(Dataset):
             msg += f"'{unique_types}'."
             raise TypeError(msg)
 
+
+    def __len__(self):
+        """Return the length of the dataset.
+
+        Returns
+        -------
+        int
+            The length of the dataset.
+
+        """
+
     def __getitem__(self, idx: int) -> Union[Tuple[Tensor, ...], Tensor]:
         """Return input or input--target pair.
 
