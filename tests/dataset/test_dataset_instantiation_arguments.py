@@ -7,6 +7,8 @@ import torch
 
 import pytest
 
+from torchvision.transforms import Compose
+
 from torch_tools.datasets import DataSet
 
 
@@ -105,3 +107,20 @@ def test_inputs_and_targets_with_mismatched_lengths():
     # Should break when the lengths don't match
     with pytest.raises(RuntimeError):
         _ = DataSet(inputs=inputs, targets=targets[:-1])
+
+
+def test_input_transfroms_types():
+    """Test the types allowed and rejected by `input_tfms`."""
+    inputs = ["I", "am", "a", "servant"]
+    targets = ["of", "the", "secret", "fire"]
+    input_tfms = Compose([])
+
+    # Should work with torchvision.transforms.Compose or `None`
+    _ = DataSet(inputs=inputs, targets=targets, input_tfms=input_tfms)
+    _ = DataSet(inputs=inputs, targets=targets, input_tfms=None)
+
+    # Should break with any non-`Compose`
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=targets, input_tfms=1)
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=targets, input_tfms=lambda x: x)
