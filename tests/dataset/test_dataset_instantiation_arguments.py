@@ -12,6 +12,12 @@ from torchvision.transforms import Compose
 from torch_tools.datasets import DataSet
 
 
+@pytest.fixture
+def inputs_and_targets():
+    """Return lists of strings for inputs and targets."""
+    return ["Three", "rings", "for"], ["the", "elven", "kings"]
+
+
 def test_inputs_with_allowed_types():
     """Test `DataSet` accepts `inputs` with allowed types."""
     strings = list(map(lambda x: str(x) + ".png", ascii_lowercase))
@@ -96,11 +102,10 @@ def test_target_args_with_inconsisten_allowed_types():
         )
 
 
-def test_inputs_and_targets_with_mismatched_lengths():
+def test_inputs_and_targets_with_mismatched_lengths(inputs_and_targets):
     """Test `DataSet` catches mismatched input and target lengths."""
     # Should work when both are the same length
-    inputs = ["Three", "rings", "for"]
-    targets = ["the", "elven", "kings"]
+    inputs, targets = inputs_and_targets
 
     _ = DataSet(inputs=inputs, targets=targets)
 
@@ -109,10 +114,9 @@ def test_inputs_and_targets_with_mismatched_lengths():
         _ = DataSet(inputs=inputs, targets=targets[:-1])
 
 
-def test_input_transfroms_types():
+def test_input_transforms_types(inputs_and_targets):
     """Test the types allowed and rejected by `input_tfms`."""
-    inputs = ["I", "am", "a", "servant"]
-    targets = ["of", "the", "secret", "fire"]
+    inputs, targets = inputs_and_targets
     input_tfms = Compose([])
 
     # Should work with torchvision.transforms.Compose or `None`
@@ -124,3 +128,33 @@ def test_input_transfroms_types():
         _ = DataSet(inputs=inputs, targets=targets, input_tfms=1)
     with pytest.raises(TypeError):
         _ = DataSet(inputs=inputs, targets=targets, input_tfms=lambda x: x)
+
+
+def test_target_transforms_types(inputs_and_targets):
+    """Test accepted and rejected types for `target_tfms` arg."""
+    inputs, targets = inputs_and_targets
+
+    # Should work with `torchvision.transforms.Compose` or `None`.
+    _ = DataSet(inputs=inputs, targets=targets, target_tfms=Compose([]))
+    _ = DataSet(inputs=inputs, targets=targets, target_tfms=None)
+
+    # Should break with any non-`Compose`.
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=targets, target_tfms=1)
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=targets, target_tfms=lambda x: x)
+
+
+def test_both_transforms_types(inputs_and_targets):
+    """Test accepted and rejected types of `both_tfms` type."""
+    inputs, targets = inputs_and_targets
+
+    # Should work with `torchvision.transforms.Compose` or `None`.
+    _ = DataSet(inputs=inputs, targets=targets, both_tfms=Compose([]))
+    _ = DataSet(inputs=inputs, targets=targets, both_tfms=None)
+
+    # Should break with any non-`Compose`.
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=targets, both_tfms="Frodo")
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=targets, both_tfms=lambda x: x)
