@@ -103,3 +103,10 @@ def test_input_target_and_both_transforms_are_applied(inputs_and_targets):
 
         msg = "Target then both transforms not applied."
         assert (y_item == both_tfms(target_tfms(tgt_item))).all(), msg
+
+def test_len_method(inputs_and_targets):
+    """Test the len method returns the correct values."""
+    inputs, targets = inputs_and_targets
+
+    msg = "Wrong length value."
+    assert len(DataSet(inputs=inputs, targets=targets)) == len(inputs), msg
