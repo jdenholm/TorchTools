@@ -1,4 +1,6 @@
 """Utilities for getting 2D convolutional encoder backbones."""
+from typing import Tuple
+
 from torchvision import models
 from torch.nn import Module, Sequential
 
@@ -7,16 +9,20 @@ _encoder_options = {
     "vgg11": models.vgg11,
     "vgg13": models.vgg13,
     "vgg16": models.vgg16,
+    "vgg19": models.vgg19,
     "vgg11_bn": models.vgg11_bn,
     "vgg13_bn": models.vgg13_bn,
     "vgg16_bn": models.vgg16_bn,
+    "vgg19_bn": models.vgg19_bn,
     "resnet18": models.resnet18,
     "resnet34": models.resnet34,
     "resnet50": models.resnet50,
+    "resnet101": models.resnet101,
+    "resnet152": models.resnet152,
 }
 
 
-def get_backbone(option: str, pretrained: bool = True) -> Module:
+def get_backbone(option: str, pretrained: bool = True) -> Tuple[Module, int]:
     """Return an encoder backbone.
 
     Parameters
@@ -41,12 +47,14 @@ def get_backbone(option: str, pretrained: bool = True) -> Module:
     if "vgg" in option:
         full_vgg = _encoder_options[option](weights=weights)
         encoder = Sequential(full_vgg.features)
+        num_feats = full_vgg.classifier[0].in_features
     if "resnet" in option:
         full_resnet = _encoder_options[option](weights=weights)
         # The resnet encoder is everything bar the final two children,
         # which are the pool and classification layers.
         encoder = Sequential(*list(full_resnet.children()))[:-2]
-    return encoder
+        num_feats = full_resnet.fc.in_features
+    return encoder, num_feats
 
 
 def _check_encoder_option_is_a_string(option: str):
