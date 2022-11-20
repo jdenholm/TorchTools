@@ -33,7 +33,7 @@ class DataSet(_BaseDataset):
         selected.
     both_tfms : Optional[Compose]
         A composition of transforms to apply to both the input and target.
-        Note: these transfroms are applied after `input_tfms` and
+        Note: these transforms are applied after `input_tfms` and
         `target_tfms`, at which point the inputs and targets should be tensors.
         Each input--target pair will be concatenated along `dim=0`,
         transformed, and sliced apart, in the way one would apply rotations or
@@ -87,10 +87,7 @@ class DataSet(_BaseDataset):
             raise TypeError(msg)
         return tfms
 
-    def _apply_input_tfms(
-        self,
-        x_item: Union[str, Path, Tensor, ndarray],
-    ) -> Tensor:
+    def _apply_input_tfms(self, x_item: Union[str, Path, Tensor, ndarray],) -> Tensor:
         """Apply the input-only transforms.
 
         Parameters
@@ -125,9 +122,7 @@ class DataSet(_BaseDataset):
         return self._y_tfms(y_item) if self._y_tfms is not None else y_item
 
     def _apply_both_tfms(
-        self,
-        x_item: Tensor,
-        y_item: Tensor,
+        self, x_item: Tensor, y_item: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         """Apply `self._both_tfms` to `x_item` and `y_item`.
 
