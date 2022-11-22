@@ -4,6 +4,10 @@ from typing import Tuple
 from torch import Tensor, concat
 from torch.nn import AdaptiveAvgPool2d, AdaptiveMaxPool2d, Module
 
+from torch_tools.models._argument_processing import (
+    process_adaptive_pool_output_size_arg,
+)
+
 
 class _ConcatMaxAvgPool2d(Module):
     """Adaptive 2D pooling layer.
@@ -52,6 +56,8 @@ def get_adaptive_pool(option: str, output_size: Tuple[int, int]) -> Module:
     ----------
     option : str
         Adaptive pool option: 'avg', 'max', 'avg-max-concat'.
+    output_size : Tuple[int, int]
+        The output size the pooling layer should produce.
 
     Returns
     -------
@@ -68,6 +74,8 @@ def get_adaptive_pool(option: str, output_size: Tuple[int, int]) -> Module:
     """
     if not isinstance(option, str):
         raise TypeError(f"Encoder option should be str. Got '{type(option)}'.")
+
+    process_adaptive_pool_output_size_arg(output_size)
 
     if option not in _options:
         msg = f"Encoder option '{option}' no supported. Choose from "
