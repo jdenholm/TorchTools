@@ -9,6 +9,8 @@ from torch_tools.models._encoder_backbones_2d import get_backbone
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
 from torch_tools.models._dense_network import DenseNetwork
 
+# pylint: disable=too-many-arguments
+
 
 class ConvNet2d(Module):
     """Two-dimensional CNN for image-like objects.
@@ -45,10 +47,13 @@ class ConvNet2d(Module):
     ):
         """Build `ConvNet2d`."""
         super().__init__()
+        # TODO: get output_size argument from `get_encoder_backbone`
         self._backbone, num_feats = get_backbone(
             encoder_style,
             pretrained=pretrained,
         )
+
+        # TODOL add output_size argument to get_adaptive_pool.
         self._pool = Sequential(get_adaptive_pool(pool_style), Flatten())
 
         if dense_net_kwargs is not None:
