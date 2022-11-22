@@ -92,3 +92,68 @@ def test_negative_slope_argument_type():
         _ = ap.process_negative_slope_arg(1j)
     with pytest.raises(TypeError):
         _ = ap.process_negative_slope_arg("I'm batman.")
+
+
+def test_adaptive_pool_output_size_arg_type():
+    """Test the argument type of `ap.process_adaptive_pool_output_size_arg`."""
+    # Should work with Tuple[int, int] where the ints are one or more.
+    ap.process_adaptive_pool_output_size_arg((1, 1))
+
+    # Should break with non-tuple.
+    with pytest.raises(TypeError):
+        ap.process_adaptive_pool_output_size_arg([1, 1])
+
+
+def test_adaptive_pool_output_size_arg_contents_types():
+    """Test the types in output-size arg.
+
+    Makes sure the the `output_size` arg of
+    `ap.process_adaptive_pool_output_size_arg` can only be ints.
+
+    """
+    # Should work with Tuple[int, int] where the ints are one or more.
+    ap.process_adaptive_pool_output_size_arg((1, 1))
+
+    # Should break if the tuple is not all ints.
+    with pytest.raises(TypeError):
+        ap.process_adaptive_pool_output_size_arg([1.0, 1])
+    with pytest.raises(TypeError):
+        ap.process_adaptive_pool_output_size_arg([1, 1.0])
+    with pytest.raises(TypeError):
+        ap.process_adaptive_pool_output_size_arg([1j, 1j])
+
+
+def test_adaptive_pool_output_size_arg_length():
+    """Test the length og the output_size arg must be 2.
+
+    Makes sure the length of the `output_size` arg of
+    `ap.process_adaptive_pool_output_size_arg` must have length 2.
+
+    """
+    # Should work with Tuple[int, int] where the ints are one or more.
+    ap.process_adaptive_pool_output_size_arg((1, 1))
+
+    # Should break if the tuple has more, or fewer, than two elements.
+    with pytest.raises(RuntimeError):
+        ap.process_adaptive_pool_output_size_arg((1,))
+    with pytest.raises(RuntimeError):
+        ap.process_adaptive_pool_output_size_arg((1, 1, 1))
+
+
+def test_adaptice_pool_output_size_arg_contents_vvalues():
+    """Test the values passed inside `output_size` arg.
+
+    Makes sure the values if the `output_size` arg of
+    `ap.process_adaptive_pool_output_size_arg` are one or more.
+
+    """
+    # Should work with Tuple[int, int] where the ints are one or more.
+    ap.process_adaptive_pool_output_size_arg((1, 1))
+
+    # Should break if any of the ints are less than one.
+    with pytest.raises(ValueError):
+        ap.process_adaptive_pool_output_size_arg((1, 0))
+    with pytest.raises(ValueError):
+        ap.process_adaptive_pool_output_size_arg((0, 1))
+    with pytest.raises(ValueError):
+        ap.process_adaptive_pool_output_size_arg((0, 0))

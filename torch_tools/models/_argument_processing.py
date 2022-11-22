@@ -1,4 +1,5 @@
 """Functions for processing arguments to models and blocks."""
+from typing import Tuple
 
 
 def process_num_feats(num_feats: int) -> int:
@@ -110,3 +111,55 @@ def process_negative_slope_arg(negative_slope: float) -> float:
         raise TypeError(msg)
 
     return abs(negative_slope)
+
+
+def process_adaptive_pool_output_size_arg(
+    output_size: Tuple[int, int],
+) -> Tuple[int, int]:
+    """Process the output_size argument of adaptive pooling layer.
+
+    Should be compatible with the `output_size` arguments of:
+        - `torch.nn.AdaptiveAvgPool2d`
+        - `torch.nn.AdaptiveMaxPool2d`
+
+    Parameters
+    ----------
+    output_size : Tuple[int, int]
+        A tuple specifiying the output size the pooling layer should produce.
+
+    Returns
+    -------
+    output_size : Tuple[int, int]
+        See Parameters.
+
+    Raises
+    ------
+    TypeError
+        If `output_size` is not a tuple.
+    TypeError
+        If `output_size` does not only contain ints.
+    RuntimeError
+        If `output_size` is not of length 2.
+    ValueError
+        If any elements of `output_size` are less than 1.
+
+    """
+    if not isinstance(output_size, tuple):
+        msg = f"output_size arg should be tuple, got '{type(output_size)}'."
+        raise TypeError(msg)
+
+    if not all(map(lambda x: isinstance(x, int), output_size)):
+        msg = "output_size arg should only contain ints. Got types: "
+        msg += f"'{list(map(type, output_size))}'."
+        raise TypeError(msg)
+
+    if len(output_size) != 2:
+        msg = "output_size arg should have length 2, got "
+        msg += f"'{len(output_size)}'."
+        raise RuntimeError(msg)
+
+    if not all(map(lambda x: x >= 1, output_size)):
+        msg = f"output_size arg's values should be >= 1, got {output_size}."
+        raise ValueError(msg)
+
+    return output_size

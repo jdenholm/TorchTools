@@ -15,7 +15,7 @@ class _ConcatMaxAvgPool2d(Module):
 
     """
 
-    def __init__(self, output_size: Tuple[int, int] = (1, 1)):
+    def __init__(self, output_size: Tuple[int, int]):
         """Build `AdaptivePoool2d`."""
         super().__init__()
         self._avg_pool = AdaptiveAvgPool2d(output_size)
@@ -45,7 +45,7 @@ _options = {
 }
 
 
-def get_adaptive_pool(option: str) -> Module:
+def get_adaptive_pool(option: str, output_size: Tuple[int, int]) -> Module:
     """Return the adaptive pooling layer.
 
     Parameters
@@ -68,6 +68,7 @@ def get_adaptive_pool(option: str) -> Module:
     """
     if not isinstance(option, str):
         raise TypeError(f"Encoder option should be str. Got '{type(option)}'.")
+
     if option not in _options:
         msg = f"Encoder option '{option}' no supported. Choose from "
         msg += f"{_options.keys()}."
