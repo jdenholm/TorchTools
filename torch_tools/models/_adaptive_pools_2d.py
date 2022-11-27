@@ -79,7 +79,7 @@ def get_adaptive_pool(option: str, output_size: Tuple[int, int]) -> Module:
 
     if option not in _options:
         msg = f"Encoder option '{option}' no supported. Choose from "
-        msg += f"{_options.keys()}."
+        msg += f"{list(_options.keys())}."
         raise RuntimeError(msg)
 
-    return _options[option](output_size=(1, 1))
+    return _options[option](output_size=output_size)
