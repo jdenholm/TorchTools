@@ -1,9 +1,8 @@
 """CNN classification/regression model."""
 from typing import Dict, Any, Optional
 
-from torch import Tensor
+from torch import Tensor, rand, set_grad_enabled
 from torch.nn import Module, Sequential, Flatten
-from torch import set_grad_enabled
 
 from torch_tools.models._encoder_backbones_2d import get_backbone
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
@@ -18,7 +17,8 @@ class ConvNet2d(Module):
     Parameters
     ----------
     out_feats : int
-        The number of output features the model should produce.
+        The number of output features the model should produce (for example,
+        the number of classes).
     encoder_option : str
         The encoder option to use. The encoders are loaded from torchvision's
         models. Options include all of torchvision's VGG and ResNET options
@@ -33,7 +33,15 @@ class ConvNet2d(Module):
         See `torch_tools.models._adaptive_pools_2d` for more info.
     dense_net_kwargs : Dict[str, Any]
         Keyword arguments for `torch_tools.models._dense_network._DenseNetwork`
-        which serves as the classification or regression part of the model.
+        which serves as the classification/regression part of the model.
+
+    Notes
+    -----
+    Because we use torchvision's available architectures, the number of input
+    channels needs to be three. A simple workaround for this is to repeat
+    greyscale images to have three channels, or wrap the model in a
+    `Sequential` and manage the number of channels with another layer.
+
 
     """
 
@@ -48,13 +56,16 @@ class ConvNet2d(Module):
         """Build `ConvNet2d`."""
         super().__init__()
         # TODO: get output_size argument from `get_encoder_backbone`
-        self._backbone, num_feats = get_backbone(
+        self._backbone, num_feats, pool_size = get_backbone(
             encoder_style,
             pretrained=pretrained,
         )
 
         # TODOL add output_size argument to get_adaptive_pool.
-        self._pool = Sequential(get_adaptive_pool(pool_style), Flatten())
+        self._pool = Sequential(
+            get_adaptive_pool(pool_style, pool_size),
+            Flatten(),
+        )
 
         if dense_net_kwargs is not None:
             self._dn_args.update(dense_net_kwargs)
@@ -85,9 +96,8 @@ class ConvNet2d(Module):
             batch-size, C the number of channels and (H, W) the input
             size.
         frozen_encoder : bool, optional
-            If `True`, the gradients are disabled in the encoder and it is
-            set to eval mode. If `False`, the gradients are enabled in the
-            encoder.
+            If `True`, the gradients are disabled in the encoder. If `False`,
+            the gradients are enabled in the encoder.
 
         Returns
         -------
@@ -99,8 +109,3 @@ class ConvNet2d(Module):
             encoder_out = self._backbone(batch)
         pool_out = self._pool(encoder_out)
         return self._dense(pool_out)
-
-
-if __name__ == "__main__":
-    model = ConvNet2d(3, dense_net_kwargs={"input_bnorm": True})
-    print(model)
