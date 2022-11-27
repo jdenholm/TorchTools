@@ -53,7 +53,7 @@ def get_backbone(
 
     if "vgg" in option:
         full_vgg = _encoder_options[option](weights=weights)
-        encoder = Sequential(full_vgg.features)
+        encoder = Sequential(*list(full_vgg.features.children()))
         num_feats = full_vgg.classifier[0].in_features
         pool_size = full_vgg.avgpool.output_size
     if "resnet" in option:
