@@ -22,7 +22,9 @@ _encoder_options = {
 }
 
 
-def get_backbone(option: str, pretrained: bool = True) -> Tuple[Module, int]:
+def get_backbone(
+    option: str, pretrained: bool = True
+) -> Tuple[Module, int, Tuple[int, int]]:
     """Return an encoder backbone.
 
     Parameters
@@ -34,8 +36,13 @@ def get_backbone(option: str, pretrained: bool = True) -> Tuple[Module, int]:
 
     Returns
     -------
-    Module
+    encoder : Module
         The encoder part of the architecture (without pool).
+    num_feats : int
+        The number of features the encoder produces.
+    pool_size : Tuple[int, int]
+        The output size argument of the adaptive pooling layer for the
+        encoder style selected.
 
     """
     _check_encoder_option_is_a_string(option)
@@ -48,13 +55,15 @@ def get_backbone(option: str, pretrained: bool = True) -> Tuple[Module, int]:
         full_vgg = _encoder_options[option](weights=weights)
         encoder = Sequential(full_vgg.features)
         num_feats = full_vgg.classifier[0].in_features
+        pool_size = full_vgg.avgpool.output_size
     if "resnet" in option:
         full_resnet = _encoder_options[option](weights=weights)
         # The resnet encoder is everything bar the final two children,
         # which are the pool and classification layers.
         encoder = Sequential(*list(full_resnet.children()))[:-2]
         num_feats = full_resnet.fc.in_features
-    return encoder, num_feats
+        pool_size = full_resnet.avgpool.output_size
+    return encoder, num_feats, pool_size
 
 
 def _check_encoder_option_is_a_string(option: str):
