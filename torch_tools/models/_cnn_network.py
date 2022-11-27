@@ -2,7 +2,7 @@
 from typing import Dict, Any, Optional
 
 from torch import Tensor, set_grad_enabled
-from torch.nn import Module, Sequential, Flatten
+from torch.nn import Module, Sequential, Flatten, Conv2d
 
 from torch_tools.models._encoder_backbones_2d import get_backbone
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
@@ -19,6 +19,10 @@ class ConvNet2d(Module):
     out_feats : int
         The number of output features the model should produce (for example,
         the number of classes).
+    in_channels : int
+        Number of input channels the model should take. Warning: if you don't
+        use three input channels, the first conv layer is overwritten, which
+        renders freezing the encoder pointless.
     encoder_option : str
         The encoder option to use. The encoders are loaded from torchvision's
         models. Options include all of torchvision's VGG and ResNET options
@@ -35,19 +39,12 @@ class ConvNet2d(Module):
         Keyword arguments for `torch_tools.models._dense_network._DenseNetwork`
         which serves as the classification/regression part of the model.
 
-    Notes
-    -----
-    Because we use torchvision's available architectures, the number of input
-    channels needs to be three. A simple workaround for this is to repeat
-    greyscale images to have three channels, or wrap the model in a
-    `Sequential` and manage the number of channels with another layer.
-
-
     """
 
     def __init__(
         self,
         out_feats: int,
+        in_channels: int = 3,
         encoder_style: str = "resnet34",
         pretrained=True,
         pool_style: str = "avg-max-concat",
@@ -55,11 +52,12 @@ class ConvNet2d(Module):
     ):
         """Build `ConvNet2d`."""
         super().__init__()
-        # TODO: get output_size argument from `get_encoder_backbone`
         self._backbone, num_feats, pool_size = get_backbone(
             encoder_style,
             pretrained=pretrained,
         )
+
+        self._replace_first_conv_if_necessary(in_channels)
 
         self._pool = Sequential(
             get_adaptive_pool(pool_style, pool_size),
@@ -85,6 +83,25 @@ class ConvNet2d(Module):
         "negative_slope": 0.2,
     }
 
+    def _replace_first_conv_if_necessary(self, in_channels: int):
+        """Replace the first conv layer if input channels don't match.
+
+        Parameters
+        ----------
+        in_channels : int
+            The number of input channels requested by the user.
+
+        """
+        for _, module in self._backbone.named_children():
+
+            if isinstance(module, Conv2d):
+                config = _conv_config(module)
+
+                if config["in_channels"] != in_channels:
+                    config["in_channels"] = in_channels
+                    setattr(self._backbone, _, Conv2d(**config))  # type:ignore
+                break
+
     def forward(self, batch: Tensor, frozen_encoder: bool = False) -> Tensor:
         """Pass `batch`" through the model.
 
@@ -108,3 +125,25 @@ class ConvNet2d(Module):
             encoder_out = self._backbone(batch)
         pool_out = self._pool(encoder_out)
         return self._dense(pool_out)
+
+
+def _conv_config(conv: Conv2d) -> Dict[str, Any]:
+    """Return a dictionary with the `conv`'s instantiation arguments.
+
+    Parameters
+    ----------
+    conv : Conv2d
+        Two-dimensional convolutional layer.
+
+    """
+    return {
+        "in_channels": conv.in_channels,
+        "out_channels": conv.out_channels,
+        "kernel_size": conv.kernel_size,
+        "stride": conv.stride,
+        "padding": conv.padding,
+        "dilation": conv.dilation,
+        "groups": conv.groups,
+        "bias": not conv.bias is None,
+        "padding_mode": conv.padding_mode,
+    }
