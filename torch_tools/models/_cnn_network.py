@@ -29,7 +29,7 @@ class ConvNet2d(Module):
         image-net-trained weights.
     pool_option : str
         The type of adaptive pooling layer to use. Choose from 'avg', 'max' or
-        'avg-max-concat' (the latter simply concatenates the formed two).
+        'avg-max-concat' (the latter simply concatenates the former two).
         See `torch_tools.models._adaptive_pools_2d` for more info.
     dense_net_kwargs : Dict[str, Any]
         Keyword arguments for `torch_tools.models._dense_network._DenseNetwork`
