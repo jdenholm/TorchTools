@@ -61,7 +61,6 @@ class ConvNet2d(Module):
             pretrained=pretrained,
         )
 
-        # TODOL add output_size argument to get_adaptive_pool.
         self._pool = Sequential(
             get_adaptive_pool(pool_style, pool_size),
             Flatten(),
