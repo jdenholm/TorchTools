@@ -1,7 +1,7 @@
 """CNN classification/regression model."""
 from typing import Dict, Any, Optional
 
-from torch import Tensor, rand, set_grad_enabled
+from torch import Tensor, set_grad_enabled
 from torch.nn import Module, Sequential, Flatten
 
 from torch_tools.models._encoder_backbones_2d import get_backbone
