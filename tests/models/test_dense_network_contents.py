@@ -1,4 +1,4 @@
-"""Test the contents of `torch-tools.models.DenseNetwork`."""
+"""Test the contents of `torch_tools.models.DenseNetwork`."""
 
 from torch.nn import Dropout, BatchNorm1d, Linear, LeakyReLU
 
