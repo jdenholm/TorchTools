@@ -4,6 +4,8 @@ from typing import Tuple
 from torchvision import models
 from torch.nn import Module, Sequential
 
+from torch_tools.models._argument_processing import process_boolean_arg
+
 
 _encoder_options = {
     "vgg11": models.vgg11,
@@ -49,7 +51,7 @@ def get_backbone(
     option = option.lower()
     _check_encoder_option_is_allowed(option)
 
-    weights = "DEFAULT" if pretrained is True else None
+    weights = "DEFAULT" if process_boolean_arg(pretrained) is True else None
 
     if "vgg" in option:
         full_vgg = _encoder_options[option](weights=weights)

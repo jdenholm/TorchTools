@@ -41,3 +41,16 @@ def test_get_backbone_with_non_allowed_options():
         _, _, _ = get_backbone(option="Gandalf the Grey")
     with pytest.raises(RuntimeError):
         _, _, _ = get_backbone(option="Sauron the Deceiver")
+
+
+def test_pretrained_argument_types():
+    """Test the `pretrained` argument only works with bools."""
+    # Should work with bool
+    _, _, _ = get_backbone(option="resnet18", pretrained=True)
+    _, _, _ = get_backbone(option="resnet18", pretrained=False)
+
+    # Should break with non-bool
+    with pytest.raises(TypeError):
+        _, _, _ = get_backbone(option="resnet18", pretrained="True")
+    with pytest.raises(TypeError):
+        _, _, _ = get_backbone(option="resnet18", pretrained=1)
