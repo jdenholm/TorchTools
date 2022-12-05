@@ -4,6 +4,7 @@ from typing import Dict, Any, Optional
 from torch import Tensor, set_grad_enabled
 from torch.nn import Module, Sequential, Flatten, Conv2d
 
+from torch_tools.models._argument_processing import process_num_feats
 from torch_tools.models._encoder_backbones_2d import get_backbone
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
 from torch_tools.models._dense_network import DenseNetwork
@@ -57,7 +58,7 @@ class ConvNet2d(Module):
             pretrained=pretrained,
         )
 
-        self._replace_first_conv_if_necessary(in_channels)
+        self._replace_first_conv_if_necessary(process_num_feats(in_channels))
 
         self._pool = Sequential(
             get_adaptive_pool(pool_style, pool_size),
@@ -69,7 +70,7 @@ class ConvNet2d(Module):
 
         self._dense = DenseNetwork(
             2 * num_feats if pool_style == "avg-max-concat" else num_feats,
-            out_feats,
+            process_num_feats(out_feats),
             **self._dn_args,
         )
 
