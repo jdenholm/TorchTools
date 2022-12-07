@@ -68,7 +68,7 @@ def get_adaptive_pool(option: str, output_size: Tuple[int, int]) -> Module:
     ------
     TypeError
         If `option` is not a str.
-    RuntimeError
+    ValueError
         If `option` is not in `_options`.
 
     """
@@ -80,6 +80,6 @@ def get_adaptive_pool(option: str, output_size: Tuple[int, int]) -> Module:
     if option not in _options:
         msg = f"Encoder option '{option}' no supported. Choose from "
         msg += f"{list(_options.keys())}."
-        raise RuntimeError(msg)
+        raise ValueError(msg)
 
     return _options[option](output_size=output_size)

@@ -29,9 +29,9 @@ def test_get_adaptive_pool_option_values():
     _ = get_adaptive_pool(option="avg-max-concat", output_size=(1, 1))
 
     # Should break with non-accepted options
-    with pytest.raises(RuntimeError):
+    with pytest.raises(ValueError):
         _ = get_adaptive_pool(option="Radagast the Brown.", output_size=(1, 1))
-    with pytest.raises(RuntimeError):
+    with pytest.raises(ValueError):
         _ = get_adaptive_pool(option="Gaffer Gamgee.", output_size=(1, 1))
 
 
