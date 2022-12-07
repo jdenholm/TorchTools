@@ -97,11 +97,11 @@ def _check_encoder_option_is_allowed(option: str):
 
     Raises
     ------
-    RuntimeError
+    ValueError
         If the encoder option is not in `_encoder_options`.
 
     """
     if option not in _encoder_options:
         msg = f"Encoder option '{option}' not supported. Please choose from "
         msg += f"'{_encoder_options.keys()}'."
-        raise RuntimeError(msg)
+        raise ValueError(msg)
