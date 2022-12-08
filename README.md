@@ -86,7 +86,7 @@ DenseNetwork(
 The model is a subclass of `torch.nn.Module` and inherits the same functionality as other PyTorch modules.
 
 #### Convolutional Network 2D
-Torchvision's default models assume three input channels (RGB) images. To use a different number of channels, people often overwrite the first convolutional layers, which results in ugly code that must be modified if you want to want to change architectures from, say, ResNet to VGG, etc. Furthermore, you may wish to experiment with the classification layer's architecture, which requires more ugly code to modify the default models. To circumvent this, you can use `ConvNet2d`.
+Torchvision's default models assume three input channels (RGB) images. To use a different number of channels, people often overwrite the first convolutional layer, which results in ugly code that must be modified if you want to want to change architectures from, say, ResNet to VGG, etc. Furthermore, you may wish to experiment with the classification layer's architecture, which requires more ugly code to modify the default models. To circumvent this, you can use `ConvNet2d`.
 
 `ConvNet2d` is a convolution neural network made of three parts: an encoder, an adaptive pooling layer and a `DenseNetwork` (which serves as a classification/regression head). The model can be customised in a modular fashion:
 
