@@ -51,3 +51,16 @@ def test_output_features_are_correct():
     model = ConvNet2d(out_feats=321)
     preds = model(rand(10, 3, 50, 50))
     assert preds.shape == (10, 321), "Expected 321 output features."
+
+
+def test_call_works_with_all_kinds_of_pools():
+    """Test the forward function works with each pool option."""
+    # With average pool
+    model = ConvNet2d(out_feats=1, pool_style="avg")
+    _ = model(rand(10, 3, 50, 50))
+
+    model = ConvNet2d(out_feats=1, pool_style="max")
+    _ = model(rand(10, 3, 50, 50))
+
+    model = ConvNet2d(out_feats=1, pool_style="avg-max-concat")
+    _ = model(rand(10, 3, 50, 50))
