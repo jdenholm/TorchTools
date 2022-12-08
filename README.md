@@ -3,7 +3,7 @@ Handy PyTorch utilities and models which should save you time.
 
 
 ## Installation
-To clone the repository:
+To clone the repository (should't work right now):
 ```bash
 git clone https://github.com/jdenholm/TorchTools.git
 ```
@@ -171,6 +171,12 @@ ConvNet2d(
     )
   )
 )
-
-
 ```
+
+The model is again a subclass of `torch.nn.Module`.
+
+
+##### UNet—Semantic Segmentation
+The `UNet` is a time-honoured classic which, for some reason, Torchvision doesn't have an implementation of. Having an easy-to-instantiate `UNet` model ready-to-go is always handy.
+
+Still to add `UNet` model code.
