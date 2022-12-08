@@ -3,7 +3,7 @@ Handy PyTorch utilities and models which should save you time.
 
 
 ## Installation
-To clone the repository (should't work right now):
+To clone the repository (shouldn't work right now):
 ```bash
 git clone https://github.com/jdenholm/TorchTools.git
 ```
