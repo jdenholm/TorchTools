@@ -177,7 +177,7 @@ The model is again a subclass of `torch.nn.Module`.
 
 
 ##### UNet—Semantic Segmentation
-The `UNet` is a time-honoured classic which, for some reason, Torchvision doesn't have an implementation of. Furthermore, most implementation one finds online again have the architecture hard-coded, which doesn't allow for ease-of-modification.
+The `UNet` is a time-honoured classic which, for some reason, Torchvision doesn't have an implementation of. Furthermore, most implementations one finds online again have the architecture hard-coded, which doesn't allow for ease-of-modification.
 
 Having an easy-to-instantiate `UNet` model ready-to-go is always handy, so we include one here.
 
