@@ -34,10 +34,9 @@ To add ...
 ### Models
 
 #### Dense Network
-Often people share code with simple perceptron-style networks where they have hard-coded the architecture, number of layers and various other attributes such as dropout probabilities and the number of input/output features. This code is often inelegant—and doesn't allow one to easily investigate modifications to the architecture.
+Often people share code with simple perceptron-style networks where they have hard-coded the architecture—the number of layers, dropout probabilities and the number of input/output features, etc. Hard-coding these features is inelegant and doesn't allow one to easily modify the architecture.
 
-`DenseNetwork` is a simple, perceptron-style, neural network that can be used
-for classification and regression. It is super-simple to use and instantiate.
+`DenseNetwork` is a straightforward perceptron-style neural network that can be used for classification and regression. It is super-simple to use and instantiate.
 
 For example:
 ```python
@@ -86,11 +85,11 @@ DenseNetwork(
 The model is a subclass of `torch.nn.Module` and inherits the same functionality as other PyTorch modules.
 
 #### Convolutional Network 2D
-Torchvision's default models assume three input channels (RGB) images. To use a different number of channels, people often overwrite the first convolutional layer, which results in ugly code that must be modified if you want to want to change architectures from, say, ResNet to VGG, etc. Furthermore, you may wish to experiment with the classification layer's architecture, which requires more ugly code to modify the default models. To circumvent this, you can use `ConvNet2d`.
+Torchvision's default models assume three-channel (RGB) images. To use a different number of channels, one has to overwrite the first convolutional layer, which results in ugly code that must be modified if you want to want to change architectures from, say, ResNet to VGG, etc. Furthermore, you may wish to experiment with the classification layer's architecture, which requires more ugly code to modify the default models. To circumvent this, you can use `ConvNet2d`.
 
 `ConvNet2d` is a convolution neural network made of three parts: an encoder, an adaptive pooling layer and a `DenseNetwork` (which serves as a classification/regression head). The model can be customised in a modular fashion:
 
-* Encoder: the encoder can be chosen with the optional argument `encoder_style`, which can be any of torchvision's ResNet or VGG models (i.e. `"resnet18"`, `"vgg11"`, `"vgg_11_bn"` etc.).
+* Encoder: the encoder can be chosen with the optional argument `encoder_style`, which can be any of Torchvision's ResNet or VGG models (i.e. `"resnet18"`, `"vgg11"`, `"vgg_11_bn"` etc.).
 * Pool: the adaptive pooling layer can be chosen with the `pool_style` optional argument. The options are `"avg"`, `"max"` and `"avg-max-concat"`. The former two options are simply adaptive average and max pooling layers, and the latter is a layer which concatenates the former two (thus doubling the number of features).
 * `DenseNetwork`: the final part of the model is simply the dense network introduced in the previous section. The keyword arguments can be supplied by passing a dictionary to `dense_net_kwargs` optional argument.
 
