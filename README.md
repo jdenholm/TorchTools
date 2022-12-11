@@ -98,12 +98,13 @@ For example, suppose we want an encoder in the style of torchvision's VGG11 with
 
 ```python
 >>> from torch_tools.models import ConvNet2d
->>> ConvNet2d(out_feats=512,
-              in_channels=3,
-              encoder_style="vgg11_bn",
-              pretrained=True,
-              pool_style="avg-max-concat",
-              dense_net_kwargs={"hidden_sizes": (1024, 1024), "hidden_dropout": 0.25})
+>>> model = ConvNet2d(out_feats=512,
+                      in_channels=3,
+                      encoder_style="vgg11_bn",
+                      pretrained=True,
+                      pool_style="avg-max-concat",
+                      dense_net_kwargs={"hidden_sizes": (1024, 1024), "hidden_dropout": 0.25})
+>>> model
 ConvNet2d(
   (_backbone): Sequential(
     (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
@@ -171,12 +172,20 @@ ConvNet2d(
   )
 )
 ```
-
-The model is again a subclass of `torch.nn.Module`.
+The model is again a subclass of `torch.nn.Module`. Another useful feature of
+`ConvNet2d` if the ability to _freeze_ the encoder—that is to say, disable gradients in the encoder in order take full advantage of the pretrained weights (transfer learning). For example:
+```python
+>>> from torch import rand
+>>> batch = rand(10, 3, 100, 100)
+>>> # With the encoder frozen
+>>> preds = model(batch, frozen_encoder=True)
+>>> # Without the encoder frozen (default behaviour)
+>>> preds = model(batch, frozen_encoder=False)
+```
 
 
 ##### UNet—Semantic Segmentation
-The `UNet` is a time-honoured classic which, for some reason, Torchvision doesn't have an implementation of. Furthermore, most implementations one finds online again have the architecture hard-coded, which doesn't allow for ease-of-modification.
+The `UNet` is a time-honoured classic which, for some reason, Torchvision doesn't have an implementation of. Furthermore, most implementations one finds online (again) have the architecture hard-coded, which doesn't allow for ease-of-modification.
 
 Having an easy-to-instantiate `UNet` model ready-to-go is always handy, so we include one here.
 
