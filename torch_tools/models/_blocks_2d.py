@@ -1,8 +1,12 @@
 """Two-dimensional convolutional blocks."""
 from typing import List
 
-from torch import Tensor
+from torch import Tensor, cat  # pylint: disable=no-name-in-module
 from torch.nn import Module, Conv2d, BatchNorm2d, LeakyReLU, Sequential, ReLU
+from torch.nn import ConvTranspose2d, Upsample
+
+from torch.nn.functional import pad
+
 
 from torch_tools.models._argument_processing import (
     process_num_feats,
@@ -11,7 +15,7 @@ from torch_tools.models._argument_processing import (
 )
 
 
-class SingleConvBlock(Module):
+class ConvBlock(Module):
     """Single 2D convolutional block.
 
     Parameters
@@ -123,14 +127,14 @@ class DoubleConvBlock(Module):
 
         """
         super().__init__()
-        self.conv1 = SingleConvBlock(
+        self.conv1 = ConvBlock(
             process_num_feats(in_chans),
             process_num_feats(out_chans),
             batch_norm=True,
             leaky_relu=True,
             lr_slope=process_negative_slope_arg(lr_slope),
         )
-        self.conv2 = SingleConvBlock(
+        self.conv2 = ConvBlock(
             process_num_feats(out_chans),
             process_num_feats(out_chans),
             batch_norm=True,
@@ -155,20 +159,20 @@ class DoubleConvBlock(Module):
         return self.conv2(self.conv1(batch))
 
 
-class ResidualBlock(Module):
+class ResBlock(Module):
     """Residual block."""
 
     def __init__(self, num_chans: int):
         """Build `ResidualBlock`."""
         super().__init__()
-        self.conv1 = SingleConvBlock(
+        self.conv1 = ConvBlock(
             num_chans,
             num_chans,
             batch_norm=True,
             leaky_relu=True,
             lr_slope=0.0,
         )
-        self.conv2 = SingleConvBlock(
+        self.conv2 = ConvBlock(
             num_chans,
             num_chans,
             batch_norm=True,
@@ -196,3 +200,135 @@ class ResidualBlock(Module):
         out = self.conv2(out)
         out += identity
         return self.relu(out)
+
+
+class UNetUpBlock(Module):
+    """Upsampling block to be used in the second half of a UNet.
+
+    Parameters
+    ----------
+    in_chans : int
+        The number of input channels.
+    out_chans : int
+        The number of output channels.
+
+    """
+
+    def __init__(self, in_chans: int, out_chans: int, bilinear: bool = False):
+        """Build `UNetUpBlock`."""
+        super().__init__()
+        self._in_chans = process_num_feats(in_chans)
+        self._out_chans = process_num_feats(out_chans)
+
+        self._upsample = self._get_upsample(process_boolean_arg(bilinear))
+        self._double_conv = DoubleConvBlock(self._in_chans, self._out_chans)
+
+    def _get_upsample(self, bilinear: bool) -> Module:
+        """Return the upsampling layer.
+
+        Parameters
+        ----------
+        bilinear : bool
+            Whether to use bilinear interpolation to upsample (`True`) or
+            a `ConvTranspose2d` (`False`).
+
+        Returns
+        -------
+        Module
+            An upsampling block which increases the input dimensionality by a
+            factor of 2.
+
+        """
+        if bilinear is True:
+            return Sequential(
+                Upsample(scale_factor=2, mode="bilinear", align_corners=True),
+                Conv2d(self._in_chans, self._in_chans // 2, kernel_size=1),
+            )
+        return ConvTranspose2d(
+            self._in_chans,
+            self._in_chans // 2,
+            kernel_size=2,
+            stride=2,
+        )
+
+    @staticmethod
+    def _channel_size_check(to_upsample: Tensor, down_features: Tensor):
+        """Check the channel sizes are offset by a factor of 2.
+
+        Parameters
+        ----------
+        to_upsample : Tensor
+            The image batch to be upsampled.
+        down_features : Tensor
+            The batch from the UNet's down path.
+
+        Raises
+        ------
+        RuntimeError
+            If the number of channels in `to_upsample` is not two times
+            greater than the number of channels in `down_features`.
+
+        """
+        up_chans = to_upsample.shape[1]
+        down_chans = down_features.shape[1]
+        if not (up_chans / down_chans) == 2:
+            msg = "Channel sizes should be off by a factor of 2. "
+            msg += f"Got {up_chans} and {down_chans}"
+            raise RuntimeError(msg)
+
+    def _to_upsample_channel_check(self, to_upsample: Tensor):
+        """Check the number of channels in `to_upsample` match `_in_chans`.
+
+        Parameters
+        ----------
+        to_upsample : Tensor
+            The Tensor to be upsampled.
+
+        Raises
+        ------
+        RuntimeError
+            If `to_upsample` has the wrong number of channels.
+
+        """
+        if not to_upsample.shape[1] == self._in_chans:
+            msg = f"to_upsample should have {self._in_chans} channels. "
+            msg += f"Got {to_upsample.shape[1]}."
+            raise RuntimeError(msg)
+
+    def forward(self, to_upsample: Tensor, down_features: Tensor) -> Tensor:
+        """Unet skip-connection forward step.
+
+        Parameters
+        ----------
+        to_upsample : Tensor
+            The batch to be upsampled by the layer.
+        down_features : Tensor
+            The corresponding down features to be concatenated with the
+            upsampled `to_upsample`.
+
+        Returns
+        -------
+        Tensor
+            The output of the UNet upsampling skip connection.
+
+        """
+        self._channel_size_check(to_upsample, down_features)
+        self._to_upsample_channel_check(to_upsample)
+
+        upsampled = self._upsample(to_upsample)
+
+        height_diff = down_features.shape[2] - upsampled.shape[2]
+        width_diff = down_features.shape[3] - upsampled.shape[3]
+
+        padding = (
+            width_diff // 2,  # Left padding
+            width_diff - width_diff // 2,  # Right padding
+            height_diff // 2,  # Top padding
+            height_diff - height_diff // 2,  # Bottom padding
+        )
+
+        upsampled = pad(upsampled, padding)
+
+        # Concatenate along the channel dimension (N, C, H, W)
+        concatenated = cat([down_features, upsampled], dim=1)
+        return self._double_conv(concatenated)
