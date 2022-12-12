@@ -94,7 +94,7 @@ Torchvision's default models assume three-channel (RGB) images. To use a differe
 * `DenseNetwork`: the final part of the model is simply the dense network introduced in the previous section. The keyword arguments can be supplied by passing a dictionary to `dense_net_kwargs` optional argument.
 
 
-For example, suppose we want an encoder in the style of torchvision's VGG11 with batch normalisation, initialised with torchvision's ImageNet pretrained weights, a pooling layer which concatenates the outputs of both the average and maximum adaptive pooling layers, a classifier with two hidden layers and a dropout probability of 0.25:
+For example, suppose we want an encoder in the style of Torchvision's VGG11 with batch normalisation, initialised with Torchvision's ImageNet pretrained weights, a pooling layer which concatenates the outputs of both the average and maximum adaptive pooling layers, a classifier with two hidden layers and a dropout probability of 0.25:
 
 ```python
 >>> from torch_tools.models import ConvNet2d
