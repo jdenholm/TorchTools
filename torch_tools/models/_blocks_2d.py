@@ -160,7 +160,14 @@ class DoubleConvBlock(Module):
 
 
 class ResBlock(Module):
-    """Residual block."""
+    """Residual block.
+
+    Parameters
+    ----------
+    in_chans : int
+        The number of input channels.
+
+    """
 
     def __init__(self, in_chans: int):
         """Build `ResidualBlock`."""
