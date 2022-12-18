@@ -2,7 +2,7 @@
 
 import pytest
 
-from torch_tools.models._blocks_2d import ConvBlock
+from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResBlock
 
 
 def test_conv_block_in_chans_arg_types():
@@ -93,3 +93,52 @@ def test_conv_block_lr_slope_argument_type():
         _ = ConvBlock(in_chans=2, out_chans=1, lr_slope=1)
     with pytest.raises(TypeError):
         _ = ConvBlock(in_chans=2, out_chans=1, lr_slope=1j)
+
+
+def test_double_conv_block_in_chans_type():
+    """Test the types accepted by the `in_chans` argument."""
+    # Should work with ints of one or more
+    _ = DoubleConvBlock(in_chans=1, out_chans=5)
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = DoubleConvBlock(in_chans=1.0, out_chans=5)
+    with pytest.raises(TypeError):
+        _ = DoubleConvBlock(in_chans=1.0j, out_chans=5)
+
+
+def test_double_conv_block_out_chans_type():
+    """Test the types accepted by the `out_chans` argument."""
+    # Should work with ints of one or more.
+    _ = DoubleConvBlock(in_chans=10, out_chans=1)
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = DoubleConvBlock(in_chans=10, out_chans=1.0)
+    with pytest.raises(TypeError):
+        _ = DoubleConvBlock(in_chans=10, out_chans=1.0j)
+
+
+def test_double_conv_lr_slope_argument_type():
+    """Test the types accepted by the `lr_slope` arg."""
+    # Should work with floats
+    _ = DoubleConvBlock(in_chans=10, out_chans=2, lr_slope=0.0)
+    _ = DoubleConvBlock(in_chans=10, out_chans=2, lr_slope=0.1)
+
+    # Should break with non-float
+    with pytest.raises(TypeError):
+        _ = DoubleConvBlock(in_chans=10, out_chans=2, lr_slope=1)
+    with pytest.raises(TypeError):
+        _ = DoubleConvBlock(in_chans=10, out_chans=2, lr_slope=1j)
+
+
+def test_res_block_in_chans_arg_type():
+    """Test the types accepted by the `in_chans` arg."""
+    # Should work with ints of one or more
+    _ = ResBlock(in_chans=1)
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = ResBlock(in_chans=1.0)
+    with pytest.raises(TypeError):
+        _ = ResBlock(in_chans=1.0j)
