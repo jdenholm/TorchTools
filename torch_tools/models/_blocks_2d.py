@@ -162,19 +162,19 @@ class DoubleConvBlock(Module):
 class ResBlock(Module):
     """Residual block."""
 
-    def __init__(self, num_chans: int):
+    def __init__(self, in_chans: int):
         """Build `ResidualBlock`."""
         super().__init__()
         self.conv1 = ConvBlock(
-            num_chans,
-            num_chans,
+            in_chans,
+            in_chans,
             batch_norm=True,
             leaky_relu=True,
             lr_slope=0.0,
         )
         self.conv2 = ConvBlock(
-            num_chans,
-            num_chans,
+            in_chans,
+            in_chans,
             batch_norm=True,
             leaky_relu=False,
         )
