@@ -218,6 +218,9 @@ class UNetUpBlock(Module):
         The number of input channels.
     out_chans : int
         The number of output channels.
+    bilinear : bool
+        If `True`, the upsample is done using bilinear interpolation using
+        `torch.nn.Upsample`. Otherwise we use a `ConvTranspose2d`
 
     """
 
