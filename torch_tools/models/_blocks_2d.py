@@ -227,11 +227,44 @@ class UNetUpBlock(Module):
     def __init__(self, in_chans: int, out_chans: int, bilinear: bool = False):
         """Build `UNetUpBlock`."""
         super().__init__()
-        self._in_chans = process_num_feats(in_chans)
+        self._in_chans = self._process_in_chans(in_chans)
         self._out_chans = process_num_feats(out_chans)
 
         self._upsample = self._get_upsample(process_boolean_arg(bilinear))
         self._double_conv = DoubleConvBlock(self._in_chans, self._out_chans)
+
+    @staticmethod
+    def _process_in_chans(in_chans: int) -> int:
+        """ "Process `in_chans` arg.
+
+        Parameters
+        ----------
+        in_chans : int
+            The number of input channels requested by the user.
+
+        Returns
+        -------
+        in_chans : int
+            The number of input channels requested by the user.
+
+        Raises
+        ------
+        TypeError
+            If `in_chans` is not an int.
+        ValueError
+            If `in_chans` is less than 2.
+        ValueError
+            If `in_chans` is not even.
+
+        """
+        if not isinstance(in_chans, int):
+            raise TypeError(f"in_chans should be int. Got {type(in_chans)}.")
+        if in_chans < 2:
+            raise ValueError(f"in_chans should be 2 or more. Got {in_chans}.")
+        if (in_chans % 2) != 0:
+            raise ValueError(f"in_chans should be even. Got {in_chans}.")
+
+        return in_chans
 
     def _get_upsample(self, bilinear: bool) -> Module:
         """Return the upsampling layer.
