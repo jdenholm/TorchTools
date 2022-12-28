@@ -180,4 +180,3 @@ dependencies:
   - zfp=0.5.5
   - zlib=1.2.13
   - zstd=1.5.2
-prefix: /home/jim/anaconda3/envs/torch-tools
