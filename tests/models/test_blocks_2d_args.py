@@ -3,6 +3,7 @@
 import pytest
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResBlock
+from torch_tools.models._blocks_2d import UNetUpBlock
 
 
 def test_conv_block_in_chans_arg_types():
@@ -178,3 +179,34 @@ def test_res_block_in_chans_arg_values():
         _ = ResBlock(in_chans=0)
     with pytest.raises(ValueError):
         _ = ResBlock(in_chans=-1)
+
+
+def test_unet_up_block_in_chans_arg_type():
+    """Test the types accepted by the `in_chans` argument."""
+    # Should work with ints of two or more
+    _ = UNetUpBlock(in_chans=2, out_chans=1)
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = UNetUpBlock(in_chans=2.0, out_chans=1)
+    with pytest.raises(TypeError):
+        _ = UNetUpBlock(in_chans=2j, out_chans=1)
+
+
+def test_unet_up_block_in_chans_arg_values():
+    """Test the values accepted by the `in_chans` argument."""
+    # Should work with even ints of two or more
+    _ = UNetUpBlock(in_chans=2, out_chans=1)
+    _ = UNetUpBlock(in_chans=4, out_chans=1)
+
+    # Should break with ints less than two
+    with pytest.raises(ValueError):
+        _ = UNetUpBlock(in_chans=1, out_chans=1)
+    with pytest.raises(ValueError):
+        _ = UNetUpBlock(in_chans=0, out_chans=1)
+
+    # Should break with uneven ints
+    with pytest.raises(ValueError):
+        _ = UNetUpBlock(in_chans=3, out_chans=1)
+    with pytest.raises(ValueError):
+        _ = UNetUpBlock(in_chans=3, out_chans=1)
