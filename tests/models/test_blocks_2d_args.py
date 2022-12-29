@@ -184,66 +184,98 @@ def test_res_block_in_chans_arg_values():
 def test_unet_up_block_in_chans_arg_type():
     """Test the types accepted by the `in_chans` argument."""
     # Should work with ints of two or more
-    _ = UNetUpBlock(in_chans=2, out_chans=1)
+    _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=0.1)
 
     # Should break with non-ints
     with pytest.raises(TypeError):
-        _ = UNetUpBlock(in_chans=2.0, out_chans=1)
+        _ = UNetUpBlock(
+            in_chans=2.0,
+            out_chans=1,
+            bilinear=False,
+            lr_slope=0.1,
+        )
     with pytest.raises(TypeError):
-        _ = UNetUpBlock(in_chans=2j, out_chans=1)
+        _ = UNetUpBlock(
+            in_chans=2j,
+            out_chans=1,
+            bilinear=False,
+            lr_slope=0.1,
+        )
 
 
 def test_unet_up_block_in_chans_arg_values():
     """Test the values accepted by the `in_chans` argument."""
     # Should work with even ints of two or more
-    _ = UNetUpBlock(in_chans=2, out_chans=1)
-    _ = UNetUpBlock(in_chans=4, out_chans=1)
+    _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=0.1)
+    _ = UNetUpBlock(in_chans=4, out_chans=1, bilinear=False, lr_slope=0.1)
 
     # Should break with ints less than two
     with pytest.raises(ValueError):
-        _ = UNetUpBlock(in_chans=1, out_chans=1)
+        _ = UNetUpBlock(in_chans=1, out_chans=1, bilinear=False, lr_slope=0.1)
     with pytest.raises(ValueError):
-        _ = UNetUpBlock(in_chans=0, out_chans=1)
+        _ = UNetUpBlock(in_chans=0, out_chans=1, bilinear=False, lr_slope=0.1)
 
     # Should break with uneven ints
     with pytest.raises(ValueError):
-        _ = UNetUpBlock(in_chans=3, out_chans=1)
+        _ = UNetUpBlock(in_chans=3, out_chans=1, bilinear=False, lr_slope=0.1)
     with pytest.raises(ValueError):
-        _ = UNetUpBlock(in_chans=3, out_chans=1)
+        _ = UNetUpBlock(in_chans=3, out_chans=1, bilinear=False, lr_slope=0.1)
 
 
 def test_unet_up_block_out_chans_arg_type():
     """Test the types accepted by the `out_chans` argument."""
     # Should work with ints of one or more
-    _ = UNetUpBlock(in_chans=2, out_chans=1)
+    _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=0.1)
 
     # Should break with non-int
     with pytest.raises(TypeError):
-        _ = UNetUpBlock(in_chans=2, out_chans=1.0)
+        _ = UNetUpBlock(
+            in_chans=2,
+            out_chans=1.0,
+            bilinear=False,
+            lr_slope=0.1,
+        )
     with pytest.raises(TypeError):
-        _ = UNetUpBlock(in_chans=2, out_chans=1j)
+        _ = UNetUpBlock(
+            in_chans=2,
+            out_chans=1j,
+            bilinear=False,
+            lr_slope=0.1,
+        )
 
 
 def test_unet_up_block_out_chans_arg_values():
     """Test the values accepted by the `out_chans` arg."""
     # Should work with ints of one or more
-    _ = UNetUpBlock(in_chans=2, out_chans=1)
+    _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=0.1)
 
     # Should break with anything less than one
     with pytest.raises(ValueError):
-        _ = UNetUpBlock(in_chans=2, out_chans=0)
+        _ = UNetUpBlock(in_chans=2, out_chans=0, bilinear=False, lr_slope=0.1)
     with pytest.raises(ValueError):
-        _ = UNetUpBlock(in_chans=2, out_chans=-1)
+        _ = UNetUpBlock(in_chans=2, out_chans=-1, bilinear=False, lr_slope=0.1)
 
 
 def test_unet_upblock_bilinear_arg_type():
     """Test the types allowed by the `bilinear` arg."""
     # Should work with bool
-    _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=True)
-    _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False)
+    _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=True, lr_slope=0.1)
+    _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=0.1)
 
     # Should break with non-bool
     with pytest.raises(TypeError):
-        _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=1)
+        _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=1, lr_slope=0.1)
     with pytest.raises(TypeError):
-        _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear="True")
+        _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear="True", lr_slope=0.1)
+
+
+def test_unet_upblock_leaky_relu_arg_types():
+    """Test the types accepted by the `lr_slope` argument."""
+    # Should work with float
+    _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=0.1)
+
+    # Should break with non-float
+    with pytest.raises(TypeError):
+        _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=1)
+    with pytest.raises(TypeError):
+        _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=1j)

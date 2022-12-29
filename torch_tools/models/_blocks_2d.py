@@ -4,6 +4,7 @@ from typing import List
 from torch import Tensor, cat  # pylint: disable=no-name-in-module
 from torch.nn import Module, Conv2d, BatchNorm2d, LeakyReLU, Sequential, ReLU
 from torch.nn import ConvTranspose2d, Upsample
+from torch.nn import MaxPool2d, AvgPool2d
 
 from torch.nn.functional import pad
 
@@ -221,17 +222,29 @@ class UNetUpBlock(Module):
     bilinear : bool
         If `True`, the upsample is done using bilinear interpolation using
         `torch.nn.Upsample`. Otherwise we use a `ConvTranspose2d`
+    lr_slope : float
+        The negative slope to use in the `LeakyReLU`.
 
     """
 
-    def __init__(self, in_chans: int, out_chans: int, bilinear: bool = False):
+    def __init__(
+        self,
+        in_chans: int,
+        out_chans: int,
+        bilinear: bool,
+        lr_slope: float,
+    ):
         """Build `UNetUpBlock`."""
         super().__init__()
         self._in_chans = self._process_in_chans(in_chans)
         self._out_chans = process_num_feats(out_chans)
 
         self._upsample = self._get_upsample(process_boolean_arg(bilinear))
-        self._double_conv = DoubleConvBlock(self._in_chans, self._out_chans)
+        self._double_conv = DoubleConvBlock(
+            self._in_chans,
+            self._out_chans,
+            lr_slope=lr_slope,
+        )
 
     @staticmethod
     def _process_in_chans(in_chans: int) -> int:
