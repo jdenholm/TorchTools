@@ -234,3 +234,16 @@ def test_unet_up_block_out_chans_arg_values():
         _ = UNetUpBlock(in_chans=2, out_chans=0)
     with pytest.raises(ValueError):
         _ = UNetUpBlock(in_chans=2, out_chans=-1)
+
+
+def test_unet_upblock_bilinear_arg_type():
+    """Test the types allowed by the `bilinear` arg."""
+    # Should work with bool
+    _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=True)
+    _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False)
+
+    # Should break with non-bool
+    with pytest.raises(TypeError):
+        _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=1)
+    with pytest.raises(TypeError):
+        _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear="True")
