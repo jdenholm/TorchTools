@@ -235,7 +235,7 @@ class UNetUpBlock(Module):
 
     @staticmethod
     def _process_in_chans(in_chans: int) -> int:
-        """ "Process `in_chans` arg.
+        """Process `in_chans` arg.
 
         Parameters
         ----------
