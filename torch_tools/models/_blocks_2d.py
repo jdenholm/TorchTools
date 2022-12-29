@@ -13,6 +13,7 @@ from torch_tools.models._argument_processing import (
     process_num_feats,
     process_negative_slope_arg,
     process_boolean_arg,
+    process_str_arg,
 )
 
 
@@ -413,7 +414,7 @@ class DownBlock(Module):
     ):
         """Build `DownBlock`."""
         super().__init__()
-        self._pool = self._pools[pool.lower()](
+        self._pool = self._pools[process_str_arg(pool).lower()](
             kernel_size=2,
             stride=2,
             padding=2,
