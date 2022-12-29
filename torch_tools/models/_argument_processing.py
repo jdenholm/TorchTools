@@ -163,3 +163,28 @@ def process_adaptive_pool_output_size_arg(
         raise ValueError(msg)
 
     return output_size
+
+
+def process_str_arg(string_arg: str) -> str:
+    """Check `string_arg` is a `str` and return it.
+
+    Parameters
+    ----------
+    string_arg : str
+        A string argument.
+
+    Returns
+    -------
+    string_arg
+        See parameters.
+
+    Raises
+    ------
+    TypeError
+        If `string_arg` is not a string.
+
+    """
+    if not isinstance(string_arg, str):
+        msg = f"Expect string arg to by 'str', got {type(string_arg)}."
+        raise TypeError(msg)
+    return string_arg

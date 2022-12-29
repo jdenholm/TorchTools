@@ -157,3 +157,15 @@ def test_adaptice_pool_output_size_arg_contents_vvalues():
         ap.process_adaptive_pool_output_size_arg((0, 1))
     with pytest.raises(ValueError):
         ap.process_adaptive_pool_output_size_arg((0, 0))
+
+
+def test_process_str_arg_types():
+    """Test `process_str_arg` catches non-str."""
+    # Should work with strings
+    ap.process_str_arg("Glorfindel")
+
+    # Should break with non-str
+    with pytest.raises(TypeError):
+        ap.process_str_arg(123)
+    with pytest.raises(TypeError):
+        ap.process_str_arg({})
