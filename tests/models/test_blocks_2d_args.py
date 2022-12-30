@@ -3,7 +3,7 @@
 import pytest
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResBlock
-from torch_tools.models._blocks_2d import UNetUpBlock
+from torch_tools.models._blocks_2d import UNetUpBlock, DownBlock
 
 
 def test_conv_block_in_chans_arg_types():
@@ -181,7 +181,7 @@ def test_res_block_in_chans_arg_values():
         _ = ResBlock(in_chans=-1)
 
 
-def test_unet_up_block_in_chans_arg_type():
+def test_unet_up_block_in_chans_arg_types():
     """Test the types accepted by the `in_chans` argument."""
     # Should work with ints of two or more
     _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=0.1)
@@ -222,7 +222,7 @@ def test_unet_up_block_in_chans_arg_values():
         _ = UNetUpBlock(in_chans=3, out_chans=1, bilinear=False, lr_slope=0.1)
 
 
-def test_unet_up_block_out_chans_arg_type():
+def test_unet_up_block_out_chans_arg_types():
     """Test the types accepted by the `out_chans` argument."""
     # Should work with ints of one or more
     _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=0.1)
@@ -256,7 +256,7 @@ def test_unet_up_block_out_chans_arg_values():
         _ = UNetUpBlock(in_chans=2, out_chans=-1, bilinear=False, lr_slope=0.1)
 
 
-def test_unet_upblock_bilinear_arg_type():
+def test_unet_upblock_bilinear_arg_types():
     """Test the types allowed by the `bilinear` arg."""
     # Should work with bool
     _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=True, lr_slope=0.1)
@@ -279,3 +279,88 @@ def test_unet_upblock_leaky_relu_arg_types():
         _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=1)
     with pytest.raises(TypeError):
         _ = UNetUpBlock(in_chans=2, out_chans=1, bilinear=False, lr_slope=1j)
+
+
+def test_down_block_in_chans_arg_types():
+    """Test the types accepted by the `in_chans` arg."""
+    # Should work with ints of one or more
+    _ = DownBlock(in_chans=1, out_chans=8, pool="max", lr_slope=0.1)
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = DownBlock(in_chans=1.0, out_chans=8, pool="max", lr_slope=0.1)
+    with pytest.raises(TypeError):
+        _ = DownBlock(in_chans=1j, out_chans=8, pool="max", lr_slope=0.1)
+
+
+def test_down_block_in_chans_arg_values():
+    """Test the values accepted by the `in_chans` arg."""
+    # Should work with ints of one or more
+    _ = DownBlock(in_chans=1, out_chans=8, pool="max", lr_slope=0.1)
+
+    # Should break with ints less than one
+    with pytest.raises(ValueError):
+        _ = DownBlock(in_chans=0, out_chans=8, pool="max", lr_slope=0.1)
+    with pytest.raises(ValueError):
+        _ = DownBlock(in_chans=-1, out_chans=8, pool="max", lr_slope=0.1)
+
+
+def test_down_block_out_chans_arg_types():
+    """Test the types accepted by the `out_chans` arg."""
+    # Should work with ints of one or more
+    _ = DownBlock(in_chans=8, out_chans=1, pool="max", lr_slope=0.1)
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = DownBlock(in_chans=8, out_chans=1.0, pool="max", lr_slope=0.1)
+    with pytest.raises(TypeError):
+        _ = DownBlock(in_chans=8, out_chans=1j, pool="max", lr_slope=0.1)
+
+
+def test_down_block_out_chans_arg_values():
+    """Test the values accepted by the `out_chans` arg."""
+    # Should work with ints of one or more
+    _ = DownBlock(in_chans=8, out_chans=1, pool="max", lr_slope=0.1)
+
+    # Should break with ints less than one
+    with pytest.raises(ValueError):
+        _ = DownBlock(in_chans=8, out_chans=0, pool="max", lr_slope=0.1)
+    with pytest.raises(ValueError):
+        _ = DownBlock(in_chans=8, out_chans=-1, pool="max", lr_slope=0.1)
+
+
+def test_down_block_pool_arg_types():
+    """Test the types accepted by the `pool` argument."""
+    # Should work with allowed strings
+    _ = DownBlock(in_chans=8, out_chans=1, pool="max", lr_slope=0.1)
+    _ = DownBlock(in_chans=8, out_chans=1, pool="avg", lr_slope=0.1)
+
+    # Should work non-str
+    with pytest.raises(TypeError):
+        _ = DownBlock(in_chans=8, out_chans=1, pool=1, lr_slope=0.1)
+    with pytest.raises(TypeError):
+        _ = DownBlock(in_chans=8, out_chans=1, pool=[], lr_slope=0.1)
+
+
+def test_down_block_pool_arg_values():
+    """Test the values accepted by the `pool` arg."""
+    # Should work with allowed strings
+    _ = DownBlock(in_chans=8, out_chans=1, pool="max", lr_slope=0.1)
+    _ = DownBlock(in_chans=8, out_chans=1, pool="avg", lr_slope=0.1)
+
+    # Should break with strings which are not allowed
+    with pytest.raises(KeyError):
+        _ = DownBlock(in_chans=8, out_chans=1, pool="Gandalf", lr_slope=0.1)
+    with pytest.raises(KeyError):
+        _ = DownBlock(in_chans=8, out_chans=1, pool="Saruman", lr_slope=0.1)
+
+def test_down_block_lr_slope_arg_type():
+    """Test the types accepted by the `lr_slope` argument."""
+    # Should work with floats
+    _ = DownBlock(in_chans=8, out_chans=1, pool="max", lr_slope=0.1)
+
+    # Should break with non-float
+    with pytest.raises(TypeError):
+        _ = DownBlock(in_chans=8, out_chans=1, pool="max", lr_slope=1)
+    with pytest.raises(TypeError):
+        _ = DownBlock(in_chans=8, out_chans=1, pool="max", lr_slope=1j)
