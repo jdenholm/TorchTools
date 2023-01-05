@@ -2,7 +2,7 @@
 
 from torch import rand  # pylint: disable=no-name-in-module
 
-from torch_tools.models._blocks_2d import ConvBlock
+from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResBlock
 
 
 def test_conv_block_call_return_shapes_with_batchnorm_and_leaky_relu():
@@ -41,6 +41,7 @@ def test_conv_block_call_return_shapes_with_batchnorm_and_no_leaky_relu():
     )
     assert block(rand(10, 111, 12, 21)).shape == (10, 222, 12, 21)
 
+
 def test_conv_block_call_return_shapes_with_no_batchnorm_and_no_leaky_relu():
     """Test the return shapes produced by `ConvBlock` are correct.
 
@@ -57,3 +58,21 @@ def test_conv_block_call_return_shapes_with_no_batchnorm_and_no_leaky_relu():
         leaky_relu=False,
     )
     assert block(rand(10, 1, 50, 50)).shape == (10, 321, 50, 50)
+
+
+def test_double_conv_block_call_return_shapes():
+    """Test the return shapes produced by `DoubleConvBlock` are correct."""
+    block = DoubleConvBlock(in_chans=123, out_chans=321)
+    assert block(rand(10, 123, 50, 100)).shape == (10, 321, 50, 100)
+
+    block = DoubleConvBlock(in_chans=111, out_chans=222)
+    assert block(rand(10, 111, 50, 100)).shape == (10, 222, 50, 100)
+
+
+def test_res_block_call_return_shapes():
+    """Test the return shapes produced by `ResBlock`."""
+    block = ResBlock(in_chans=123)
+    assert block(rand(10, 123, 50, 100)).shape == (10, 123, 50, 100)
+
+    block = ResBlock(in_chans=111)
+    assert block(rand(10, 111, 50, 100)).shape == (10, 111, 50, 100)
