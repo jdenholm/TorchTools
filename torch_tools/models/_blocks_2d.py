@@ -240,7 +240,7 @@ class UNetUpBlock(Module):
         self._in_chans = self._process_in_chans(in_chans)
         self._out_chans = process_num_feats(out_chans)
 
-        self._upsample = self._get_upsample(process_boolean_arg(bilinear))
+        self._upsample = self._get_upsample_component(process_boolean_arg(bilinear))
         self._double_conv = DoubleConvBlock(
             self._in_chans,
             self._out_chans,
@@ -280,7 +280,7 @@ class UNetUpBlock(Module):
 
         return in_chans
 
-    def _get_upsample(self, bilinear: bool) -> Module:
+    def _get_upsample_component(self, bilinear: bool) -> Module:
         """Return the upsampling layer.
 
         Parameters
