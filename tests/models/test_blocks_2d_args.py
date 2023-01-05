@@ -3,7 +3,7 @@
 import pytest
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResBlock
-from torch_tools.models._blocks_2d import UNetUpBlock, DownBlock
+from torch_tools.models._blocks_2d import UNetUpBlock, DownBlock, UpBlock
 
 
 def test_conv_block_in_chans_arg_types():
@@ -354,6 +354,7 @@ def test_down_block_pool_arg_values():
     with pytest.raises(KeyError):
         _ = DownBlock(in_chans=8, out_chans=1, pool="Saruman", lr_slope=0.1)
 
+
 def test_down_block_lr_slope_arg_type():
     """Test the types accepted by the `lr_slope` argument."""
     # Should work with floats
@@ -364,3 +365,60 @@ def test_down_block_lr_slope_arg_type():
         _ = DownBlock(in_chans=8, out_chans=1, pool="max", lr_slope=1)
     with pytest.raises(TypeError):
         _ = DownBlock(in_chans=8, out_chans=1, pool="max", lr_slope=1j)
+
+
+def test_up_block_in_chans_arg_type():
+    """Test the types accepted by the `in_chans` arg."""
+    # Should work with ints of one or more
+    _ = UpBlock(in_chans=1, out_chans=3, bilinear=True)
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = UpBlock(in_chans=1.0, out_chans=1, bilinear=True)
+    with pytest.raises(TypeError):
+        _ = UpBlock(in_chans=1j, out_chans=1, bilinear=True)
+
+def test_up_block_in_chans_arg_values():
+    """Test the values accepts by the `in_chans` arg."""
+    # Should work with ints of one or more
+    _ = UpBlock(in_chans=1, out_chans=2, bilinear=True)
+
+    # Should break with ints less than one
+    with pytest.raises(ValueError):
+        _ = UpBlock(in_chans=0, out_chans=2, bilinear=True)
+    with pytest.raises(ValueError):
+        _ = UpBlock(in_chans=-1, out_chans=2, bilinear=True)
+
+def test_up_block_out_chans_arg_type():
+    """Test the types accepted by the `out_chans` argument."""
+    # Should work with ints of one or more
+    _ = UpBlock(in_chans=1, out_chans=1, bilinear=True)
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = UpBlock(in_chans=1, out_chans=1.0, bilinear=True)
+    with pytest.raises(TypeError):
+        _ = UpBlock(in_chans=1, out_chans=1j, bilinear=True)
+
+def test_up_block_out_chans_arg_values():
+    """Test the values accepted by the `out_chans` arg."""
+    # Should work with ints of one or more
+    _ = UpBlock(in_chans=1, out_chans=1, bilinear=True)
+
+    # Should break with ints less than one
+    with pytest.raises(ValueError):
+        _ = UpBlock(in_chans=1, out_chans=0, bilinear=True)
+    with pytest.raises(ValueError):
+        _ = UpBlock(in_chans=1, out_chans=-1, bilinear=True)
+
+def test_up_block_bilinear_arg_types():
+    """Test the types accepted by the `bilinear` arg."""
+    # Should work with bool
+    _ = UpBlock(in_chans=1, out_chans=1, bilinear=True)
+    _ = UpBlock(in_chans=1, out_chans=1, bilinear=False)
+
+    # Should break with non-bool
+    with pytest.raises(TypeError):
+        _ = UpBlock(in_chans=1, out_chans=1, bilinear=1)
+    with pytest.raises(TypeError):
+        _ = UpBlock(in_chans=1, out_chans=1, bilinear="Hamfast Gamgee")
