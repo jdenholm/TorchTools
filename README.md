@@ -3,6 +3,9 @@ Handy PyTorch utilities and models which should save you time.
 
 
 ## Installation
+
+---
+
 To clone the repository (shouldn't work right now):
 ```bash
 git clone https://github.com/jdenholm/TorchTools.git
@@ -25,12 +28,9 @@ To run the tests:
 pytest tests/
 ```
 
+
 ## Contents
-
-
-### Datasets
-
-### DataSet
+---
 
 ### Models
 
@@ -198,4 +198,9 @@ Still to add `UNet` model code.
 #### Decoder
 
 
-#### Encoder
+#### Encoder–Decoder model
+
+
+### Datasets
+
+#### DataSet
