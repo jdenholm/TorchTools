@@ -28,8 +28,9 @@ pytest tests/
 ## Contents
 
 
-### Dataset
-To add ...
+### Datasets
+
+### DataSet
 
 ### Models
 
@@ -84,7 +85,10 @@ DenseNetwork(
 ```
 The model is a subclass of `torch.nn.Module` and inherits the same functionality as other PyTorch modules.
 
+
 #### Convolutional Network 2D
+
+
 Torchvision's default models assume three-channel (RGB) images. To use a different number of channels, one has to overwrite the first convolutional layer, which results in ugly code that must be modified if you want to want to change architectures from, say, ResNet to VGG, etc. Furthermore, you may wish to experiment with the classification layer's architecture, which requires more ugly code to modify the default models. To circumvent this, you can use `ConvNet2d`.
 
 `ConvNet2d` is a convolution neural network made of three parts: an encoder, an adaptive pooling layer and a `DenseNetwork` (which serves as a classification/regression head). The model can be customised in a modular fashion:
@@ -183,10 +187,15 @@ The model is again a subclass of `torch.nn.Module`. Another useful feature of
 >>> preds = model(batch, frozen_encoder=False)
 ```
 
-
-##### UNet—Semantic Segmentation
-The `UNet` is a time-honoured classic which, for some reason, Torchvision doesn't have an implementation of. Furthermore, most implementations one finds online (again) have the architecture hard-coded, which doesn't allow for ease-of-modification.
-
-Having an easy-to-instantiate `UNet` model ready-to-go is always handy, so we include one here.
+#### UNet—Semantic Segmentation
+The `UNet` is has become a classic model which is often implemented with the architecture hard-coded. Having an easy-to-instantiate `UNet` where the architecture can be set or configured at instantiation is always handy, so we include one here.
 
 Still to add `UNet` model code.
+
+#### Encoder
+
+
+#### Decoder
+
+
+#### Encoder
