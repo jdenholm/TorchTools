@@ -211,6 +211,138 @@ class ResBlock(Module):
         return self.relu(out)
 
 
+class DownBlock(Module):
+    """Down-sampling block which reduces image size by a factor of 2.
+
+    Parameters
+    ----------
+    in_chans : int
+        The number of input channels the block should take.
+    out_chans : int
+        The number of output channels the block should take.
+    pool : str
+        The style of the pooling layer to use: can be `"avg"` or `"max"`.
+
+    """
+
+    def __init__(
+        self,
+        in_chans: int,
+        out_chans: int,
+        pool: str,
+        lr_slope: float,
+    ):
+        """Build `DownBlock`."""
+        super().__init__()
+        self._pool = self._pools[process_str_arg(pool).lower()](
+            kernel_size=2,
+            stride=2,
+            padding=0,
+        )
+        self._conv = DoubleConvBlock(
+            process_num_feats(in_chans),
+            process_num_feats(out_chans),
+            lr_slope=process_negative_slope_arg(lr_slope),
+        )
+
+    def forward(self, batch: Tensor) -> Tensor:
+        """Pass `batch` through the model.
+
+        Parameters
+        ----------
+        batch : Tensor
+            A mini-batch of inputs.
+
+        Returns
+        -------
+        Tensor
+            The result of passing `batch` through the block.
+
+        """
+        downsampled = self._pool(batch)
+        return self._conv(downsampled)
+
+    _pools = {"max": MaxPool2d, "avg": AvgPool2d}
+
+
+class UpBlock(Module):
+    """Upsampling block which increases image size by a factor of 2.
+
+    Parameters
+    ----------
+    in_chans : int
+        The number of inpuuts channels the block should take.
+    out_chans : int
+        The number of output channels the block should take.
+    bilinear : bool
+        Determines whether the block uses bilinear interpolation (`True`) or
+        `ConvTranspose2d` (`False`).
+
+    """
+
+    def __init__(self, in_chans: int, out_chans: int, bilinear: bool):
+        """Build `UpBlock`."""
+        super().__init__()
+        self._upsample = self._get_upsampling_component(
+            process_num_feats(in_chans),
+            process_boolean_arg(bilinear),
+        )
+        self._conv = DoubleConvBlock(
+            process_num_feats(in_chans),
+            process_num_feats(out_chans),
+        )
+
+    @staticmethod
+    def _get_upsampling_component(in_chans: int, bilinear: bool) -> Module:
+        """Return the upsampling component of the block.
+
+        Parameters
+        ----------
+        in_chans : int
+            The number of input channels.
+        bilinear : bool
+            Bool controlling upsampling method. If `True`, we use bilinear
+            interpolation. If `False`, we use `ConvTranspose2d`.
+
+        Returns
+        -------
+        upsample : Module
+            The upsampling component of the block.
+
+        """
+        upsample: Module
+        if bilinear is True:
+            upsample = Sequential(
+                Upsample(scale_factor=2, mode="bilinear", align_corners=True),
+                Conv2d(in_chans, in_chans, kernel_size=1),
+            )
+        else:
+            upsample = ConvTranspose2d(
+                in_chans,
+                in_chans,
+                kernel_size=2,
+                stride=2,
+            )
+        return upsample
+
+    def forward(self, batch: Tensor) -> Tensor:
+        """Pass `batch` through the block.
+
+        Parameters
+        ----------
+        batch : Tensor
+            A mini-batch of inputs
+
+        Returns
+        -------
+        Tensor
+            Thee result of passing `batch` through the model.
+
+        """
+        upsampled = self._upsample(batch)
+        return self._conv(upsampled)
+
+
 class UNetUpBlock(Module):
     """Upsampling block to be used in the second half of a UNet.
 
@@ -389,135 +521,3 @@ class UNetUpBlock(Module):
         # Concatenate along the channel dimension (N, C, H, W)
         concatenated = cat([down_features, upsampled], dim=1)
         return self._double_conv(concatenated)
-
-
-class DownBlock(Module):
-    """Down-sampling block which reduces image size by a factor of 2.
-
-    Parameters
-    ----------
-    in_chans : int
-        The number of input channels the block should take.
-    out_chans : int
-        The number of output channels the block should take.
-    pool : str
-        The style of the pooling layer to use: can be `"avg"` or `"max"`.
-
-    """
-
-    def __init__(
-        self,
-        in_chans: int,
-        out_chans: int,
-        pool: str,
-        lr_slope: float,
-    ):
-        """Build `DownBlock`."""
-        super().__init__()
-        self._pool = self._pools[process_str_arg(pool).lower()](
-            kernel_size=2,
-            stride=2,
-            padding=2,
-        )
-        self._conv = DoubleConvBlock(
-            process_num_feats(in_chans),
-            process_num_feats(out_chans),
-            lr_slope=process_negative_slope_arg(lr_slope),
-        )
-
-    def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the model.
-
-        Parameters
-        ----------
-        batch : Tensor
-            A mini-batch of inputs.
-
-        Returns
-        -------
-        Tensor
-            The result of passing `batch` through the block.
-
-        """
-        downsampled = self._pool(batch)
-        return self._conv(downsampled)
-
-    _pools = {"max": MaxPool2d, "avg": AvgPool2d}
-
-
-class UpBlock(Module):
-    """Upsampling block which increases image size by a factor of 2.
-
-    Parameters
-    ----------
-    in_chans : int
-        The number of inpuuts channels the block should take.
-    out_chans : int
-        The number of output channels the block should take.
-    bilinear : bool
-        Determines whether the block uses bilinear interpolation (`True`) or
-        `ConvTranspose2d` (`False`).
-
-    """
-
-    def __init__(self, in_chans: int, out_chans: int, bilinear: bool):
-        """Build `UpBlock`."""
-        super().__init__()
-        self._upsample = self._get_upsampling_component(
-            process_num_feats(in_chans),
-            process_boolean_arg(bilinear),
-        )
-        self._conv = DoubleConvBlock(
-            process_num_feats(in_chans),
-            process_num_feats(out_chans),
-        )
-
-    @staticmethod
-    def _get_upsampling_component(in_chans: int, bilinear: bool) -> Module:
-        """Return the upsampling component of the block.
-
-        Parameters
-        ----------
-        in_chans : int
-            The number of input channels.
-        bilinear : bool
-            Bool controlling upsampling method. If `True`, we use bilinear
-            interpolation. If `False`, we use `ConvTranspose2d`.
-
-        Returns
-        -------
-        upsample : Module
-            The upsampling component of the block.
-
-        """
-        upsample: Module
-        if bilinear is True:
-            upsample = Sequential(
-                Upsample(scale_factor=2, mode="bilinear", align_corners=True),
-                Conv2d(in_chans, in_chans, kernel_size=1),
-            )
-        else:
-            upsample = ConvTranspose2d(
-                in_chans,
-                in_chans,
-                kernel_size=2,
-                stride=2,
-            )
-        return upsample
-
-    def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the block.
-
-        Parameters
-        ----------
-        batch : Tensor
-            A mini-batch of inputs
-
-        Returns
-        -------
-        Tensor
-            Thee result of passing `batch` through the model.
-
-        """
-        upsampled = self._upsample(batch)
-        return self._conv(upsampled)
