@@ -220,7 +220,7 @@ Still to add `UNet` model code.
 ---
 
 #### Simple 2D convolution network
-While we've already included a two-dimensional convolution model, it uses default architectures from Torchvision's available VGG and ResNet models, which are pretty big models that might be too "overpowered" for certain applications (say, to be used as a discriminator when training a GAN). To address this, we also include a simpler two-dimensional convolutional neural network.
+While we've already included a two-dimensional convolution model, it uses default architectures from Torchvision's available VGG and ResNet models, which are pretty hefty and might be too "overpowered" for certain applications (say, to be used as a discriminator when training a GAN). To address this, we also include a simpler two-dimensional convolutional neural network.
 
 
 ### Datasets
