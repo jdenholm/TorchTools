@@ -484,6 +484,39 @@ class UNetUpBlock(Module):
             msg += f"Got {to_upsample.shape[1]}."
             raise RuntimeError(msg)
 
+    def _input_size_check(self, to_upsample: Tensor, down_features: Tensor):
+        """Make sure `to_upsample` is smaller than `down_features`.
+
+        Parameters
+        ----------
+        to_upsample : Tensor
+            The features to be upsampled.
+        down_features : Tensor
+            The features from the down path to be concatenated with the
+            upsampled features.
+
+        Raises
+        ------
+        RuntimeError
+            If the height and width of `to_upsample` is greater than or equal
+            to `down_features`, something has gone wrong.
+
+        """
+        _, _, to_upsample_height, to_upsample_width = to_upsample.shape
+        _, _, down_features_height, down_features_width = down_features.shape
+
+        up_height_bigger = to_upsample_height >= down_features_height
+        up_width_bigger = to_upsample_width >= down_features_width
+
+        if up_height_bigger or up_width_bigger:
+            msg = "The features to be upsampled have a height and width of "
+            msg += f"{to_upsample_height} and {to_upsample_width}, and the "
+            msg += "features to be downsampled have a height and width of "
+            msg += f"{down_features_height} and {down_features_width}. "
+            msg += "The features to be upsampled should be smaller in "
+            msg += "each dimension in a UNet."
+            raise RuntimeError(msg)
+
     def forward(self, to_upsample: Tensor, down_features: Tensor) -> Tensor:
         """Unet skip-connection forward step.
 
@@ -503,6 +536,7 @@ class UNetUpBlock(Module):
         """
         self._channel_size_check(to_upsample, down_features)
         self._to_upsample_channel_check(to_upsample)
+        self._input_size_check(to_upsample, down_features)
 
         upsampled = self._upsample(to_upsample)
 
