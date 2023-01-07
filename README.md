@@ -197,9 +197,120 @@ The model is again a subclass of `torch.nn.Module`. Another useful feature of
 #### UNet—Semantic Segmentation
 The `UNet` has become a classic model which, again, is often implemented with the architecture hard-coded. Having an easy-to-instantiate `UNet` with an easily-modifiable architecture is always handy, so we include one here.
 
-Still to add `UNet` model code.
+Suppose we want a `UNet` that takes three-channel inputs, produces 16 output channels, has an initial convolution block which produces 64 features, has three layers in the U, uses max pooling (rather than average), used `ConvTranspose2d` layers to upsample (rather than bilinear interpolation) and has `LeakyReLU` layers with a slope of 0.2.
 
+While this is quite a mouthful, it is incredibly easy to instantiate:
 
+```python
+>>> from torch_tools import UNet
+>>> model = UNet(in_chans=3,
+                 out_chans=16,
+                 features_start=64,
+                 num_layers=3,
+                 pool_style="max",
+                 bilinear=False,
+                 lr_slope=0.2)
+>>> model
+UNet(
+  (_in_conv): DoubleConvBlock(
+    (conv1): ConvBlock(
+      (_fwd): Sequential(
+        (0): Conv2d(3, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): LeakyReLU(negative_slope=0.2)
+      )
+    )
+    (conv2): ConvBlock(
+      (_fwd): Sequential(
+        (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): LeakyReLU(negative_slope=0.2)
+      )
+    )
+  )
+  (_down_blocks): ModuleList(
+    (0): DownBlock(
+      (_pool): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (_conv): DoubleConvBlock(
+        (conv1): ConvBlock(
+          (_fwd): Sequential(
+            (0): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.2)
+          )
+        )
+        (conv2): ConvBlock(
+          (_fwd): Sequential(
+            (0): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.2)
+          )
+        )
+      )
+    )
+    (1): DownBlock(
+      (_pool): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      (_conv): DoubleConvBlock(
+        (conv1): ConvBlock(
+          (_fwd): Sequential(
+            (0): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.2)
+          )
+        )
+        (conv2): ConvBlock(
+          (_fwd): Sequential(
+            (0): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.2)
+          )
+        )
+      )
+    )
+  )
+  (_up_blocks): ModuleList(
+    (0): UNetUpBlock(
+      (_upsample): ConvTranspose2d(256, 128, kernel_size=(2, 2), stride=(2, 2))
+      (_double_conv): DoubleConvBlock(
+        (conv1): ConvBlock(
+          (_fwd): Sequential(
+            (0): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.2)
+          )
+        )
+        (conv2): ConvBlock(
+          (_fwd): Sequential(
+            (0): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.2)
+          )
+        )
+      )
+    )
+    (1): UNetUpBlock(
+      (_upsample): ConvTranspose2d(128, 64, kernel_size=(2, 2), stride=(2, 2))
+      (_double_conv): DoubleConvBlock(
+        (conv1): ConvBlock(
+          (_fwd): Sequential(
+            (0): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.2)
+          )
+        )
+        (conv2): ConvBlock(
+          (_fwd): Sequential(
+            (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.2)
+          )
+        )
+      )
+    )
+  )
+  (_out_conv): Conv2d(64, 16, kernel_size=(1, 1), stride=(1, 1))
+)
+```
 
 ---
 
