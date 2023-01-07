@@ -164,7 +164,7 @@ class UNet(Module):
             down_features.append(down_layer(down_features[-1]))
         return down_features
 
-    def _up_forward_pass(self, down_features: List[Tensor]):
+    def _up_forward_pass(self, down_features: List[Tensor]) -> Tensor:
         """Perform the UNet's upsampling forward pass.
 
         Parameters
