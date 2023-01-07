@@ -552,6 +552,6 @@ class UNetUpBlock(Module):
 
         upsampled = pad(upsampled, padding)
 
-        # Concatenate along the channel dimension (N, C, H, W)
+        # Concatenate along the channel dimension (dim=1) (N, C, H, W)
         concatenated = cat([down_features, upsampled], dim=1)
         return self._double_conv(concatenated)
