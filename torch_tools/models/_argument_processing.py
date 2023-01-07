@@ -188,3 +188,35 @@ def process_str_arg(string_arg: str) -> str:
         msg = f"Expect string arg to by 'str', got {type(string_arg)}."
         raise TypeError(msg)
     return string_arg
+
+
+def process_u_architecture_layers(num_layers: int) -> int:
+    """Process the number of layers for a U-like architecture.
+
+    Parameters
+    ----------
+    num_layers : int
+        The number of layers requested in the U-like architecture.
+
+    Returns
+    -------
+    num_layers : int
+        See Parameters.
+
+    Raises
+    ------
+    TypeError
+        If `num_layers` is not an int.
+    ValueError
+        If `num_layers` is less than 2.
+
+    """
+    if not isinstance(num_layers, int):
+        msg = "Number of layers in U-like architecture should be an int. Got "
+        msg += f"'{type(num_layers)}'."
+        raise TypeError(msg)
+    if num_layers < 2:
+        msg = "Number of layers in U-like archiecture should be at least 2. "
+        msg = f"Got '{num_layers}'."
+        raise ValueError(msg)
+    return num_layers

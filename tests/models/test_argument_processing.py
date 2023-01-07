@@ -20,7 +20,7 @@ def test_process_num_feats_types():
 
 
 def test_process_num_feats_values():
-    """test `ap.process_num_feats`'s value checking."""
+    """Test `ap.process_num_feats`'s value checking."""
     # Should work with ints of one and above
     _ = ap.process_num_feats(1)
     _ = ap.process_num_feats(2)
@@ -169,3 +169,29 @@ def test_process_str_arg_types():
         ap.process_str_arg(123)
     with pytest.raises(TypeError):
         ap.process_str_arg({})
+
+
+def test_process_u_architecture_layers_types():
+    """Test the types accepted by `process_u_architecture_layers`."""
+    # Should work with ints of 2 or more
+    _ = ap.process_u_architecture_layers(2)
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = ap.process_u_architecture_layers(2.0)
+    with pytest.raises(TypeError):
+        _ = ap.process_u_architecture_layers(2j)
+
+
+def test_process_u_architecture_layers_values():
+    """Test the values accepted by `process_u_architecture_layers`."""
+    # Should work with ints of 2 or more
+    _ = ap.process_u_architecture_layers(2)
+    _ = ap.process_u_architecture_layers(3)
+    _ = ap.process_u_architecture_layers(4)
+
+    # Should break with ints less than two
+    with pytest.raises(ValueError):
+        _ = ap.process_u_architecture_layers(1)
+    with pytest.raises(ValueError):
+        _ = ap.process_u_architecture_layers(0)
