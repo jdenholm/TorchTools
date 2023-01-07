@@ -4,8 +4,6 @@ Handy PyTorch utilities and models which should save you time.
 
 ## Installation
 
----
-
 To clone the repository (shouldn't work right now):
 ```bash
 git clone https://github.com/jdenholm/TorchTools.git
@@ -30,9 +28,13 @@ pytest tests/
 
 
 ## Contents
----
+
+
 
 ### Models
+
+
+---
 
 #### Dense Network
 Often people share code with simple perceptron-style networks where they have hard-coded the architecture—the number of layers, dropout probabilities and the number of input/output features, etc. Hard-coding these features is inelegant and doesn't allow one to easily modify the architecture.
@@ -84,6 +86,8 @@ DenseNetwork(
 )
 ```
 The model is a subclass of `torch.nn.Module` and inherits the same functionality as other PyTorch modules.
+
+---
 
 
 #### Convolutional Network 2D
@@ -187,18 +191,36 @@ The model is again a subclass of `torch.nn.Module`. Another useful feature of
 >>> preds = model(batch, frozen_encoder=False)
 ```
 
+---
+
+
 #### UNet—Semantic Segmentation
-The `UNet` is has become a classic model which is often implemented with the architecture hard-coded. Having an easy-to-instantiate `UNet` where the architecture can be set or configured at instantiation is always handy, so we include one here.
+The `UNet` has become a classic model which, again, is often implemented with the architecture hard-coded. Having an easy-to-instantiate `UNet` with an easily-modifiable architecture is always handy, so we include one here.
 
 Still to add `UNet` model code.
+
+
+
+---
+
 
 #### Encoder
 
 
+---
+
 #### Decoder
+
+---
 
 
 #### Encoder–Decoder model
+
+
+---
+
+#### Simple 2D convolution network
+While we've already included a two-dimensional convolution model, it uses default architectures from Torchvision's available VGG and ResNet models, which are pretty big models that might be too "overpowered" for certain applications (say, to be used as a discriminator when training a GAN). To address this, we also include a simpler two-dimensional convolutional neural network.
 
 
 ### Datasets
