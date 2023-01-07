@@ -3,7 +3,7 @@
 from torch import rand  # pylint: disable=no-name-in-module
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResBlock
-from torch_tools.models._blocks_2d import DownBlock, UpBlock
+from torch_tools.models._blocks_2d import DownBlock, UpBlock, UNetUpBlock
 
 
 def test_conv_block_call_return_shapes_with_batchnorm_and_leaky_relu():
@@ -99,3 +99,16 @@ def test_up_block_call_return_shapes():
 
     block = UpBlock(in_chans=3, out_chans=3, bilinear=False)
     assert block(rand(10, 3, 128, 256)).shape == (10, 3, 256, 512)
+
+
+def test_unet_upblock_call_return_shapes():
+    """Test the return shapes produced by `UNetUpBlock`."""
+    block = UNetUpBlock(in_chans=4, out_chans=5, bilinear=False, lr_slope=0.1)
+    to_upsample = rand(10, 4, 25, 50)
+    down_features = rand(10, 2, 50, 100)
+    assert block(to_upsample, down_features).shape == (10, 5, 50, 100)
+
+    block = UNetUpBlock(in_chans=2, out_chans=12, bilinear=False, lr_slope=0.1)
+    to_upsample = rand(10, 2, 30, 30)
+    down_features = rand(10, 1, 50, 50)
+    assert block(to_upsample, down_features).shape == (10, 12, 50, 50)
