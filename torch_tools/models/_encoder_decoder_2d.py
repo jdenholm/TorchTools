@@ -4,7 +4,8 @@ from torch.nn import Module, Conv2d
 
 from torch import Tensor, set_grad_enabled
 
-from torch_tools import Encoder2d, Decoder2d
+from torch_tools.models._encoder_2d import Encoder2d
+from torch_tools.models._decoder_2d import Decoder2d
 from torch_tools.models._blocks_2d import DoubleConvBlock
 
 from torch_tools.models._argument_processing import process_num_feats
