@@ -351,5 +351,6 @@ While we've already included a two-dimensional convolutional model, it uses defa
 
 
 ### Datasets
+Now that we have these fancy neural networks to play with, we need a good way of supplying them with data. The standard way to do this in PyTorch to to create a Dataset class—specifically a class which inherits from `torch.utils.data.Dataset`, whose `__getitem__` method yields the inputs for your model.
 
 #### DataSet
