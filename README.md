@@ -1,7 +1,15 @@
 # TorchTools
 Handy PyTorch models and utilities which should save you time.
 
+
+
+## Description
 This Python library contains a bunch of neural networks, implemented in PyTorch, and a generic `Dataset` class with useful features to help you get started with your deep-learning problem more quickly, and spend a lot less time engineering—and testing—the PyTorch-specific software you need. There is also the hope that you will write, and duplicate, less code by being able to easily set and modify these models' architectures at instantiation.
+
+
+## Authors and Acknowledgement
+This project was created by Jim Denholm.
+
 
 ## Installation
 
