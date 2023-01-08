@@ -10,13 +10,29 @@ from torch_tools.models._blocks_2d import DoubleConvBlock
 
 from torch_tools.models._argument_processing import process_num_feats
 
+from torch_tools.misc import batch_spatial_dims_power_of_2
+
+# pylint:disable=too-many-arguments
+
 
 class EncoderDecoder2d(Module):
     """A simple encoder-decoder pair for image-like inputs.
 
     Parameters
     ----------
-    Bla
+    in_chans : int
+        The number of input channels.
+    num_layers : int
+        The number of layers in the encoder/decoder.
+    features_start : int
+        The number of features produced by the first conv block.
+    lr_slope : float
+        The negative slope to use in the `LeakReLU`s.
+    pool_style : str
+        The pool style to use in the downsampling blocks (`"avg"` or `"max"`).
+    bilinear : bool
+        Whether or not to upsample with bilinear interpolation (`True`) or
+        `ConvTranspose2d` (`False`).
 
     """
 
@@ -84,6 +100,8 @@ class EncoderDecoder2d(Module):
             The result of passing `batch` through the model.
 
         """
+        batch_spatial_dims_power_of_2(batch)
+
         with set_grad_enabled(not frozen_encoder):
             encoded = self._in_conv(batch)
             encoded = self._encoder(encoded)
