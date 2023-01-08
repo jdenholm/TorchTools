@@ -1,7 +1,7 @@
 """Utility functions for creating 2D adaptive pooling layers."""
 from typing import Tuple
 
-from torch import Tensor, concat
+from torch import Tensor, concat  # pylint: disable=no-name-in-module
 from torch.nn import AdaptiveAvgPool2d, AdaptiveMaxPool2d, Module
 
 from torch_tools.models._argument_processing import (
