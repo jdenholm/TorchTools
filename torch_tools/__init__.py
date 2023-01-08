@@ -3,3 +3,4 @@ from .datasets import DataSet
 from .models import DenseNetwork
 from .models import ConvNet2d
 from .models import UNet
+from .models import Encoder
