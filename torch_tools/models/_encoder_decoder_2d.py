@@ -89,10 +89,10 @@ class EncoderDecoder2d(Module):
             A mini-batch of inputs.
         frozen_encoder : bool
             Boolean switch controlling whether the encoder's gradients are
-            enabled or disabled (useful for transfer learning).
+            enabled or disabled (usefull for transfer learning).
         frozen_decoder : bool
             Boolean switch controlling whether the decoder's gradients are
-            enabled or disabled (usefule for transfer learning).
+            enabled or disabled (usefull for transfer learning).
 
         Returns
         -------
