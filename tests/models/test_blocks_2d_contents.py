@@ -1,7 +1,7 @@
 """Tests for the contents of the blocks in `torch_tools.models._blocks_2d`"""
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU
 
-from torch_tools.models._blocks_2d import ConvBlock
+from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
 
 # pylint: disable=protected-access
 
@@ -104,3 +104,39 @@ def test_conv_block_contents_with_no_batchnorm_or_leaky_relu():
 
     # Check the layers are in the right order
     assert isinstance(block._fwd[0], Conv2d), "1st layer should be conv 2d."
+
+
+def test_double_conv_block_in_conv_contents():
+    """Test the contents of `DoubleConvBlock`'s `in_conv` are as expected."""
+    block = DoubleConvBlock(in_chans=123, out_chans=321, lr_slope=0.123456)
+
+    in_conv = block._in_conv
+
+    # Should have three layers in the in_conv block
+    assert len(in_conv._fwd) == 3, "Wrong number of layers in in conv block."
+
+    assert in_conv._fwd[0].in_channels == 123, "Wrong number of input chans."
+    assert in_conv._fwd[0].out_channels == 321, "Wrong number of output chans."
+    assert in_conv._fwd[2].negative_slope == 0.123456, "Wrong negative slope."
+
+    assert isinstance(in_conv._fwd[0], Conv2d), "Should be Conv2d."
+    assert isinstance(in_conv._fwd[1], BatchNorm2d), "Should be BatchNorm2d."
+    assert isinstance(in_conv._fwd[2], LeakyReLU), "Should be LeakyReLU."
+
+
+def test_double_conv_block_out_conv_contents():
+    """Test the contents of `DoubleConvBlock`'s `out_conv` are as expected."""
+    block = DoubleConvBlock(in_chans=123, out_chans=321, lr_slope=0.123456)
+
+    out_conv = block._out_conv
+
+    # Should have three layers in the in_conv block
+    assert len(out_conv._fwd) == 3, "Wrong number of layers in in conv block."
+
+    assert out_conv._fwd[0].in_channels == 321, "Wrong number of input chans."
+    assert out_conv._fwd[0].out_channels == 321, "Wrong number of output chans."
+    assert out_conv._fwd[2].negative_slope == 0.123456, "Wrong negative slope."
+
+    assert isinstance(out_conv._fwd[0], Conv2d), "Should be Conv2d."
+    assert isinstance(out_conv._fwd[1], BatchNorm2d), "Should be BatchNorm2d."
+    assert isinstance(out_conv._fwd[2], LeakyReLU), "Should be LeakyReLU."
