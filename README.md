@@ -215,15 +215,15 @@ UNet(
   (_in_conv): DoubleConvBlock(
     (conv1): ConvBlock(
       (_fwd): Sequential(
-        (0): Conv2d(3, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-        (1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
         (2): LeakyReLU(negative_slope=0.2)
       )
     )
     (conv2): ConvBlock(
       (_fwd): Sequential(
-        (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-        (1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
         (2): LeakyReLU(negative_slope=0.2)
       )
     )
@@ -270,7 +270,10 @@ UNet(
   )
   (_up_blocks): ModuleList(
     (0): UNetUpBlock(
-      (_upsample): ConvTranspose2d(256, 128, kernel_size=(2, 2), stride=(2, 2))
+      (_upsample): Sequential(
+        (0): Upsample(scale_factor=2.0, mode=bilinear)
+        (1): Conv2d(256, 128, kernel_size=(1, 1), stride=(1, 1))
+      )
       (_double_conv): DoubleConvBlock(
         (conv1): ConvBlock(
           (_fwd): Sequential(
@@ -289,7 +292,10 @@ UNet(
       )
     )
     (1): UNetUpBlock(
-      (_upsample): ConvTranspose2d(128, 64, kernel_size=(2, 2), stride=(2, 2))
+      (_upsample): Sequential(
+        (0): Upsample(scale_factor=2.0, mode=bilinear)
+        (1): Conv2d(128, 64, kernel_size=(1, 1), stride=(1, 1))
+      )
       (_double_conv): DoubleConvBlock(
         (conv1): ConvBlock(
           (_fwd): Sequential(
@@ -310,6 +316,7 @@ UNet(
   )
   (_out_conv): Conv2d(64, 16, kernel_size=(1, 1), stride=(1, 1))
 )
+
 ```
 
 ---
