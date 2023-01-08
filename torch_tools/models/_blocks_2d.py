@@ -115,7 +115,7 @@ class DoubleConvBlock(Module):
 
     """
 
-    def __init__(self, in_chans: int, out_chans: int, lr_slope: float = 0.1):
+    def __init__(self, in_chans: int, out_chans: int, lr_slope: float):
         """Build `DoubleConvBlock`.
 
         Parameters
