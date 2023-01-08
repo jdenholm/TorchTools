@@ -12,7 +12,7 @@ from torch_tools.models._argument_processing import (
 )
 
 
-class Encoder(Module):
+class Encoder2d(Module):
     """Encoder model for image-like inputs.
 
     Parameters
