@@ -106,7 +106,7 @@ Torchvision's default models assume three-channel (RGB) images. To use a differe
 For example, suppose we want an encoder in the style of Torchvision's VGG11 with batch normalisation, initialised with Torchvision's ImageNet pretrained weights, a pooling layer which concatenates the outputs of both the average and maximum adaptive pooling layers, a classifier with two hidden layers and a dropout probability of 0.25:
 
 ```python
->>> from torch_tools.models import ConvNet2d
+>>> from torch_tools import ConvNet2d
 >>> model = ConvNet2d(out_feats=512,
                       in_channels=3,
                       encoder_style="vgg11_bn",
