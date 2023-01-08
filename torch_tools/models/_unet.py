@@ -52,7 +52,11 @@ class UNet(Module):
         """Build `UNet`."""
         super().__init__()
 
-        self._in_conv = DoubleConvBlock(in_chans, out_chans, lr_slope)
+        self._in_conv = DoubleConvBlock(
+            in_chans,
+            process_num_feats(features_start),
+            lr_slope,
+        )
 
         self._down_blocks = self._get_down_blocks(
             process_u_architecture_layers(num_layers),
