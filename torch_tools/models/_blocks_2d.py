@@ -277,10 +277,18 @@ class UpBlock(Module):
     bilinear : bool
         Determines whether the block uses bilinear interpolation (`True`) or
         `ConvTranspose2d` (`False`).
+    lr_slope : float
+        Negative slope to use in the `LeakyReLU`s.
 
     """
 
-    def __init__(self, in_chans: int, out_chans: int, bilinear: bool):
+    def __init__(
+        self,
+        in_chans: int,
+        out_chans: int,
+        bilinear: bool,
+        lr_slope: float,
+    ):
         """Build `UpBlock`."""
         super().__init__()
         self._upsample = self._get_upsampling_component(
@@ -290,6 +298,7 @@ class UpBlock(Module):
         self._conv = DoubleConvBlock(
             process_num_feats(in_chans),
             process_num_feats(out_chans),
+            lr_slope=process_negative_slope_arg(lr_slope),
         )
 
     @staticmethod
