@@ -1,6 +1,7 @@
 # TorchTools
-Handy PyTorch utilities and models which should save you time.
+Handy PyTorch models and utilities which should save you time.
 
+This Python library contains a bunch of neural networks, implemented in PyTorch, and a generic `Dataset` class with useful features to help you get started with your deep-learning problem more quickly, and spend a lot less time engineering—and testing—the PyTorch-specific software you need. There is also the hope that you will write, and duplicate, less code by being able to easily set and modify these models' architectures at instantiation.
 
 ## Installation
 
@@ -333,12 +334,12 @@ UNet(
 
 
 #### Encoder–Decoder model
-
+This model is effectively a UNet without the skip connections. It can be used for segmentation and style transfer in the same way, however a roughly equivalent UNet will likely outperform it. That said, it carries the advantage that it requires less memory during training and inference, and is faster computationally.
 
 ---
 
 #### Simple 2D convolution network
-While we've already included a two-dimensional convolution model, it uses default architectures from Torchvision's available VGG and ResNet models, which are pretty hefty and might be too "overpowered" for certain applications (say, to be used as a discriminator when training a GAN). To address this, we also include a simpler two-dimensional convolutional neural network.
+While we've already included a two-dimensional convolutional model, it uses default architectures from Torchvision's available VGG and ResNet models, which are pretty hefty and might be too "overpowered" for certain applications (say, to be used as a discriminator when training a GAN). To address this, we also include a simpler two-dimensional convolutional neural network which is a lot more lightweight and customisable.
 
 
 ### Datasets
