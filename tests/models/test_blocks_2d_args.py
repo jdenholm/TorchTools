@@ -99,49 +99,49 @@ def test_conv_block_lr_slope_argument_types():
 def test_double_conv_block_in_chans_types():
     """Test the types accepted by the `in_chans` argument."""
     # Should work with ints of one or more
-    _ = DoubleConvBlock(in_chans=1, out_chans=5)
+    _ = DoubleConvBlock(in_chans=1, out_chans=5, lr_slope=0.1)
 
     # Should break with non-ints
     with pytest.raises(TypeError):
-        _ = DoubleConvBlock(in_chans=1.0, out_chans=5)
+        _ = DoubleConvBlock(in_chans=1.0, out_chans=5, lr_slope=0.1)
     with pytest.raises(TypeError):
-        _ = DoubleConvBlock(in_chans=1.0j, out_chans=5)
+        _ = DoubleConvBlock(in_chans=1.0j, out_chans=5, lr_slope=0.1)
 
 
 def test_double_conv_block_in_chans_values():
     """Test the values accepted by the `in_chans` arg."""
     # Should work with ints of one or more
-    _ = DoubleConvBlock(in_chans=1, out_chans=5)
+    _ = DoubleConvBlock(in_chans=1, out_chans=5, lr_slope=0.1)
 
     # Should break with ints less than one
     with pytest.raises(ValueError):
-        _ = DoubleConvBlock(in_chans=0, out_chans=10)
+        _ = DoubleConvBlock(in_chans=0, out_chans=10, lr_slope=0.1)
     with pytest.raises(ValueError):
-        _ = DoubleConvBlock(in_chans=-1, out_chans=10)
+        _ = DoubleConvBlock(in_chans=-1, out_chans=10, lr_slope=0.1)
 
 
 def test_double_conv_block_out_chans_types():
     """Test the types accepted by the `out_chans` argument."""
     # Should work with ints of one or more.
-    _ = DoubleConvBlock(in_chans=10, out_chans=1)
+    _ = DoubleConvBlock(in_chans=10, out_chans=1, lr_slope=0.1)
 
     # Should break with non-ints
     with pytest.raises(TypeError):
-        _ = DoubleConvBlock(in_chans=10, out_chans=1.0)
+        _ = DoubleConvBlock(in_chans=10, out_chans=1.0, lr_slope=0.1)
     with pytest.raises(TypeError):
-        _ = DoubleConvBlock(in_chans=10, out_chans=1.0j)
+        _ = DoubleConvBlock(in_chans=10, out_chans=1.0j, lr_slope=0.1)
 
 
 def test_double_conv_block_out_chans_arg_values():
     """Test the values accepted by the `out_chans` argument."""
     # Should work with ints of one or more
-    _ = DoubleConvBlock(in_chans=10, out_chans=1)
+    _ = DoubleConvBlock(in_chans=10, out_chans=1, lr_slope=0.1)
 
     # Should break with ints less than one
     with pytest.raises(ValueError):
-        _ = DoubleConvBlock(in_chans=10, out_chans=0)
+        _ = DoubleConvBlock(in_chans=10, out_chans=0, lr_slope=0.1)
     with pytest.raises(ValueError):
-        _ = DoubleConvBlock(in_chans=10, out_chans=-1)
+        _ = DoubleConvBlock(in_chans=10, out_chans=-1, lr_slope=0.1)
 
 
 def test_double_conv_lr_slope_argument_types():

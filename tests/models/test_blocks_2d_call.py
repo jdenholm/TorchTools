@@ -63,10 +63,10 @@ def test_conv_block_call_return_shapes_with_no_batchnorm_and_no_leaky_relu():
 
 def test_double_conv_block_call_return_shapes():
     """Test the return shapes produced by `DoubleConvBlock` are correct."""
-    block = DoubleConvBlock(in_chans=123, out_chans=321)
+    block = DoubleConvBlock(in_chans=123, out_chans=321, lr_slope=0.1)
     assert block(rand(10, 123, 50, 100)).shape == (10, 321, 50, 100)
 
-    block = DoubleConvBlock(in_chans=111, out_chans=222)
+    block = DoubleConvBlock(in_chans=111, out_chans=222, lr_slope=0.1)
     assert block(rand(10, 111, 50, 100)).shape == (10, 222, 50, 100)
 
 
@@ -94,10 +94,10 @@ def test_down_block_call_return_shapes():
 
 def test_up_block_call_return_shapes():
     """Test the return shapes produced by `UpBlock`."""
-    block = UpBlock(in_chans=3, out_chans=8, bilinear=True)
+    block = UpBlock(in_chans=3, out_chans=8, bilinear=True, lr_slope=0.1)
     assert block(rand(10, 3, 16, 32)).shape == (10, 8, 32, 64)
 
-    block = UpBlock(in_chans=3, out_chans=3, bilinear=False)
+    block = UpBlock(in_chans=3, out_chans=3, bilinear=False, lr_slope=0.1)
     assert block(rand(10, 3, 128, 256)).shape == (10, 3, 256, 512)
 
 
