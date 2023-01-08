@@ -1,10 +1,10 @@
 """Miscellaneous helpful functions."""
 
-from torch import Tensor
+from torch import Tensor, log2, as_tensor  # pylint: disable=no-name-in-module
 
 
-def batch_spatial_dims_divisible_by_2(batch: Tensor):
-    """Check height and width of `batch` can be divided by 2.
+def batch_spatial_dims_power_of_2(batch: Tensor):
+    """Check height and width of `batch` are powers of 2.
 
     Parameters
     ----------
@@ -18,9 +18,9 @@ def batch_spatial_dims_divisible_by_2(batch: Tensor):
     RuntimeError
         If `batch` does not have four dimensions.
     RuntimeError
-        If the batch's images' heights are not divisible by 2.
+        If the batch's images' heights are not a power of 2.
     RuntimeError
-        If the batch's images' heights are not divisible by 2.
+        If the batch's images' heights are not a power of 2.
 
     """
     if not isinstance(batch, Tensor):
@@ -31,11 +31,11 @@ def batch_spatial_dims_divisible_by_2(batch: Tensor):
 
     _, _, height, width = batch.shape
 
-    if (height % 2) != 0:
-        msg = "Mini-batch of image-like's height should divide by 2. Got "
+    if (log2(as_tensor(height)) % 1) != 0:
+        msg = "Mini-batch of image-like's height should be power of 2. Got "
         msg += f"'{height}'."
         raise RuntimeError(msg)
-    if (width % 2) != 0:
-        msg = "Mini-batch of image-like's width should divide by 2. Got "
+    if (log2(as_tensor(width)) % 1) != 0:
+        msg = "Mini-batch of image-like's width should be power of 2. Got "
         msg += f"{width}."
         raise RuntimeError(msg)
