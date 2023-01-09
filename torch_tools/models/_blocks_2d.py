@@ -323,7 +323,7 @@ class UpBlock(Module):
         if bilinear is True:
             upsample = Sequential(
                 Upsample(scale_factor=2, mode="bilinear", align_corners=True),
-                Conv2d(in_chans, in_chans, kernel_size=1),
+                Conv2d(in_chans, in_chans, kernel_size=1, stride=1),
             )
         else:
             upsample = ConvTranspose2d(
