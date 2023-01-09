@@ -37,5 +37,5 @@ def batch_spatial_dims_power_of_2(batch: Tensor):
         raise RuntimeError(msg)
     if (log2(as_tensor(width)) % 1) != 0:
         msg = "Mini-batch of image-like's width should be power of 2. Got "
-        msg += f"{width}."
+        msg += f"'{width}'."
         raise RuntimeError(msg)
