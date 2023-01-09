@@ -174,14 +174,14 @@ class ResBlock(Module):
     def __init__(self, in_chans: int):
         """Build `ResidualBlock`."""
         super().__init__()
-        self.conv1 = ConvBlock(
+        self._conv_1 = ConvBlock(
             in_chans,
             in_chans,
             batch_norm=True,
             leaky_relu=True,
             lr_slope=0.0,
         )
-        self.conv2 = ConvBlock(
+        self._conv_2 = ConvBlock(
             in_chans,
             in_chans,
             batch_norm=True,
@@ -205,8 +205,8 @@ class ResBlock(Module):
 
         """
         identity = batch
-        out = self.conv1(batch)
-        out = self.conv2(out)
+        out = self._conv_1(batch)
+        out = self._conv_2(out)
         out += identity
         return self.relu(out)
 
