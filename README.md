@@ -10,6 +10,9 @@ This Python library contains a bunch of neural networks, implemented in PyTorch,
 ## Authors and Acknowledgement
 This project was created by Jim Denholm.
 
+## License
+Um ...
+
 
 ## Installation
 
