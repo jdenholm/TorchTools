@@ -160,6 +160,11 @@ class InputBlock(Module):
         dropout : float
             Should we apply dropout to the inputs?
 
+        Returns
+        -------
+        Sequential
+            The block's layers in a `Sequential`.
+
         """
         layers: List[Module]
         layers = []
