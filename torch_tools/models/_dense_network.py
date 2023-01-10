@@ -31,10 +31,7 @@ class DenseNetwork(Module):
     negative_slope : float, optional
         The negative slope argument to use in the leaky relu layers.
 
-    Examples
-    --------
-    TODO: add some examples.
-
+    #TODO: Add tests for argument types and values.
 
     """
 
@@ -52,16 +49,100 @@ class DenseNetwork(Module):
         """Build `DenseClassifier`."""
         super().__init__()
 
-        self._input_block = InputBlock(in_feats, input_bnorm, input_dropout)
+        self._blocks = self._blocks_in_sequential(
+            in_feats,
+            out_feats,
+            hidden_sizes,
+            input_bnorm,
+            input_dropout,
+            hidden_dropout,
+            hidden_bnorm,
+            negative_slope,
+        )
 
-        self._dense_blocks = self._list_dense_blocks(
+    def _blocks_in_sequential(
+        self,
+        in_feats: int,
+        out_feats: int,
+        hidden_sizes: Union[Tuple[int, ...], None],
+        input_bnorm: bool,
+        input_dropout: float,
+        hidden_dropout: float,
+        hidden_bnorm: bool,
+        negative_slope: float,
+    ) -> Sequential:
+        """Put all of the model's blocks in a `Sequential`.
+
+        Parameters
+        ----------
+        in_feats : int
+            The number of input features.
+        out_feats : int
+            The number of output features the model should produce.
+        hidden_sizes : List[int] or None
+            The sizes of the hidden layers in the model.
+        input_bnorm : bool
+            Should we apply a batchnorm to the input?
+        input_dropout : float
+            Dropout probability to apply to the input (not included if 0.0).
+        hidden_dropout : float
+            The dropout probability to apply at the hidden layers (not
+            included if 0.0).
+        hidden_bnorm : bool
+            Whether or not to apply batchnorm in the hidden layers.
+        negative_slope : float
+            The negative slope to use in the `LeakyReLU`s.
+
+        Returns
+        -------
+        Sequential
+            The model's blocks arranged in a `Sequential`.
+
+        """
+        in_block_list = self._input_block_in_list(
+            in_feats,
+            input_bnorm,
+            input_dropout,
+        )
+
+        dense_block_list = self._list_dense_blocks(
             in_feats,
             out_feats,
             hidden_dropout,
             hidden_bnorm,
             negative_slope,
-            hidden_sizes=hidden_sizes,
+            hidden_sizes,
         )
+
+        return Sequential(*in_block_list, *dense_block_list)
+
+    def _input_block_in_list(
+        self,
+        in_feats: int,
+        input_bnorm: bool,
+        input_dropout: float,
+    ) -> List[Module]:
+        """Put the input block in a list if it's needed.
+
+        Parameters
+        ----------
+        in_feats : int
+            The number of inputs features the model should take.
+        input_bnorm : bool
+            Bool determining whether or not batchnorm should be applied to
+            the input.
+        input_dropout : float
+            The dropout probability to apply to the input (no included if 0.0).
+
+        Returns
+        -------
+        List[Module]
+            The input block in a list, if needed, otherwise the list is empty.
+
+        """
+        if (input_bnorm is False) and (input_dropout == 0.0):
+            return []
+        return [InputBlock(in_feats, input_bnorm, input_dropout)]
 
     @staticmethod
     def _get_feature_sizes(
@@ -99,8 +180,8 @@ class DenseNetwork(Module):
         dropout_prob: float,
         batch_norms: bool,
         negative_slope: float,
-        hidden_sizes: Optional[Tuple[int, ...]] = None,
-    ) -> Sequential:
+        hidden_sizes: Union[Tuple[int, ...], None],
+    ) -> List[Module]:
         """List the dense layers in the model.
 
         Parameters
@@ -115,13 +196,13 @@ class DenseNetwork(Module):
             Should we include batchnorms in the DenseBlocks?
         negative_slope : float
             The negative slope to use in the leaky relu layers.
-        hidden_sizes : Tuple[int], optional
+        hidden_sizes : Tuple[int]
             Sizes of the hidden layers in the model.
 
         Returns
         -------
-        Sequential
-            All of the model's layers stacked in a `Sequential`.
+        blocks
+            All of the model's dense blocks in a list.
 
         """
         in_sizes, out_sizes = self._get_feature_sizes(
@@ -144,7 +225,7 @@ class DenseNetwork(Module):
                     negative_slope=negative_slope,
                 )
             )
-        return Sequential(*blocks)
+        return blocks
 
     def forward(self, batch: Tensor) -> Tensor:
         """Pass `batch` through the model.
@@ -160,5 +241,4 @@ class DenseNetwork(Module):
             The result of passing `batch` through the model.
 
         """
-        input_layer_out = self._input_block(batch)
-        return self._dense_blocks(input_layer_out)
+        return self._blocks(batch)

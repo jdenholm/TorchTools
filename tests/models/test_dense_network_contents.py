@@ -17,7 +17,7 @@ def test_full_input_block_contents():
         input_dropout=0.25,
     )
 
-    in_block = model._input_block
+    in_block = model._blocks[0]
 
     # There should be two layers in the input block
     assert len(in_block._fwd_seq) == 2, "Expected two layers in input block."
@@ -45,7 +45,7 @@ def test_input_block_contents_with_batchnorm_only():
         input_dropout=0.0,
     )
 
-    in_block = model._input_block
+    in_block = model._blocks[0]
 
     # There should only be one layer in the input block
     assert len(in_block._fwd_seq) == 1, "Expected one layer in input block."
@@ -68,7 +68,7 @@ def test_input_block_contents_with_dropout_only():
         input_dropout=0.25,
     )
 
-    in_block = model._input_block
+    in_block = model._blocks[0]
 
     # There should only be one layer in the input block
     assert len(in_block._fwd_seq) == 1, "Expected one layer in input block."
@@ -82,12 +82,12 @@ def test_input_batchnorm_number_of_feats_assignment():
     """Test the input batchnorm layer is assigned correct number of feats."""
     msg = "Unexpected number of batchnorm features."
     model = DenseNetwork(123, 2, input_bnorm=True)
-    input_bnorm = model._input_block._fwd_seq[0]
+    input_bnorm = model._blocks[0]._fwd_seq[0]
     assert input_bnorm.num_features == 123, msg
 
     msg = "Unexpected number of batchnorm features."
     model = DenseNetwork(321, 2, input_bnorm=True)
-    input_bnorm = model._input_block._fwd_seq[0]
+    input_bnorm = model._blocks[0]._fwd_seq[0]
     assert input_bnorm.num_features == 321, msg
 
 
@@ -96,71 +96,140 @@ def test_input_block_dropout_probability_assignment():
     model = DenseNetwork(
         in_feats=10, out_feats=2, input_bnorm=True, input_dropout=0.123456
     )
-    input_dropout_prob = model._input_block._fwd_seq[1].p
+    input_dropout_prob = model._blocks[0]._fwd_seq[1].p
     assert input_dropout_prob == 0.123456, "Dropout prob incorrectly assigned."
 
     model = DenseNetwork(
         in_feats=10, out_feats=2, input_bnorm=True, input_dropout=0.654321
     )
-    input_dropout_prob = model._input_block._fwd_seq[1].p
+    input_dropout_prob = model._blocks[0]._fwd_seq[1].p
     assert input_dropout_prob == 0.654321, "Dropout prob incorrectly assigned."
 
 
 def test_number_of_dense_blocks_with_no_hidden_layers():
-    """Test the number of dense blocks in `DenseNetwork`."""
+    """Test the number of dense blocks in `DenseNetwork`.
+
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False,
+        — input_dropout=0.0,
+
+    """
     # With no hidden layers (hidden_sizes=None), the model should only have
     # one dense block.
-    model = DenseNetwork(in_feats=10, out_feats=2, hidden_sizes=None)
+    model = DenseNetwork(
+        in_feats=10,
+        out_feats=2,
+        hidden_sizes=None,
+        input_bnorm=False,
+        input_dropout=0.0,
+    )
 
-    dense_blocks = model._dense_blocks
+    dense_blocks = model._blocks
     msg = "Should only be one dense block when no hidden layers are requested."
     assert len(dense_blocks) == 1, msg
 
 
 def test_number_of_hidden_blocks_with_one_hidden_layer():
-    """Test the number of dense blocks with one hidden layer."""
-    model = DenseNetwork(in_feats=10, out_feats=2, hidden_sizes=((5,)))
+    """Test the number of dense blocks with one hidden layer.
+
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
+    """
+    model = DenseNetwork(
+        in_feats=10,
+        out_feats=2,
+        hidden_sizes=((5,)),
+        input_bnorm=False,
+        input_dropout=0.0,
+    )
 
     # There should be two dense blocks if we ask for one hidden layer.
     # `print(model)` if that seems confusing.
 
-    dense_blocks = model._dense_blocks
+    dense_blocks = model._blocks
     msg = "Should be two dense blocks when one hidden layer is requested."
     assert len(dense_blocks) == 2, msg
 
 
 def test_number_of_dense_blocks_with_seven_hidden_layers():
-    """Test the numer of dense blocks with seven hidden layers."""
-    model = DenseNetwork(in_feats=10, out_feats=2, hidden_sizes=(7 * (10,)))
+    """Test the numer of dense blocks with seven hidden layers.
+
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
+    """
+    model = DenseNetwork(
+        in_feats=10,
+        out_feats=2,
+        hidden_sizes=(7 * (10,)),
+        input_bnorm=False,
+        input_dropout=0.0,
+    )
 
     # There should be 8 dense block when 7 hidden layers are requested
-    dense_blocks = model._dense_blocks
+    dense_blocks = model._blocks
     msg = "Should be 8 dense blocks when you ask for 7 hidden layers."
     assert len(dense_blocks) == 8, msg
 
 
 def test_linear_layer_sizes_in_dense_blocks_with_no_hidden_layers():
-    """Test the feature dimensions in the linear layers with hidden layers."""
+    """Test feature dimensions in the linear layers with no hidden layers.
+
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
+    """
     # Test with no hidden layers
-    model = DenseNetwork(10, 2, hidden_sizes=None)
-    dense_blocks = model._dense_blocks
+    model = DenseNetwork(
+        10,
+        2,
+        hidden_sizes=None,
+        input_bnorm=False,
+        input_dropout=0.0,
+    )
     msg = "The linear layer should have 10 input features."
-    assert dense_blocks[0]._fwd_seq[0].in_features == 10, msg
+    assert model._blocks[0]._fwd_seq[0].in_features == 10, msg
 
     msg = "The linear layer should have 2 output features."
-    assert dense_blocks[0]._fwd_seq[0].out_features == 2, msg
+    assert model._blocks[0]._fwd_seq[0].out_features == 2, msg
 
 
 def test_linear_layer_sizes_in_dense_blocks_with_hidden_layers():
-    """Test the feature dimensions in the linear layers with hidden layers."""
+    """Test the feature dimensions in the linear layers with hidden layers.
+
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
+    """
     # Test with hidden layers
     in_feats, out_feats = 128, 2
     hidden_sizes = (64, 32, 16, 8, 16, 32, 64)
-    model = DenseNetwork(in_feats, out_feats, hidden_sizes=hidden_sizes)
+    model = DenseNetwork(
+        in_feats,
+        out_feats,
+        hidden_sizes=hidden_sizes,
+        input_bnorm=False,
+        input_dropout=0.0,
+    )
 
     in_sizes = iter((in_feats,) + hidden_sizes)
     out_sizes = iter(hidden_sizes + (out_feats,))
-    for _, module in model._dense_blocks.named_children():
+    for _, module in model._blocks.named_children():
 
         msg = "Unexpected number of input features in linear layer."
         assert module._fwd_seq[0].in_features == next(in_sizes), msg
@@ -176,6 +245,12 @@ def test_hidden_block_contents_with_dropout_and_batchnorm():
 
         Linear -> BatchNorm1d -> Dropout -> LeakyReLU
 
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
     """
     model = DenseNetwork(
         in_feats=10,
@@ -183,10 +258,12 @@ def test_hidden_block_contents_with_dropout_and_batchnorm():
         hidden_sizes=(5, 5, 5),
         hidden_dropout=0.5,
         hidden_bnorm=True,
+        input_bnorm=False,
+        input_dropout=0.0,
     )
 
     # The final block should only contain a Linear layer, so we chop it off
-    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+    non_final_blocks = list(model._blocks.named_children())[:-1]
 
     for _, block in non_final_blocks:
 
@@ -213,15 +290,23 @@ def test_hidden_block_contents_with_batchnorm_and_no_dropout():
 
         Linear -> BatchNorm1d -> LeakyReLU
 
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
     """
     model = DenseNetwork(
         in_feats=10,
         out_feats=2,
         hidden_dropout=0.0,
         hidden_bnorm=True,
+        input_bnorm=False,
+        input_dropout=0.0,
     )
 
-    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+    non_final_blocks = list(model._blocks.named_children())[:-1]
 
     for _, block in non_final_blocks:
 
@@ -245,15 +330,23 @@ def test_hidden_block_contents_with_dropout_and_no_batchnorm():
 
         Linear -> Dropout -> LeakyReLU
 
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
     """
     model = DenseNetwork(
         in_feats=10,
         out_feats=2,
         hidden_dropout=0.5,
         hidden_bnorm=False,
+        input_bnorm=False,
+        input_dropout=0.0,
     )
 
-    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+    non_final_blocks = list(model._blocks.named_children())[:-1]
 
     for _, block in non_final_blocks:
 
@@ -277,15 +370,23 @@ def test_hidden_block_contents_with_no_dropout_and_no_batch_norm():
 
         Linear -> LeakyReLU
 
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
     """
     model = DenseNetwork(
         in_feats=10,
         out_feats=2,
         hidden_dropout=0.0,
         hidden_bnorm=False,
+        input_bnorm=False,
+        input_dropout=0.0,
     )
 
-    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+    non_final_blocks = list(model._blocks.named_children())[:-1]
 
     for _, block in non_final_blocks:
 
@@ -300,7 +401,15 @@ def test_hidden_block_contents_with_no_dropout_and_no_batch_norm():
 
 
 def test_hidden_batchnorm_number_of_features_are_correct():
-    """Test number of features in the hidden layer batchnorms."""
+    """Test number of features in the hidden layer batchnorms.
+
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
+    """
     hidden_sizes = (2, 4, 6, 8)
     model = DenseNetwork(
         in_feats=10,
@@ -308,9 +417,11 @@ def test_hidden_batchnorm_number_of_features_are_correct():
         hidden_sizes=(2, 4, 6, 8),
         hidden_bnorm=True,
         hidden_dropout=0.25,
+        input_bnorm=False,
+        input_dropout=0.0,
     )
 
-    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+    non_final_blocks = list(model._blocks.named_children())[:-1]
 
     for (_, block), bnorm_feats in zip(non_final_blocks, hidden_sizes):
 
@@ -320,16 +431,26 @@ def test_hidden_batchnorm_number_of_features_are_correct():
 
 
 def test_hidden_block_dropout_probability_assignment():
-    """Test the dropout porbability in thie hidden blocks is correct."""
+    """Test the dropout probability in thie hidden blocks is correct.
+
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
+    """
     model = DenseNetwork(
         in_feats=10,
         out_feats=2,
         hidden_sizes=(8, 6, 4),
         hidden_dropout=0.123456789,
         hidden_bnorm=True,
+        input_bnorm=False,
+        input_dropout=0.0,
     )
 
-    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+    non_final_blocks = list(model._blocks.named_children())[:-1]
 
     for _, block in non_final_blocks:
 
@@ -344,10 +465,23 @@ def test_final_layer_feature_sizes_with_no_hidden_layers():
     With no hidden layers, the feature sizes of the final (and only) linear
     layer should be equal to `in_feats` and `out_feats`.
 
-    """
-    model = DenseNetwork(in_feats=987, out_feats=123, hidden_sizes=None)
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
 
-    dense_blocks = model._dense_blocks
+
+    """
+    model = DenseNetwork(
+        in_feats=987,
+        out_feats=123,
+        hidden_sizes=None,
+        input_bnorm=False,
+        input_dropout=0.0,
+    )
+
+    dense_blocks = model._blocks
 
     # There should only be one dense block
     assert len(dense_blocks) == 1, "Should only be one layer in dense block."
@@ -371,6 +505,13 @@ def test_final_linear_layer_feature_sizes_with_hidden_layers():
     With hidden layers included, the final linear layer should have
     `hidden_sizes[-1]` input features and `out_feats` output features.
 
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
+
     """
     in_feats, out_feats = 128, 2
     hidden_sizes = (63, 32, 666)
@@ -378,9 +519,11 @@ def test_final_linear_layer_feature_sizes_with_hidden_layers():
         in_feats=in_feats,
         out_feats=out_feats,
         hidden_sizes=hidden_sizes,
+        input_bnorm=False,
+        input_dropout=0.0,
     )
 
-    final_linear_layer = model._dense_blocks[-1]._fwd_seq[0]
+    final_linear_layer = model._blocks[-1]._fwd_seq[0]
 
     # The final linear layer should have hiddens_sizes[-1] input features
     msg = f"Expected {hidden_sizes[-1]} input features."
@@ -392,15 +535,26 @@ def test_final_linear_layer_feature_sizes_with_hidden_layers():
 
 
 def test_leaky_relu_negative_slope_assignment():
-    """Test the `negative_slope` value assignment of the leaky relu."""
+    """Test the `negative_slope` value assignment of the leaky relu.
+
+    Notes
+    -----
+    We also make sure there is no input block by setting:
+        — input_bnorm=False
+        — input_dropout=0.0
+
+
+    """
     model = DenseNetwork(
         in_feats=100,
         out_feats=10,
         hidden_sizes=(50, 50),
         negative_slope=0.12345678,
+        input_bnorm=False,
+        input_dropout=0.0,
     )
 
-    non_final_blocks = list(model._dense_blocks.named_children())[:-1]
+    non_final_blocks = list(model._blocks.named_children())[:-1]
     for _, block in non_final_blocks:
 
         leaky_relu = block._fwd_seq[-1]
