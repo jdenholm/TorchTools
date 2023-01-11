@@ -2,7 +2,7 @@
 
 import pytest
 
-from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResBlock
+from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResidualBlock
 from torch_tools.models._blocks_2d import UNetUpBlock, DownBlock, UpBlock
 
 
@@ -160,25 +160,25 @@ def test_double_conv_lr_slope_argument_types():
 def test_res_block_in_chans_arg_types():
     """Test the types accepted by the `in_chans` arg."""
     # Should work with ints of one or more
-    _ = ResBlock(in_chans=1)
+    _ = ResidualBlock(in_chans=1)
 
     # Should break with non-int
     with pytest.raises(TypeError):
-        _ = ResBlock(in_chans=1.0)
+        _ = ResidualBlock(in_chans=1.0)
     with pytest.raises(TypeError):
-        _ = ResBlock(in_chans=1.0j)
+        _ = ResidualBlock(in_chans=1.0j)
 
 
 def test_res_block_in_chans_arg_values():
     """Test the values accepted by the `in_chans` argument."""
     # Should work with ints of 1 or more
-    _ = ResBlock(in_chans=1)
+    _ = ResidualBlock(in_chans=1)
 
     # Should break with ints less than one
     with pytest.raises(ValueError):
-        _ = ResBlock(in_chans=0)
+        _ = ResidualBlock(in_chans=0)
     with pytest.raises(ValueError):
-        _ = ResBlock(in_chans=-1)
+        _ = ResidualBlock(in_chans=-1)
 
 
 def test_unet_up_block_in_chans_arg_types():

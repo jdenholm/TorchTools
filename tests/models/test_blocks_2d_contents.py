@@ -1,7 +1,7 @@
 """Tests for the contents of the blocks in `torch_tools.models._blocks_2d`"""
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU
 
-from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResBlock
+from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResidualBlock
 
 # pylint: disable=protected-access
 
@@ -144,7 +144,7 @@ def test_double_conv_block_out_conv_contents():
 
 def test_res_block_first_conv_contents():
     """The the contents of the first conv block."""
-    block = ResBlock(in_chans=123)
+    block = ResidualBlock(in_chans=123)
 
     first_conv = block.first_conv
 
@@ -183,7 +183,7 @@ def test_res_block_second_conv_contents():
     its output is added to the input, a normal relu is applied.
 
     """
-    block = ResBlock(in_chans=123)
+    block = ResidualBlock(in_chans=123)
 
     second_conv = block.second_conv
 

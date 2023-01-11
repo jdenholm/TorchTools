@@ -2,7 +2,7 @@
 
 from torch import rand  # pylint: disable=no-name-in-module
 
-from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResBlock
+from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResidualBlock
 from torch_tools.models._blocks_2d import DownBlock, UpBlock, UNetUpBlock
 
 
@@ -72,10 +72,10 @@ def test_double_conv_block_call_return_shapes():
 
 def test_res_block_call_return_shapes():
     """Test the return shapes produced by `ResBlock`."""
-    block = ResBlock(in_chans=123)
+    block = ResidualBlock(in_chans=123)
     assert block(rand(10, 123, 50, 100)).shape == (10, 123, 50, 100)
 
-    block = ResBlock(in_chans=111)
+    block = ResidualBlock(in_chans=111)
     assert block(rand(10, 111, 50, 100)).shape == (10, 111, 50, 100)
 
 

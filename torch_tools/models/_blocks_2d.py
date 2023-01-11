@@ -146,7 +146,7 @@ class DoubleConvBlock(Module):
         return self.out_conv(self.in_conv(batch))
 
 
-class ResBlock(Module):
+class ResidualBlock(Module):
     """Residual block.
 
     Parameters
