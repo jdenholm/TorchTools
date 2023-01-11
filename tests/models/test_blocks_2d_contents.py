@@ -110,7 +110,7 @@ def test_double_conv_block_in_conv_contents():
     """Test the contents of `DoubleConvBlock`'s `in_conv` are as expected."""
     block = DoubleConvBlock(in_chans=123, out_chans=321, lr_slope=0.123456)
 
-    in_conv = block._in_conv
+    in_conv = block.in_conv
 
     # Should have three layers in the in_conv block
     assert len(in_conv) == 3, "Wrong number of layers in in conv block."
@@ -128,7 +128,7 @@ def test_double_conv_block_out_conv_contents():
     """Test the contents of `DoubleConvBlock`'s `out_conv` are as expected."""
     block = DoubleConvBlock(in_chans=123, out_chans=321, lr_slope=0.123456)
 
-    out_conv = block._out_conv
+    out_conv = block.out_conv
 
     # Should have three layers in the in_conv block
     assert len(out_conv) == 3, "Wrong number of layers in in conv block."

@@ -114,14 +114,14 @@ class DoubleConvBlock(Module):
 
         """
         super().__init__()
-        self._in_conv = ConvBlock(
+        self.in_conv = ConvBlock(
             process_num_feats(in_chans),
             process_num_feats(out_chans),
             batch_norm=True,
             leaky_relu=True,
             lr_slope=process_negative_slope_arg(lr_slope),
         )
-        self._out_conv = ConvBlock(
+        self.out_conv = ConvBlock(
             process_num_feats(out_chans),
             process_num_feats(out_chans),
             batch_norm=True,
@@ -143,7 +143,7 @@ class DoubleConvBlock(Module):
             The result of passing `batch` through the model.
 
         """
-        return self._out_conv(self._in_conv(batch))
+        return self.out_conv(self.in_conv(batch))
 
 
 class ResBlock(Module):
