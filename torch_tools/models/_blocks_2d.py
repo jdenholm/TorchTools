@@ -219,12 +219,12 @@ class DownBlock(Module):
     ):
         """Build `DownBlock`."""
         super().__init__()
-        self._pool = self._pools[process_str_arg(pool).lower()](
+        self.pool = self._pools[process_str_arg(pool).lower()](
             kernel_size=2,
             stride=2,
             padding=0,
         )
-        self._conv = DoubleConvBlock(
+        self.double_conv = DoubleConvBlock(
             process_num_feats(in_chans),
             process_num_feats(out_chans),
             lr_slope=process_negative_slope_arg(lr_slope),
@@ -244,8 +244,8 @@ class DownBlock(Module):
             The result of passing `batch` through the block.
 
         """
-        downsampled = self._pool(batch)
-        return self._conv(downsampled)
+        downsampled = self.pool(batch)
+        return self.double_conv(downsampled)
 
     _pools = {"max": MaxPool2d, "avg": AvgPool2d}
 
