@@ -1,7 +1,7 @@
 """Two-dimensional convolutional encoder moder."""
 from typing import List
 
-from torch.nn import Module, Sequential
+from torch.nn import Sequential
 
 
 from torch_tools.models._blocks_2d import DownBlock
@@ -51,7 +51,7 @@ class Encoder2d(Sequential):
         num_blocks,
         pool_style: str,
         lr_slope: float,
-    ) -> List[Module]:
+    ) -> List[DownBlock]:
         """Get the encoding layers in a sequential.
 
         Parameters
