@@ -276,11 +276,11 @@ class UpBlock(Module):
     ):
         """Build `UpBlock`."""
         super().__init__()
-        self._upsample = self._get_upsampling_component(
+        self.upsample = self._get_upsampling_component(
             process_num_feats(in_chans),
             process_boolean_arg(bilinear),
         )
-        self._conv = DoubleConvBlock(
+        self.double_conv = DoubleConvBlock(
             process_num_feats(in_chans),
             process_num_feats(out_chans),
             lr_slope=process_negative_slope_arg(lr_slope),
@@ -333,8 +333,8 @@ class UpBlock(Module):
             Thee result of passing `batch` through the model.
 
         """
-        upsampled = self._upsample(batch)
-        return self._conv(upsampled)
+        upsampled = self.upsample(batch)
+        return self.double_conv(upsampled)
 
 
 class UNetUpBlock(Module):
