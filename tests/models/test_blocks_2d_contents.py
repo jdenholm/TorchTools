@@ -146,7 +146,7 @@ def test_res_block_first_conv_contents():
     """The the contents of the first conv block."""
     block = ResBlock(in_chans=123)
 
-    first_conv = block._first_conv
+    first_conv = block.first_conv
 
     assert isinstance(first_conv, ConvBlock)
 
@@ -185,7 +185,7 @@ def test_res_block_second_conv_contents():
     """
     block = ResBlock(in_chans=123)
 
-    second_conv = block._second_conv
+    second_conv = block.second_conv
 
     assert isinstance(second_conv, ConvBlock)
 
