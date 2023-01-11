@@ -67,8 +67,8 @@ class Encoder2d(Sequential):
 
         Returns
         -------
-        Sequential
-            The encoder's layers.
+        List[Module]
+            A list of the model's blocks.
 
         """
         chans = in_chans
