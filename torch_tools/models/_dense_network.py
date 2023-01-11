@@ -9,7 +9,7 @@ from torch_tools.models._blocks_1d import DenseBlock, InputBlock
 # pylint: disable=too-many-arguments
 
 
-class DenseNetwork(Module):
+class DenseNetwork(Sequential):
     """Dense, fully connected neural network.
 
     Parameters
@@ -47,20 +47,20 @@ class DenseNetwork(Module):
         negative_slope: float = 0.2,
     ):
         """Build `DenseClassifier`."""
-        super().__init__()
-
-        self._blocks = self._blocks_in_sequential(
-            in_feats,
-            out_feats,
-            hidden_sizes,
-            input_bnorm,
-            input_dropout,
-            hidden_dropout,
-            hidden_bnorm,
-            negative_slope,
+        super().__init__(
+            *self._list_all_blocks(
+                in_feats,
+                out_feats,
+                hidden_sizes,
+                input_bnorm,
+                input_dropout,
+                hidden_dropout,
+                hidden_bnorm,
+                negative_slope,
+            )
         )
 
-    def _blocks_in_sequential(
+    def _list_all_blocks(
         self,
         in_feats: int,
         out_feats: int,
@@ -226,19 +226,3 @@ class DenseNetwork(Module):
                 )
             )
         return blocks
-
-    def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the model.
-
-        Parameters
-        ----------
-        batch : Tensor
-            A mini-batch of inputs.
-
-        Returns
-        -------
-        Tensor
-            The result of passing `batch` through the model.
-
-        """
-        return self._blocks(batch)
