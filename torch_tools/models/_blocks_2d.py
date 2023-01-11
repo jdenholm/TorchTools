@@ -276,7 +276,7 @@ class UpBlock(Module):
     ):
         """Build `UpBlock`."""
         super().__init__()
-        self.upsample = self._get_upsampling_component(
+        self.upsample = self._get_upsampler(
             process_num_feats(in_chans),
             process_boolean_arg(bilinear),
         )
@@ -287,7 +287,7 @@ class UpBlock(Module):
         )
 
     @staticmethod
-    def _get_upsampling_component(in_chans: int, bilinear: bool) -> Module:
+    def _get_upsampler(in_chans: int, bilinear: bool) -> Module:
         """Return the upsampling component of the block.
 
         Parameters
