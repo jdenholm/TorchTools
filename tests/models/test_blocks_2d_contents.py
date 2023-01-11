@@ -17,22 +17,22 @@ def test_conv_block_contents_with_batchnorm_and_leaky_relu():
     )
 
     # Check the channels are set correctly
-    assert block._fwd[0].in_channels == 123, "Wrong input channels."
-    assert block._fwd[0].out_channels == 321, "Wrong output channels."
+    assert block[0].in_channels == 123, "Wrong input channels."
+    assert block[0].out_channels == 321, "Wrong output channels."
 
     # Check the right number of layers are in the block
-    assert len(block._fwd) == 3, "Wrong number of layers in the block."
+    assert len(block) == 3, "Wrong number of layers in the block."
 
     # Check the layers are in the right order
-    assert isinstance(block._fwd[0], Conv2d), "1st layer should be conv 2d."
-    assert isinstance(block._fwd[1], BatchNorm2d), "2nd layer should be bnorm."
-    assert isinstance(block._fwd[2], LeakyReLU), "3rd layer should be leaky relu."
+    assert isinstance(block[0], Conv2d), "1st layer should be conv 2d."
+    assert isinstance(block[1], BatchNorm2d), "2nd layer should be bnorm."
+    assert isinstance(block[2], LeakyReLU), "3rd layer should be leaky relu."
 
     # Check the batchnorm has the right number of features
-    assert block._fwd[1].num_features == 321, "Wrong num feats in batchnorm."
+    assert block[1].num_features == 321, "Wrong num feats in batchnorm."
 
     # Check the leaky relu's negative slope is set correctly
-    assert block._fwd[2].negative_slope == 0.12345, "Leaky ReLU slope wrong."
+    assert block[2].negative_slope == 0.12345, "Leaky ReLU slope wrong."
 
 
 def test_conv_block_contents_with_batchnorm_and_no_leaky_relu():
@@ -46,18 +46,18 @@ def test_conv_block_contents_with_batchnorm_and_no_leaky_relu():
     )
 
     # Check the channels are set correctly
-    assert block._fwd[0].in_channels == 123, "Wrong input channels."
-    assert block._fwd[0].out_channels == 321, "Wrong output channels."
+    assert block[0].in_channels == 123, "Wrong input channels."
+    assert block[0].out_channels == 321, "Wrong output channels."
 
     # Check the right number of layers are in the block
-    assert len(block._fwd) == 2, "Wrong number of layers in the block."
+    assert len(block) == 2, "Wrong number of layers in the block."
 
     # Check the layers are in the right order
-    assert isinstance(block._fwd[0], Conv2d), "1st layer should be conv 2d."
-    assert isinstance(block._fwd[1], BatchNorm2d), "2nd layer should be bnorm."
+    assert isinstance(block[0], Conv2d), "1st layer should be conv 2d."
+    assert isinstance(block[1], BatchNorm2d), "2nd layer should be bnorm."
 
     # Check the batchnorm has the right number of features
-    assert block._fwd[1].num_features == 321, "Wrong num feats in batchnorm."
+    assert block[1].num_features == 321, "Wrong num feats in batchnorm."
 
 
 def test_conv_block_contents_with_no_batchnorm_and_with_leaky_relu():
@@ -71,18 +71,18 @@ def test_conv_block_contents_with_no_batchnorm_and_with_leaky_relu():
     )
 
     # Check the channels are set correctly
-    assert block._fwd[0].in_channels == 123, "Wrong input channels."
-    assert block._fwd[0].out_channels == 321, "Wrong output channels."
+    assert block[0].in_channels == 123, "Wrong input channels."
+    assert block[0].out_channels == 321, "Wrong output channels."
 
     # Check the right number of layers are in the block
-    assert len(block._fwd) == 2, "Wrong number of layers in the block."
+    assert len(block) == 2, "Wrong number of layers in the block."
 
     # Check the layers are in the right order
-    assert isinstance(block._fwd[0], Conv2d), "1st layer should be conv 2d."
-    assert isinstance(block._fwd[1], LeakyReLU), "3rd layer should be leaky relu."
+    assert isinstance(block[0], Conv2d), "1st layer should be conv 2d."
+    assert isinstance(block[1], LeakyReLU), "3rd layer should be leaky relu."
 
     # Check the leaky relu's negative slope is set correctly
-    assert block._fwd[1].negative_slope == 0.12345, "Leaky ReLU slope wrong."
+    assert block[1].negative_slope == 0.12345, "Leaky ReLU slope wrong."
 
 
 def test_conv_block_contents_with_no_batchnorm_or_leaky_relu():
@@ -96,14 +96,14 @@ def test_conv_block_contents_with_no_batchnorm_or_leaky_relu():
     )
 
     # Check the channels are set correctly
-    assert block._fwd[0].in_channels == 123, "Wrong input channels."
-    assert block._fwd[0].out_channels == 321, "Wrong output channels."
+    assert block[0].in_channels == 123, "Wrong input channels."
+    assert block[0].out_channels == 321, "Wrong output channels."
 
     # Check the right number of layers are in the block
-    assert len(block._fwd) == 1, "Wrong number of layers in the block."
+    assert len(block) == 1, "Wrong number of layers in the block."
 
     # Check the layers are in the right order
-    assert isinstance(block._fwd[0], Conv2d), "1st layer should be conv 2d."
+    assert isinstance(block[0], Conv2d), "1st layer should be conv 2d."
 
 
 def test_double_conv_block_in_conv_contents():
@@ -113,15 +113,15 @@ def test_double_conv_block_in_conv_contents():
     in_conv = block._in_conv
 
     # Should have three layers in the in_conv block
-    assert len(in_conv._fwd) == 3, "Wrong number of layers in in conv block."
+    assert len(in_conv) == 3, "Wrong number of layers in in conv block."
 
-    assert in_conv._fwd[0].in_channels == 123, "Wrong number of input chans."
-    assert in_conv._fwd[0].out_channels == 321, "Wrong number of output chans."
-    assert in_conv._fwd[2].negative_slope == 0.123456, "Wrong negative slope."
+    assert in_conv[0].in_channels == 123, "Wrong number of input chans."
+    assert in_conv[0].out_channels == 321, "Wrong number of output chans."
+    assert in_conv[2].negative_slope == 0.123456, "Wrong negative slope."
 
-    assert isinstance(in_conv._fwd[0], Conv2d), "Should be Conv2d."
-    assert isinstance(in_conv._fwd[1], BatchNorm2d), "Should be BatchNorm2d."
-    assert isinstance(in_conv._fwd[2], LeakyReLU), "Should be LeakyReLU."
+    assert isinstance(in_conv[0], Conv2d), "Should be Conv2d."
+    assert isinstance(in_conv[1], BatchNorm2d), "Should be BatchNorm2d."
+    assert isinstance(in_conv[2], LeakyReLU), "Should be LeakyReLU."
 
 
 def test_double_conv_block_out_conv_contents():
@@ -131,15 +131,15 @@ def test_double_conv_block_out_conv_contents():
     out_conv = block._out_conv
 
     # Should have three layers in the in_conv block
-    assert len(out_conv._fwd) == 3, "Wrong number of layers in in conv block."
+    assert len(out_conv) == 3, "Wrong number of layers in in conv block."
 
-    assert out_conv._fwd[0].in_channels == 321, "Wrong number of input chans."
-    assert out_conv._fwd[0].out_channels == 321, "Wrong number of output chans."
-    assert out_conv._fwd[2].negative_slope == 0.123456, "Wrong negative slope."
+    assert out_conv[0].in_channels == 321, "Wrong number of input chans."
+    assert out_conv[0].out_channels == 321, "Wrong number of output chans."
+    assert out_conv[2].negative_slope == 0.123456, "Wrong negative slope."
 
-    assert isinstance(out_conv._fwd[0], Conv2d), "Should be Conv2d."
-    assert isinstance(out_conv._fwd[1], BatchNorm2d), "Should be BatchNorm2d."
-    assert isinstance(out_conv._fwd[2], LeakyReLU), "Should be LeakyReLU."
+    assert isinstance(out_conv[0], Conv2d), "Should be Conv2d."
+    assert isinstance(out_conv[1], BatchNorm2d), "Should be BatchNorm2d."
+    assert isinstance(out_conv[2], LeakyReLU), "Should be LeakyReLU."
 
 
 def test_res_block_first_conv_contents():
@@ -150,28 +150,28 @@ def test_res_block_first_conv_contents():
 
     assert isinstance(first_conv, ConvBlock)
 
-    assert len(first_conv._fwd) == 3, "There should be 3 layers in the block."
+    assert len(first_conv) == 3, "There should be 3 layers in the block."
 
     msg = "1st layer should be conv."
-    assert isinstance(first_conv._fwd[0], Conv2d), msg
+    assert isinstance(first_conv[0], Conv2d), msg
 
     msg = "2nd layer should be batchnorm."
-    assert isinstance(first_conv._fwd[1], BatchNorm2d), msg
+    assert isinstance(first_conv[1], BatchNorm2d), msg
 
     msg = "3rd layer should be leaky relu."
-    assert isinstance(first_conv._fwd[2], LeakyReLU), msg
+    assert isinstance(first_conv[2], LeakyReLU), msg
 
     msg = "Conv should have 123 input chans."
-    assert first_conv._fwd[0].in_channels == 123, msg
+    assert first_conv[0].in_channels == 123, msg
 
     msg = "Conv should have 123 output chans."
-    assert first_conv._fwd[0].out_channels == 123, msg
+    assert first_conv[0].out_channels == 123, msg
 
     msg = "Batchnorm should have 123 features."
-    assert first_conv._fwd[1].num_features == 123, msg
+    assert first_conv[1].num_features == 123, msg
 
     msg = "Leaky relu should have negative slope of 0.0."
-    assert first_conv._fwd[2].negative_slope == 0.0, msg
+    assert first_conv[2].negative_slope == 0.0, msg
 
 
 def test_res_block_second_conv_contents():
@@ -189,19 +189,19 @@ def test_res_block_second_conv_contents():
 
     assert isinstance(second_conv, ConvBlock)
 
-    assert len(second_conv._fwd) == 2, "There should be 2 layers in the block."
+    assert len(second_conv) == 2, "There should be 2 layers in the block."
 
     msg = "1st layer should be conv."
-    assert isinstance(second_conv._fwd[0], Conv2d), msg
+    assert isinstance(second_conv[0], Conv2d), msg
 
     msg = "2nd layer should be batchnorm."
-    assert isinstance(second_conv._fwd[1], BatchNorm2d), msg
+    assert isinstance(second_conv[1], BatchNorm2d), msg
 
     msg = "Conv should have 123 input chans."
-    assert second_conv._fwd[0].in_channels == 123, msg
+    assert second_conv[0].in_channels == 123, msg
 
     msg = "Conv should have 123 output chans."
-    assert second_conv._fwd[0].out_channels == 123, msg
+    assert second_conv[0].out_channels == 123, msg
 
     msg = "Batchnorm should have 123 features."
-    assert second_conv._fwd[1].num_features == 123, msg
+    assert second_conv[1].num_features == 123, msg

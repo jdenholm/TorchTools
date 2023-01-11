@@ -17,7 +17,7 @@ from torch_tools.models._argument_processing import (
 )
 
 
-class ConvBlock(Module):
+class ConvBlock(Sequential):
     """Single 2D convolutional block.
 
     Parameters
@@ -44,13 +44,14 @@ class ConvBlock(Module):
         lr_slope: float = 0.1,
     ):
         """Build `SingleConvBlock`."""
-        super().__init__()
-        self._fwd = self._layers(
-            process_num_feats(in_chans),
-            process_num_feats(out_chans),
-            process_boolean_arg(batch_norm),
-            process_boolean_arg(leaky_relu),
-            process_negative_slope_arg(lr_slope),
+        super().__init__(
+            *self._layers(
+                process_num_feats(in_chans),
+                process_num_feats(out_chans),
+                process_boolean_arg(batch_norm),
+                process_boolean_arg(leaky_relu),
+                process_negative_slope_arg(lr_slope),
+            )
         )
 
     @staticmethod
@@ -60,7 +61,7 @@ class ConvBlock(Module):
         batch_norm: bool,
         leaky_relu: bool,
         lr_slope: float,
-    ) -> Sequential:
+    ) -> List[Module]:
         """Stack the block's layers in a `Sequential`.
 
         Parameters
@@ -69,8 +70,8 @@ class ConvBlock(Module):
 
         Returns
         -------
-        Sequential
-            The block's layers in a `Sequential`.
+        List[Module]
+            The block's layers in a list.
 
         """
         layers: List[Module]
@@ -82,23 +83,7 @@ class ConvBlock(Module):
         if leaky_relu is True:
             layers.append(LeakyReLU(lr_slope))
 
-        return Sequential(*layers)
-
-    def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the model.
-
-        Parameters
-        ----------
-        batch : Tensor
-            A mini-batch of inputs.
-
-        Returns
-        -------
-        Tensor
-            The result of passing `batch` through the model.
-
-        """
-        return self._fwd(batch)
+        return layers
 
 
 class DoubleConvBlock(Module):
