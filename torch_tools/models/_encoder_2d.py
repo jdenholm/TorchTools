@@ -1,8 +1,8 @@
 """Two-dimensional convolutional encoder moder."""
+from typing import List
 
 from torch.nn import Module, Sequential
 
-from torch import Tensor
 
 from torch_tools.models._blocks_2d import DownBlock
 from torch_tools.models._argument_processing import (
@@ -12,7 +12,7 @@ from torch_tools.models._argument_processing import (
 )
 
 
-class Encoder2d(Module):
+class Encoder2d(Sequential):
     """Encoder model for image-like inputs.
 
     Parameters
@@ -36,12 +36,13 @@ class Encoder2d(Module):
         lr_slope: float,
     ):
         """Build `Encoder`."""
-        super().__init__()
-        self._fwd = self._get_blocks(
-            process_num_feats(in_chans),
-            process_num_feats(num_blocks),
-            process_str_arg(pool_style),
-            process_negative_slope_arg(lr_slope),
+        super().__init__(
+            *self._get_blocks(
+                process_num_feats(in_chans),
+                process_num_feats(num_blocks),
+                process_str_arg(pool_style),
+                process_negative_slope_arg(lr_slope),
+            )
         )
 
     def _get_blocks(
@@ -50,7 +51,7 @@ class Encoder2d(Module):
         num_blocks,
         pool_style: str,
         lr_slope: float,
-    ) -> Sequential:
+    ) -> List[Module]:
         """Get the encoding layers in a sequential.
 
         Parameters
@@ -75,20 +76,4 @@ class Encoder2d(Module):
         for _ in range(num_blocks):
             blocks.append(DownBlock(chans, chans * 2, pool_style, lr_slope))
             chans *= 2
-        return Sequential(*blocks)
-
-    def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the model.
-
-        Parameters
-        ----------
-        batch : Tensor
-            A mini-batch of inputs.
-
-        Returns
-        -------
-        Tensor
-            The result of passing `batch` through the model.
-
-        """
-        return self._fwd(batch)
+        return blocks
