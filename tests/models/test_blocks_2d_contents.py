@@ -1,7 +1,7 @@
 """Tests for the contents of the blocks in `torch_tools.models._blocks_2d`"""
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU
 
-from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
+from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResBlock
 
 # pylint: disable=protected-access
 
@@ -140,3 +140,68 @@ def test_double_conv_block_out_conv_contents():
     assert isinstance(out_conv._fwd[0], Conv2d), "Should be Conv2d."
     assert isinstance(out_conv._fwd[1], BatchNorm2d), "Should be BatchNorm2d."
     assert isinstance(out_conv._fwd[2], LeakyReLU), "Should be LeakyReLU."
+
+
+def test_res_block_first_conv_contents():
+    """The the contents of the first conv block."""
+    block = ResBlock(in_chans=123)
+
+    first_conv = block._first_conv
+
+    assert isinstance(first_conv, ConvBlock)
+
+    assert len(first_conv._fwd) == 3, "There should be 3 layers in the block."
+
+    msg = "1st layer should be conv."
+    assert isinstance(first_conv._fwd[0], Conv2d), msg
+
+    msg = "2nd layer should be batchnorm."
+    assert isinstance(first_conv._fwd[1], BatchNorm2d), msg
+
+    msg = "3rd layer should be leaky relu."
+    assert isinstance(first_conv._fwd[2], LeakyReLU), msg
+
+    msg = "Conv should have 123 input chans."
+    assert first_conv._fwd[0].in_channels == 123, msg
+
+    msg = "Conv should have 123 output chans."
+    assert first_conv._fwd[0].out_channels == 123, msg
+
+    msg = "Batchnorm should have 123 features."
+    assert first_conv._fwd[1].num_features == 123, msg
+
+    msg = "Leaky relu should have negative slope of 0.0."
+    assert first_conv._fwd[2].negative_slope == 0.0, msg
+
+
+def test_res_block_second_conv_contents():
+    """The the contents of the second conv block.
+
+    Notes
+    -----
+    The second conv block should not have a leaky relu at the end. Once
+    its output is added to the input, a normal relu is applied.
+
+    """
+    block = ResBlock(in_chans=123)
+
+    second_conv = block._second_conv
+
+    assert isinstance(second_conv, ConvBlock)
+
+    assert len(second_conv._fwd) == 2, "There should be 2 layers in the block."
+
+    msg = "1st layer should be conv."
+    assert isinstance(second_conv._fwd[0], Conv2d), msg
+
+    msg = "2nd layer should be batchnorm."
+    assert isinstance(second_conv._fwd[1], BatchNorm2d), msg
+
+    msg = "Conv should have 123 input chans."
+    assert second_conv._fwd[0].in_channels == 123, msg
+
+    msg = "Conv should have 123 output chans."
+    assert second_conv._fwd[0].out_channels == 123, msg
+
+    msg = "Batchnorm should have 123 features."
+    assert second_conv._fwd[1].num_features == 123, msg
