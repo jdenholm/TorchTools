@@ -48,27 +48,27 @@ class EncoderDecoder2d(Module):
         """Build `EncoderDecoder2d`."""
         super().__init__()
 
-        self._in_conv = DoubleConvBlock(
+        self.in_conv = DoubleConvBlock(
             process_num_feats(in_chans),
             process_num_feats(features_start),
             lr_slope,
         )
 
-        self._encoder = Encoder2d(
+        self.encoder = Encoder2d(
             features_start,
             num_layers - 1,
             pool_style,
             lr_slope,
         )
 
-        self._decoder = Decoder2d(
+        self.decoder = Decoder2d(
             (2 ** (num_layers - 1)) * features_start,
             num_layers - 1,
             bilinear,
             lr_slope,
         )
 
-        self._out_conv = Conv2d(
+        self.out_conv = Conv2d(
             in_channels=features_start,
             out_channels=in_chans,  # Return should have `in_chans` channels.
             kernel_size=1,
@@ -103,9 +103,9 @@ class EncoderDecoder2d(Module):
         batch_spatial_dims_power_of_2(batch)
 
         with set_grad_enabled(not frozen_encoder):
-            encoded = self._in_conv(batch)
-            encoded = self._encoder(encoded)
+            encoded = self.in_conv(batch)
+            encoded = self.encoder(encoded)
         with set_grad_enabled(not frozen_decoder):
-            decoded = self._decoder(encoded)
-            decoded = self._out_conv(decoded)
+            decoded = self.decoder(encoded)
+            decoded = self.out_conv(decoded)
         return decoded
