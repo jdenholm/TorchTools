@@ -366,8 +366,8 @@ class UNetUpBlock(Module):
         self._in_chans = self._process_in_chans(in_chans)
         self._out_chans = process_num_feats(out_chans)
 
-        self._upsample = self._get_upsample_component(process_boolean_arg(bilinear))
-        self._double_conv = DoubleConvBlock(
+        self.upsample = self._get_upsampler(process_boolean_arg(bilinear))
+        self.double_conv = DoubleConvBlock(
             self._in_chans,
             self._out_chans,
             lr_slope=lr_slope,
@@ -406,7 +406,7 @@ class UNetUpBlock(Module):
 
         return in_chans
 
-    def _get_upsample_component(self, bilinear: bool) -> Module:
+    def _get_upsampler(self, bilinear: bool) -> Module:
         """Return the upsampling layer.
 
         Parameters
@@ -532,7 +532,7 @@ class UNetUpBlock(Module):
         self._to_upsample_channel_check(to_upsample)
         self._input_size_check(to_upsample, down_features)
 
-        upsampled = self._upsample(to_upsample)
+        upsampled = self.upsample(to_upsample)
 
         height_diff = down_features.shape[2] - upsampled.shape[2]
         width_diff = down_features.shape[3] - upsampled.shape[3]
@@ -548,4 +548,4 @@ class UNetUpBlock(Module):
 
         # Concatenate along the channel dimension (dim=1) (N, C, H, W)
         concatenated = cat([down_features, upsampled], dim=1)
-        return self._double_conv(concatenated)
+        return self.double_conv(concatenated)
