@@ -1,7 +1,10 @@
 """Tests for the contents of the blocks in `torch_tools.models._blocks_2d`"""
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU
 
-from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResidualBlock
+from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
+from torch_tools.models._blocks_2d import ResidualBlock, DownBlock
+
+from torch.nn import MaxPool2d, AvgPool2d
 
 # pylint: disable=protected-access
 
@@ -142,7 +145,7 @@ def test_double_conv_block_out_conv_contents():
     assert isinstance(out_conv[2], LeakyReLU), "Should be LeakyReLU."
 
 
-def test_res_block_first_conv_contents():
+def test_residual_block_first_conv_contents():
     """The the contents of the first conv block."""
     block = ResidualBlock(in_chans=123)
 
@@ -174,7 +177,7 @@ def test_res_block_first_conv_contents():
     assert first_conv[2].negative_slope == 0.0, msg
 
 
-def test_res_block_second_conv_contents():
+def test_residual_block_second_conv_contents():
     """The the contents of the second conv block.
 
     Notes
@@ -205,3 +208,43 @@ def test_res_block_second_conv_contents():
 
     msg = "Batchnorm should have 123 features."
     assert second_conv[1].num_features == 123, msg
+
+
+def test_down_block_contents_pool_assignment():
+    """Test pool assignment in `DownBlock`."""
+    # Test with max pool
+    block = DownBlock(in_chans=123, out_chans=321, pool="max", lr_slope=0.1)
+    assert isinstance(block.pool, MaxPool2d), "Should be max pool."
+    assert block.pool.kernel_size == 2, "Kernel size should be 2."
+    assert block.pool.stride == 2, "Stride should be 2."
+
+    # Test with average pool
+    block = DownBlock(in_chans=123, out_chans=321, pool="avg", lr_slope=0.1)
+    assert isinstance(block.pool, AvgPool2d), "Should be avg pool."
+    assert block.pool.kernel_size == 2, "Kernel size should be 2."
+    assert block.pool.stride == 2, "Stride should be 2."
+
+
+def test_down_block_double_conv_contents():
+    """Test the contents of the `DoubleConv` block in `DownBlock`."""
+    block = DownBlock(in_chans=123, out_chans=321, pool="max", lr_slope=0.1234)
+
+    in_conv = block.double_conv.in_conv
+    assert isinstance(in_conv[0], Conv2d), "1st layer should be conv"
+    assert isinstance(in_conv[1], BatchNorm2d), "2nd layer should be batchnorm"
+    assert isinstance(in_conv[2], LeakyReLU), "3rd layer should be leaky relu"
+
+    assert in_conv[0].in_channels == 123
+    assert in_conv[0].out_channels == 321
+    assert in_conv[1].num_features == 321
+    assert in_conv[2].negative_slope == 0.1234
+
+    out_conv = block.double_conv.out_conv
+    assert isinstance(out_conv[0], Conv2d), "Should be conv"
+    assert isinstance(out_conv[1], BatchNorm2d), "Should be batchnorm"
+    assert isinstance(out_conv[2], LeakyReLU), "Should be leaky relu"
+
+    assert out_conv[0].in_channels == 321
+    assert out_conv[0].out_channels == 321
+    assert out_conv[1].num_features == 321
+    assert out_conv[2].negative_slope == 0.1234
