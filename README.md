@@ -170,32 +170,22 @@ ConvNet2d(
     (1): Flatten(start_dim=1, end_dim=-1)
   )
   (_dense): DenseNetwork(
-    (_input_block): InputBlock(
-      (_fwd_seq): Sequential()
+    (0): DenseBlock(
+      (0): Linear(in_features=50176, out_features=1024, bias=True)
+      (1): Dropout(p=0.25, inplace=False)
+      (2): LeakyReLU(negative_slope=0.2)
     )
-    (_dense_blocks): Sequential(
-      (0): DenseBlock(
-        (_fwd_seq): Sequential(
-          (0): Linear(in_features=50176, out_features=1024, bias=True)
-          (1): Dropout(p=0.25, inplace=False)
-          (2): LeakyReLU(negative_slope=0.2)
-        )
-      )
-      (1): DenseBlock(
-        (_fwd_seq): Sequential(
-          (0): Linear(in_features=1024, out_features=1024, bias=True)
-          (1): Dropout(p=0.25, inplace=False)
-          (2): LeakyReLU(negative_slope=0.2)
-        )
-      )
-      (2): DenseBlock(
-        (_fwd_seq): Sequential(
-          (0): Linear(in_features=1024, out_features=512, bias=True)
-        )
-      )
+    (1): DenseBlock(
+      (0): Linear(in_features=1024, out_features=1024, bias=True)
+      (1): Dropout(p=0.25, inplace=False)
+      (2): LeakyReLU(negative_slope=0.2)
+    )
+    (2): DenseBlock(
+      (0): Linear(in_features=1024, out_features=512, bias=True)
     )
   )
 )
+
 ```
 Another useful feature of `ConvNet2d` if the ability to _freeze_ the encoder—that is to say, disable gradients in the encoder in order take full advantage of the pretrained weights (transfer learning). For example:
 ```python
