@@ -1,4 +1,4 @@
-"""Test the contents of blocks in `torch_tools.models._blocks1d.`"""
+"""Test the contents of blocks in `torch_tools.models._blocks_1d.`"""
 # pylint: disable=protected-access
 
 from torch.nn import Linear, BatchNorm1d, LeakyReLU, Dropout
@@ -16,20 +16,15 @@ def test_contents_of_dense_block_when_full():
         final_block=False,
     )
 
-    msg = "There should be four layers in the block."
-    assert len(block._fwd_seq) == 4, msg
+    assert len(block) == 4, "There should be four layers in the block."
 
-    msg = "First layer should be linear."
-    assert isinstance((block._fwd_seq[0]), Linear), msg
+    assert isinstance((block[0]), Linear), "1st layer should be linear."
 
-    msg = "Second layer should be batch norm."
-    assert isinstance(block._fwd_seq[1], BatchNorm1d)
+    assert isinstance(block[1], BatchNorm1d), "2nd layer should be batch norm."
 
-    msg = "Third layer should be dropout."
-    assert isinstance(block._fwd_seq[2], Dropout)
+    assert isinstance(block[2], Dropout), "3rd layer should be dropout."
 
-    msg = "Final layer should be leaky relu."
-    assert isinstance(block._fwd_seq[3], LeakyReLU)
+    assert isinstance(block[3], LeakyReLU), "4th layer should be leaky relu."
 
 
 def test_contents_of_dense_block_with_no_batchnorm():
@@ -42,17 +37,13 @@ def test_contents_of_dense_block_with_no_batchnorm():
         final_block=False,
     )
 
-    msg = "There should be three layers in the block."
-    assert len(block._fwd_seq) == 3, msg
+    assert len(block) == 3, "There should be three layers in the block."
 
-    msg = "First layer should be linear."
-    assert isinstance((block._fwd_seq[0]), Linear), msg
+    assert isinstance((block[0]), Linear), "1st layer should be linear."
 
-    msg = "Second layer should be dropout."
-    assert isinstance(block._fwd_seq[1], Dropout)
+    assert isinstance(block[1], Dropout), "2nd layer should be dropout."
 
-    msg = "Final layer should be leaky relu."
-    assert isinstance(block._fwd_seq[2], LeakyReLU)
+    assert isinstance(block[2], LeakyReLU), "3rd layer should be leaky relu."
 
 
 def test_contents_of_dense_block_with_no_dropout():
@@ -65,17 +56,13 @@ def test_contents_of_dense_block_with_no_dropout():
         final_block=False,
     )
 
-    msg = "There should be three layers in the block."
-    assert len(block._fwd_seq) == 3, msg
+    assert len(block) == 3, "There should be three layers in the block."
 
-    msg = "First layer should be linear."
-    assert isinstance((block._fwd_seq[0]), Linear), msg
+    assert isinstance((block[0]), Linear), "1st layer should be linear."
 
-    msg = "Second layer should be batch norm."
-    assert isinstance(block._fwd_seq[1], BatchNorm1d)
+    assert isinstance(block[1], BatchNorm1d), "2nd layer should be batch norm."
 
-    msg = "Final layer should be leaky relu."
-    assert isinstance(block._fwd_seq[2], LeakyReLU)
+    assert isinstance(block[2], LeakyReLU), "3rd layer should be leaky relu."
 
 
 def test_contents_of_dense_block_as_final_block():
@@ -83,74 +70,63 @@ def test_contents_of_dense_block_as_final_block():
     block = DenseBlock(10, 2, final_block=True)
 
     msg = "There should be one layersin the block."
-    assert len(block._fwd_seq) == 1, msg
+    assert len(block) == 1, msg
 
     msg = "First layer should be linear."
-    assert isinstance((block._fwd_seq[0]), Linear), msg
+    assert isinstance((block[0]), Linear), msg
 
 
 def test_dropout_probability():
     """Test the dropout probability value is correctly assigned."""
     block = DenseBlock(10, 2, dropout_prob=0.1234)
-    assert block._fwd_seq[2].p == 0.1234, "Dropout prob not correct."
+    assert block[2].p == 0.1234, "Dropout prob not correct."
 
     block = DenseBlock(10, 2, dropout_prob=0.987654321)
-    assert block._fwd_seq[2].p == 0.987654321, "Dropout prob not correct."
+    assert block[2].p == 0.987654321, "Dropout prob not correct."
 
 
 def test_leaky_relu_slope_value_assignment():
     """Test the slope of the leaky relu layer."""
     block = DenseBlock(10, 2, negative_slope=0.1234)
-    assert block._fwd_seq[3].negative_slope == 0.1234, "Slope not correct."
+    assert block[3].negative_slope == 0.1234, "Slope not correct."
 
     block = DenseBlock(10, 2, negative_slope=0.98765432)
-    assert block._fwd_seq[3].negative_slope == 0.98765432, "Slope not correct."
+    assert block[3].negative_slope == 0.98765432, "Slope not correct."
 
 
 def test_contents_of_input_block_when_full():
     """Test the contents of `InputBlock` when full."""
     block = InputBlock(in_feats=10, batch_norm=True, dropout=0.5)
 
-    # There should be three layers in the block
-    assert len(block._fwd_seq) == 2, "There should be 2 layers in the block."
+    assert len(block) == 2, "There should be 2 layers in the block."
 
-    # The first layer should be a batchnorm
-    msg = "First layer should be batchnorm."
-    assert isinstance(block._fwd_seq[0], BatchNorm1d), msg
+    assert isinstance(block[0], BatchNorm1d), "First layer should be batchnorm."
 
-    # The second layer should be a dropout
-    msg = "Second layer should be a dropout."
-    assert isinstance(block._fwd_seq[1], Dropout), msg
+    assert isinstance(block[1], Dropout), "Second layer should be a dropout."
 
 
 def test_contents_of_input_block_with_batchnorm_only():
     """Test the contents of `InputBlock` with just a batch-norm."""
     block = InputBlock(in_feats=10, batch_norm=True, dropout=0.0)
 
-    # There should be three layers in the block
-    assert len(block._fwd_seq) == 1, "There should be 1 layer in the block."
+    assert len(block) == 1, "There should be 1 layer in the block."
 
-    # The first layer should be a batchnorm
-    msg = "First layer should be batchnorm."
-    assert isinstance(block._fwd_seq[0], BatchNorm1d), msg
+    assert isinstance(block[0], BatchNorm1d), "First layer should be batchnorm."
 
 
 def test_contents_of_input_block_with_dropout_only():
     """Test the contents of `InputBlock` with just a dropout."""
     block = InputBlock(in_feats=10, batch_norm=False, dropout=0.5)
 
-    # There should be three layers in the block
-    assert len(block._fwd_seq) == 1, "There should be 2 layers in the block."
+    assert len(block) == 1, "There should be 2 layers in the block."
 
-    # The second layer should be a dropout
-    msg = "Second layer should be a dropout."
-    assert isinstance(block._fwd_seq[0], Dropout), msg
+    assert isinstance(block[0], Dropout), "Second layer should be a dropout."
 
 
 def test_input_block_dropout_prob():
     """Test assingment of the dropout probability `InputBlock`."""
     block = InputBlock(in_feats=10, batch_norm=True, dropout=0.1234)
-    assert block._fwd_seq[1].p == 0.1234, "Unexpected dropout prob."
+    assert block[1].p == 0.1234, "Unexpected dropout prob."
 
     block = InputBlock(in_feats=10, batch_norm=True, dropout=0.4321)
-    assert block._fwd_seq[1].p == 0.4321, "Unexpected dropout prob."
+    assert block[1].p == 0.4321, "Unexpected dropout prob."

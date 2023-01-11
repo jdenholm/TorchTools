@@ -1,7 +1,6 @@
 """One dimensional neural network blocks."""
 from typing import List
 
-from torch import Tensor
 from torch.nn import Module, Sequential, Linear, BatchNorm1d, Dropout
 from torch.nn import LeakyReLU
 
@@ -13,7 +12,7 @@ from torch_tools.models._argument_processing import process_negative_slope_arg
 # pylint: disable=too-many-arguments
 
 
-class DenseBlock(Module):
+class DenseBlock(Sequential):
     """Fully connected dense block.
 
     Linear -> BatchNorm (optional) -> Dropout (optional)
@@ -47,14 +46,15 @@ class DenseBlock(Module):
         negative_slope: float = 0.2,
     ):
         """Build `DenseBlock`."""
-        super().__init__()
-        self._fwd_seq = self._get_layers(
-            process_num_feats(in_feats),
-            process_num_feats(out_feats),
-            process_boolean_arg(batch_norm),
-            process_dropout_prob(dropout_prob),
-            process_boolean_arg(final_block),
-            process_negative_slope_arg(negative_slope),
+        super().__init__(
+            *self._get_layers(
+                process_num_feats(in_feats),
+                process_num_feats(out_feats),
+                process_boolean_arg(batch_norm),
+                process_dropout_prob(dropout_prob),
+                process_boolean_arg(final_block),
+                process_negative_slope_arg(negative_slope),
+            )
         )
 
     @staticmethod
@@ -65,7 +65,7 @@ class DenseBlock(Module):
         dropout_prob: float,
         final: bool,
         negative_slope: float,
-    ) -> Sequential:
+    ) -> List[Module]:
         """Return the block's layers in a `Sequential`.
 
         Parameters
@@ -85,8 +85,8 @@ class DenseBlock(Module):
 
         Returns
         -------
-        Sequential
-            The block's layers in a `Sequential`.
+        List[Module]
+            A list of the block's layers.
 
         """
         layer_list: List[Module]
@@ -101,26 +101,10 @@ class DenseBlock(Module):
         if final is False:
             layer_list.append(LeakyReLU(negative_slope=negative_slope))
 
-        return Sequential(*layer_list)
-
-    def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the block.
-
-        Parameters
-        ----------
-        batch : Tensor
-            Mini-batch of inputs.
-
-        Returns
-        -------
-        Tensor
-            The result of passing `batch` through the block.
-
-        """
-        return self._fwd_seq(batch)
+        return layer_list
 
 
-class InputBlock(Module):
+class InputBlock(Sequential):
     """Block for modifying the inputs before they pass through `DenseNetwork`.
 
     Parameters
@@ -136,11 +120,12 @@ class InputBlock(Module):
 
     def __init__(self, in_feats: int, batch_norm: bool, dropout: float):
         """Build `InputBlock`."""
-        super().__init__()
-        self._fwd_seq = self._get_layers(
-            process_num_feats(in_feats),
-            process_boolean_arg(batch_norm),
-            process_dropout_prob(dropout),
+        super().__init__(
+            *self._get_layers(
+                process_num_feats(in_feats),
+                process_boolean_arg(batch_norm),
+                process_dropout_prob(dropout),
+            )
         )
 
     @staticmethod
@@ -148,7 +133,7 @@ class InputBlock(Module):
         in_feats: int,
         batch_norm: bool,
         dropout: float,
-    ) -> Sequential:
+    ) -> List[Module]:
         """Get the block's layers.
 
         Parameters
@@ -162,8 +147,8 @@ class InputBlock(Module):
 
         Returns
         -------
-        Sequential
-            The block's layers in a `Sequential`.
+        List[Module]
+            A list of the block's layers.
 
         """
         layers: List[Module]
@@ -172,20 +157,4 @@ class InputBlock(Module):
             layers.append(BatchNorm1d(in_feats))
         if dropout != 0:
             layers.append(Dropout(p=dropout))
-        return Sequential(*layers)
-
-    def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the block.
-
-        Parameters
-        ----------
-        batch : Tensor
-            A mini-batch of inputs
-
-        Returns
-        -------
-        Tensor
-            The result of passing `batch` through the block.
-
-        """
-        return self._fwd_seq(batch)
+        return layers

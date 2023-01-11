@@ -19,16 +19,11 @@ def test_full_input_block_contents():
 
     in_block = model._blocks[0]
 
-    # There should be two layers in the input block
-    assert len(in_block._fwd_seq) == 2, "Expected two layers in input block."
+    assert len(in_block) == 2, "Expected two layers in input block."
 
-    # The first layer in the input block should be BatchNorm1d
-    msg = "First layer should be BatchNorm1d."
-    assert isinstance(in_block._fwd_seq[0], BatchNorm1d), msg
+    assert isinstance(in_block[0], BatchNorm1d), "1st layer should be batchnorm."
 
-    # The second layer in the input block should be Dropout.
-    msg = "Second layer should be Dropout"
-    assert isinstance(in_block._fwd_seq[1], Dropout), msg
+    assert isinstance(in_block[1], Dropout), "2nd layer should be Dropout"
 
 
 def test_input_block_contents_with_batchnorm_only():
@@ -47,12 +42,9 @@ def test_input_block_contents_with_batchnorm_only():
 
     in_block = model._blocks[0]
 
-    # There should only be one layer in the input block
-    assert len(in_block._fwd_seq) == 1, "Expected one layer in input block."
+    assert len(in_block) == 1, "Expected one layer in input block."
 
-    # The only layer in input block should be a BatchNorm1d
-    msg = "First layer should be BatchNorm1d"
-    assert isinstance(in_block._fwd_seq[0], BatchNorm1d), msg
+    assert isinstance(in_block[0], BatchNorm1d), "1st layer should be batchnorm"
 
 
 def test_input_block_contents_with_dropout_only():
@@ -70,24 +62,21 @@ def test_input_block_contents_with_dropout_only():
 
     in_block = model._blocks[0]
 
-    # There should only be one layer in the input block
-    assert len(in_block._fwd_seq) == 1, "Expected one layer in input block."
+    assert len(in_block) == 1, "Expected one layer in input block."
 
-    # The only layer in input block should be a Dropout
-    msg = "First layer should be BatchNorm1d"
-    assert isinstance(in_block._fwd_seq[0], Dropout), msg
+    assert isinstance(in_block[0], Dropout), "1st layer should be BatchNorm1d"
 
 
 def test_input_batchnorm_number_of_feats_assignment():
     """Test the input batchnorm layer is assigned correct number of feats."""
     msg = "Unexpected number of batchnorm features."
     model = DenseNetwork(123, 2, input_bnorm=True)
-    input_bnorm = model._blocks[0]._fwd_seq[0]
+    input_bnorm = model._blocks[0][0]
     assert input_bnorm.num_features == 123, msg
 
     msg = "Unexpected number of batchnorm features."
     model = DenseNetwork(321, 2, input_bnorm=True)
-    input_bnorm = model._blocks[0]._fwd_seq[0]
+    input_bnorm = model._blocks[0][0]
     assert input_bnorm.num_features == 321, msg
 
 
@@ -96,13 +85,13 @@ def test_input_block_dropout_probability_assignment():
     model = DenseNetwork(
         in_feats=10, out_feats=2, input_bnorm=True, input_dropout=0.123456
     )
-    input_dropout_prob = model._blocks[0]._fwd_seq[1].p
+    input_dropout_prob = model._blocks[0][1].p
     assert input_dropout_prob == 0.123456, "Dropout prob incorrectly assigned."
 
     model = DenseNetwork(
         in_feats=10, out_feats=2, input_bnorm=True, input_dropout=0.654321
     )
-    input_dropout_prob = model._blocks[0]._fwd_seq[1].p
+    input_dropout_prob = model._blocks[0][1].p
     assert input_dropout_prob == 0.654321, "Dropout prob incorrectly assigned."
 
 
@@ -200,10 +189,10 @@ def test_linear_layer_sizes_in_dense_blocks_with_no_hidden_layers():
         input_dropout=0.0,
     )
     msg = "The linear layer should have 10 input features."
-    assert model._blocks[0]._fwd_seq[0].in_features == 10, msg
+    assert model._blocks[0][0].in_features == 10, msg
 
     msg = "The linear layer should have 2 output features."
-    assert model._blocks[0]._fwd_seq[0].out_features == 2, msg
+    assert model._blocks[0][0].out_features == 2, msg
 
 
 def test_linear_layer_sizes_in_dense_blocks_with_hidden_layers():
@@ -232,10 +221,10 @@ def test_linear_layer_sizes_in_dense_blocks_with_hidden_layers():
     for _, module in model._blocks.named_children():
 
         msg = "Unexpected number of input features in linear layer."
-        assert module._fwd_seq[0].in_features == next(in_sizes), msg
+        assert module[0].in_features == next(in_sizes), msg
 
         msg = "Unexpected number of output features in linear layer."
-        assert module._fwd_seq[0].out_features == next(out_sizes), msg
+        assert module[0].out_features == next(out_sizes), msg
 
 
 def test_hidden_block_contents_with_dropout_and_batchnorm():
@@ -268,19 +257,19 @@ def test_hidden_block_contents_with_dropout_and_batchnorm():
     for _, block in non_final_blocks:
 
         msg = "Each non-final block should contain four layers."
-        assert len(block._fwd_seq) == 4, msg
+        assert len(block) == 4, msg
 
         msg = "First layer of dense block should be Linear."
-        assert isinstance(block._fwd_seq[0], Linear), msg
+        assert isinstance(block[0], Linear), msg
 
         msg = "Second layer of dense block should be BatchNorm1d."
-        assert isinstance(block._fwd_seq[1], BatchNorm1d), msg
+        assert isinstance(block[1], BatchNorm1d), msg
 
         msg = "Third layer of dense block should be Dropout."
-        assert isinstance(block._fwd_seq[2], Dropout)
+        assert isinstance(block[2], Dropout), msg
 
         msg = "Fourth layer of dense block should be LeakyReLU."
-        assert isinstance(block._fwd_seq[3], LeakyReLU), msg
+        assert isinstance(block[3], LeakyReLU), msg
 
 
 def test_hidden_block_contents_with_batchnorm_and_no_dropout():
@@ -311,16 +300,16 @@ def test_hidden_block_contents_with_batchnorm_and_no_dropout():
     for _, block in non_final_blocks:
 
         msg = "Each non-final block should contain three layers."
-        assert len(block._fwd_seq) == 3, msg
+        assert len(block) == 3, msg
 
         msg = "The first layer of the dense block should be a Linear."
-        assert isinstance(block._fwd_seq[0], Linear), msg
+        assert isinstance(block[0], Linear), msg
 
         msg = "The second layer of the dense block should be BatchNorm1d."
-        assert isinstance(block._fwd_seq[1], BatchNorm1d), msg
+        assert isinstance(block[1], BatchNorm1d), msg
 
         msg = "The final layer of the dense block should be LeakyReLU."
-        assert isinstance(block._fwd_seq[2], LeakyReLU), msg
+        assert isinstance(block[2], LeakyReLU), msg
 
 
 def test_hidden_block_contents_with_dropout_and_no_batchnorm():
@@ -351,16 +340,16 @@ def test_hidden_block_contents_with_dropout_and_no_batchnorm():
     for _, block in non_final_blocks:
 
         msg = "There should be three layers in the block."
-        assert len(block._fwd_seq) == 3, msg
+        assert len(block) == 3, msg
 
         msg = "The first layer of the dense block should be Linear."
-        assert isinstance(block._fwd_seq[0], Linear), msg
+        assert isinstance(block[0], Linear), msg
 
         msg = "The second layer of the dense block should be Dropout."
-        assert isinstance(block._fwd_seq[1], Dropout), msg
+        assert isinstance(block[1], Dropout), msg
 
         msg = "The final layer of the dense block should be LeakyReLU."
-        assert isinstance(block._fwd_seq[2], LeakyReLU), msg
+        assert isinstance(block[2], LeakyReLU), msg
 
 
 def test_hidden_block_contents_with_no_dropout_and_no_batch_norm():
@@ -391,13 +380,13 @@ def test_hidden_block_contents_with_no_dropout_and_no_batch_norm():
     for _, block in non_final_blocks:
 
         msg = "The dense block should contain two layers."
-        assert len(block._fwd_seq) == 2, msg
+        assert len(block) == 2, msg
 
         msg = "The first layer of the dense block should be a Linear."
-        assert isinstance(block._fwd_seq[0], Linear), msg
+        assert isinstance(block[0], Linear), msg
 
         msg = "The final layer of the dense block should be LeakyReLU."
-        assert isinstance(block._fwd_seq[1], LeakyReLU), msg
+        assert isinstance(block[1], LeakyReLU), msg
 
 
 def test_hidden_batchnorm_number_of_features_are_correct():
@@ -426,7 +415,7 @@ def test_hidden_batchnorm_number_of_features_are_correct():
     for (_, block), bnorm_feats in zip(non_final_blocks, hidden_sizes):
 
         msg = "Unexpected number of features in hidden block's batch norm."
-        batch_norm = block._fwd_seq[1]
+        batch_norm = block[1]
         assert batch_norm.num_features == bnorm_feats, msg
 
 
@@ -454,7 +443,7 @@ def test_hidden_block_dropout_probability_assignment():
 
     for _, block in non_final_blocks:
 
-        dropout_layer = block._fwd_seq[2]
+        dropout_layer = block[2]
         msg = "Unexpected dropout prob in hidden blocks."
         assert dropout_layer.p == 0.123456789, msg
 
@@ -488,15 +477,15 @@ def test_final_layer_feature_sizes_with_no_hidden_layers():
 
     # There should only be one thing in the only dense block
     msg = "Dense block should have len 1."
-    assert len(dense_blocks[0]._fwd_seq) == 1, msg
+    assert len(dense_blocks[0]) == 1, msg
 
     # The linear layer in the only dense block should have `in_feats`
     msg = "Input features of only linear layer should be 987."
-    assert dense_blocks[0]._fwd_seq[0].in_features == 987, msg
+    assert dense_blocks[0][0].in_features == 987, msg
 
     # The linear layer in the only dense block should have `out_feats`
     msg = "Output features of only linear layer should be 123."
-    assert dense_blocks[0]._fwd_seq[0].out_features == 123, msg
+    assert dense_blocks[0][0].out_features == 123, msg
 
 
 def test_final_linear_layer_feature_sizes_with_hidden_layers():
@@ -523,7 +512,7 @@ def test_final_linear_layer_feature_sizes_with_hidden_layers():
         input_dropout=0.0,
     )
 
-    final_linear_layer = model._blocks[-1]._fwd_seq[0]
+    final_linear_layer = model._blocks[-1][0]
 
     # The final linear layer should have hiddens_sizes[-1] input features
     msg = f"Expected {hidden_sizes[-1]} input features."
@@ -557,7 +546,7 @@ def test_leaky_relu_negative_slope_assignment():
     non_final_blocks = list(model._blocks.named_children())[:-1]
     for _, block in non_final_blocks:
 
-        leaky_relu = block._fwd_seq[-1]
+        leaky_relu = block[-1]
 
         msg = "Wrong slope value in leaky relu."
         assert leaky_relu.negative_slope == 0.12345678, msg
