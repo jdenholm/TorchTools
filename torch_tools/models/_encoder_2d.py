@@ -51,7 +51,7 @@ class Encoder2d(Sequential):
         num_blocks,
         pool_style: str,
         lr_slope: float,
-    ) -> List[Module]:
+    ) -> List[DownBlock]:
         """Get the encoding layers in a sequential.
 
         Parameters
