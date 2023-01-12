@@ -181,7 +181,7 @@ class ResidualBlock(Module):
         return self.relu(out)
 
 
-class DownBlock(Module):
+class DownBlock(Sequential):
     """Down-sampling block which reduces image size by a factor of 2.
 
     Parameters
@@ -203,34 +203,18 @@ class DownBlock(Module):
         lr_slope: float,
     ):
         """Build `DownBlock`."""
-        super().__init__()
-        self.pool = self._pools[process_str_arg(pool).lower()](
-            kernel_size=2,
-            stride=2,
-            padding=0,
+        super().__init__(
+            self._pools[process_str_arg(pool).lower()](
+                kernel_size=2,
+                stride=2,
+                padding=0,
+            ),
+            DoubleConvBlock(
+                process_num_feats(in_chans),
+                process_num_feats(out_chans),
+                lr_slope=process_negative_slope_arg(lr_slope),
+            ),
         )
-        self.double_conv = DoubleConvBlock(
-            process_num_feats(in_chans),
-            process_num_feats(out_chans),
-            lr_slope=process_negative_slope_arg(lr_slope),
-        )
-
-    def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the model.
-
-        Parameters
-        ----------
-        batch : Tensor
-            A mini-batch of inputs.
-
-        Returns
-        -------
-        Tensor
-            The result of passing `batch` through the block.
-
-        """
-        downsampled = self.pool(batch)
-        return self.double_conv(downsampled)
 
     _pools = {"max": MaxPool2d, "avg": AvgPool2d}
 

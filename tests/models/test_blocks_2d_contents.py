@@ -214,22 +214,22 @@ def test_down_block_contents_pool_assignment():
     """Test pool assignment in `DownBlock`."""
     # Test with max pool
     block = DownBlock(in_chans=123, out_chans=321, pool="max", lr_slope=0.1)
-    assert isinstance(block.pool, MaxPool2d), "Should be max pool."
-    assert block.pool.kernel_size == 2, "Kernel size should be 2."
-    assert block.pool.stride == 2, "Stride should be 2."
+    assert isinstance(block[0], MaxPool2d), "Should be max pool."
+    assert block[0].kernel_size == 2, "Kernel size should be 2."
+    assert block[0].stride == 2, "Stride should be 2."
 
     # Test with average pool
     block = DownBlock(in_chans=123, out_chans=321, pool="avg", lr_slope=0.1)
-    assert isinstance(block.pool, AvgPool2d), "Should be avg pool."
-    assert block.pool.kernel_size == 2, "Kernel size should be 2."
-    assert block.pool.stride == 2, "Stride should be 2."
+    assert isinstance(block[0], AvgPool2d), "Should be avg pool."
+    assert block[0].kernel_size == 2, "Kernel size should be 2."
+    assert block[0].stride == 2, "Stride should be 2."
 
 
 def test_down_block_double_conv_contents():
     """Test the contents of the `DoubleConv` block in `DownBlock`."""
     block = DownBlock(in_chans=123, out_chans=321, pool="max", lr_slope=0.1234)
 
-    in_conv = block.double_conv[0]
+    in_conv = block[1][0]
     assert isinstance(in_conv[0], Conv2d), "1st layer should be conv"
     assert isinstance(in_conv[1], BatchNorm2d), "2nd layer should be batchnorm"
     assert isinstance(in_conv[2], LeakyReLU), "3rd layer should be leaky relu"
@@ -239,7 +239,7 @@ def test_down_block_double_conv_contents():
     assert in_conv[1].num_features == 321
     assert in_conv[2].negative_slope == 0.1234
 
-    out_conv = block.double_conv[1]
+    out_conv = block[1][1]
     assert isinstance(out_conv[0], Conv2d), "Should be conv"
     assert isinstance(out_conv[1], BatchNorm2d), "Should be batchnorm"
     assert isinstance(out_conv[2], LeakyReLU), "Should be leaky relu"
