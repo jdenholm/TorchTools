@@ -634,6 +634,8 @@ EncoderDecoder2d(in_chans=3)
 
 
 
+---
+
 
 
 #### Simple 2D convolution network
