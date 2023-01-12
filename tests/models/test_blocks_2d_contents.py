@@ -1,4 +1,4 @@
-"""Tests for the contents of the blocks in `torch_tools.models._blocks_2d`"""
+"""Test the contents of the blocks in `torch_tools.models._blocks_2d`."""
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
