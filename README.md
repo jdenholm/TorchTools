@@ -510,8 +510,6 @@ This model is effectively a UNet without the skip connections. It can be used fo
 
 The spatial dimensions of the image-like inputs (height and width) are necesseraliy preserved.
 
----
-
 
 
 ```python
