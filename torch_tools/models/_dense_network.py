@@ -1,7 +1,6 @@
 """A fully connected neural network model."""
 from typing import Optional, Tuple, Union, List
 
-from torch import Tensor
 from torch.nn import Module, Sequential
 
 from torch_tools.models._blocks_1d import DenseBlock, InputBlock
