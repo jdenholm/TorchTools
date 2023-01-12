@@ -1,10 +1,10 @@
 """Test the contents of the blocks in `torch_tools.models._blocks_2d`."""
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU
+from torch.nn import MaxPool2d, AvgPool2d
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
 from torch_tools.models._blocks_2d import ResidualBlock, DownBlock
 
-from torch.nn import MaxPool2d, AvgPool2d
 
 # pylint: disable=protected-access
 
