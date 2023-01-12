@@ -219,7 +219,7 @@ class DownBlock(Sequential):
     _pools = {"max": MaxPool2d, "avg": AvgPool2d}
 
 
-class UpBlock(Module):
+class UpBlock(Sequential):
     """Upsampling block which increases image size by a factor of 2.
 
     Parameters
@@ -244,15 +244,16 @@ class UpBlock(Module):
         lr_slope: float,
     ):
         """Build `UpBlock`."""
-        super().__init__()
-        self.upsample = self._get_upsampler(
-            process_num_feats(in_chans),
-            process_boolean_arg(bilinear),
-        )
-        self.double_conv = DoubleConvBlock(
-            process_num_feats(in_chans),
-            process_num_feats(out_chans),
-            lr_slope=process_negative_slope_arg(lr_slope),
+        super().__init__(
+            self._get_upsampler(
+                process_num_feats(in_chans),
+                process_boolean_arg(bilinear),
+            ),
+            DoubleConvBlock(
+                process_num_feats(in_chans),
+                process_num_feats(out_chans),
+                lr_slope=process_negative_slope_arg(lr_slope),
+            ),
         )
 
     @staticmethod
@@ -287,23 +288,6 @@ class UpBlock(Module):
                 stride=2,
             )
         return upsample
-
-    def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the block.
-
-        Parameters
-        ----------
-        batch : Tensor
-            A mini-batch of inputs
-
-        Returns
-        -------
-        Tensor
-            Thee result of passing `batch` through the model.
-
-        """
-        upsampled = self.upsample(batch)
-        return self.double_conv(upsampled)
 
 
 class UNetUpBlock(Module):
