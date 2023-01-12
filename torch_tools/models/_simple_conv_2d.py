@@ -1,19 +1,16 @@
 """Simple two dimensional convolutional neural network."""
 
-from torch.nn import Module
-
-from torch import Tensor
+from torch.nn import Sequential, Linear
 
 from torch_tools.models._encoder_2d import Encoder2d
-from torch_tools.models._dense_network import DenseNetwork
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
 from torch_tools.models._blocks_2d import DoubleConvBlock
 
 # pylint: disable=too-many-arguments
 
 
-class SimpleConvNet2d(Module):
-    """A very simple 2D CNN with an encoder, pool, and full-connected layer.
+class SimpleConvNet2d(Sequential):
+    """A very simple 2D CNN with an encoder, pool, and fully-connected layer.
 
     Parameters
     ----------
@@ -47,21 +44,26 @@ class SimpleConvNet2d(Module):
         lr_slope: float = 0.1,
     ):
         """Build `SimpleConvNet2d`."""
-        super().__init__()
-        self._in_conv = DoubleConvBlock(in_chans, features_start, lr_slope)
-        self._encoder = Encoder2d(
-            features_start,
-            num_blocks - 1,
-            downsample_pool,
-            lr_slope,
-        )
-        self._pool = get_adaptive_pool(
-            option=adaptive_pool,
-            output_size=(1, 1),
-        )
-        self._fully_connected = DenseNetwork(
-            self._num_output_features(num_blocks, features_start, adaptive_pool),
-            out_feats,
+        super().__init__(
+            DoubleConvBlock(in_chans, features_start, lr_slope),
+            Encoder2d(
+                features_start,
+                num_blocks - 1,
+                downsample_pool,
+                lr_slope,
+            ),
+            get_adaptive_pool(
+                option=adaptive_pool,
+                output_size=(1, 1),
+            ),
+            Linear(
+                self._num_output_features(
+                    num_blocks,
+                    features_start,
+                    adaptive_pool,
+                ),
+                out_feats,
+            ),
         )
 
     def _num_output_features(
@@ -89,22 +91,3 @@ class SimpleConvNet2d(Module):
         """
         feats = (2 ** (num_blocks - 1)) * features_start
         return feats * 2 if adaptive_pool_style == "avg-max-concat" else feats
-
-    def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the model.
-
-        Parameters
-        ----------
-        batch : Tensor
-            A mini-batch of inputs.
-
-        Returns
-        -------
-        Tensor
-            The result of passing `batch` through the model.
-
-        """
-        start_feats = self._in_conv(batch)
-        encoder_feats = self._encoder(start_feats)
-        pooled = self._pool(encoder_feats)
-        return self._fully_connected(pooled)
