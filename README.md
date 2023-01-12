@@ -232,6 +232,8 @@ initialising the model—even if it doesn't make sense. Welcome to deep learning
 * If you change the number of input channels, don't bother freezing the encoder—the first convolutional layer is overloaded and randomly initialised.
 * See `torch_tools.models._conv_net_2d.ConvNet2d` for more info.
 
+---
+
 #### UNet—Semantic Segmentation
 The `UNet` has become a classic model which, again, is often implemented with the architecture hard-coded. Having an easy-to-instantiate `UNet` with a readily-modifiable architecture is always handy, so we include one here.
 
