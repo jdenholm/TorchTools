@@ -53,14 +53,14 @@ class ConvNet2d(Module):
     ):
         """Build `ConvNet2d`."""
         super().__init__()
-        self._backbone, num_feats, pool_size = get_backbone(
+        self.backbone, num_feats, pool_size = get_backbone(
             encoder_style,
             pretrained=pretrained,
         )
 
         self._replace_first_conv_if_necessary(process_num_feats(in_channels))
 
-        self._pool = Sequential(
+        self.pool = Sequential(
             get_adaptive_pool(pool_style, pool_size),
             Flatten(),
         )
@@ -68,7 +68,7 @@ class ConvNet2d(Module):
         if dense_net_kwargs is not None:
             self._dn_args.update(dense_net_kwargs)
 
-        self._dense = DenseNetwork(
+        self.dense_layers = DenseNetwork(
             2 * num_feats if pool_style == "avg-max-concat" else num_feats,
             process_num_feats(out_feats),
             **self._dn_args,
@@ -93,14 +93,14 @@ class ConvNet2d(Module):
             The number of input channels requested by the user.
 
         """
-        for _, module in self._backbone.named_children():
+        for _, module in self.backbone.named_children():
 
             if isinstance(module, Conv2d):
                 config = _conv_config(module)
 
                 if config["in_channels"] != in_channels:
                     config["in_channels"] = in_channels
-                    setattr(self._backbone, _, Conv2d(**config))  # type:ignore
+                    setattr(self.backbone, _, Conv2d(**config))  # type:ignore
                 break
 
     def forward(self, batch: Tensor, frozen_encoder: bool = False) -> Tensor:
@@ -123,9 +123,9 @@ class ConvNet2d(Module):
 
         """
         with set_grad_enabled(not frozen_encoder):
-            encoder_out = self._backbone(batch)
-        pool_out = self._pool(encoder_out)
-        return self._dense(pool_out)
+            encoder_out = self.backbone(batch)
+        pool_out = self.pool(encoder_out)
+        return self.dense_layers(pool_out)
 
 
 def _conv_config(conv: Conv2d) -> Dict[str, Any]:
