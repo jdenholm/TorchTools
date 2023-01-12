@@ -86,7 +86,7 @@ class ConvBlock(Sequential):
         return layers
 
 
-class DoubleConvBlock(Module):
+class DoubleConvBlock(Sequential):
     """Double convolutional block.
 
     Parameters
@@ -113,37 +113,22 @@ class DoubleConvBlock(Module):
             The negative slope to use in the `LeakyReLU`.
 
         """
-        super().__init__()
-        self.in_conv = ConvBlock(
-            process_num_feats(in_chans),
-            process_num_feats(out_chans),
-            batch_norm=True,
-            leaky_relu=True,
-            lr_slope=process_negative_slope_arg(lr_slope),
+        super().__init__(
+            ConvBlock(
+                process_num_feats(in_chans),
+                process_num_feats(out_chans),
+                batch_norm=True,
+                leaky_relu=True,
+                lr_slope=process_negative_slope_arg(lr_slope),
+            ),
+            ConvBlock(
+                process_num_feats(out_chans),
+                process_num_feats(out_chans),
+                batch_norm=True,
+                leaky_relu=True,
+                lr_slope=process_negative_slope_arg(lr_slope),
+            ),
         )
-        self.out_conv = ConvBlock(
-            process_num_feats(out_chans),
-            process_num_feats(out_chans),
-            batch_norm=True,
-            leaky_relu=True,
-            lr_slope=process_negative_slope_arg(lr_slope),
-        )
-
-    def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the model.
-
-        Parameters
-        ----------
-        batch : Tensor
-            A mini-batch of inputs.
-
-        Returns
-        -------
-        Tensor
-            The result of passing `batch` through the model.
-
-        """
-        return self.out_conv(self.in_conv(batch))
 
 
 class ResidualBlock(Module):

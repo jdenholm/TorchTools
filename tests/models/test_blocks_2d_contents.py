@@ -113,7 +113,7 @@ def test_double_conv_block_in_conv_contents():
     """Test the contents of `DoubleConvBlock`'s `in_conv` are as expected."""
     block = DoubleConvBlock(in_chans=123, out_chans=321, lr_slope=0.123456)
 
-    in_conv = block.in_conv
+    in_conv = block[0]
 
     # Should have three layers in the in_conv block
     assert len(in_conv) == 3, "Wrong number of layers in in conv block."
@@ -131,7 +131,7 @@ def test_double_conv_block_out_conv_contents():
     """Test the contents of `DoubleConvBlock`'s `out_conv` are as expected."""
     block = DoubleConvBlock(in_chans=123, out_chans=321, lr_slope=0.123456)
 
-    out_conv = block.out_conv
+    out_conv = block[1]
 
     # Should have three layers in the in_conv block
     assert len(out_conv) == 3, "Wrong number of layers in in conv block."
@@ -229,7 +229,7 @@ def test_down_block_double_conv_contents():
     """Test the contents of the `DoubleConv` block in `DownBlock`."""
     block = DownBlock(in_chans=123, out_chans=321, pool="max", lr_slope=0.1234)
 
-    in_conv = block.double_conv.in_conv
+    in_conv = block.double_conv[0]
     assert isinstance(in_conv[0], Conv2d), "1st layer should be conv"
     assert isinstance(in_conv[1], BatchNorm2d), "2nd layer should be batchnorm"
     assert isinstance(in_conv[2], LeakyReLU), "3rd layer should be leaky relu"
@@ -239,7 +239,7 @@ def test_down_block_double_conv_contents():
     assert in_conv[1].num_features == 321
     assert in_conv[2].negative_slope == 0.1234
 
-    out_conv = block.double_conv.out_conv
+    out_conv = block.double_conv[1]
     assert isinstance(out_conv[0], Conv2d), "Should be conv"
     assert isinstance(out_conv[1], BatchNorm2d), "Should be batchnorm"
     assert isinstance(out_conv[2], LeakyReLU), "Should be leaky relu"
