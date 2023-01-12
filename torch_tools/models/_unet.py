@@ -52,27 +52,27 @@ class UNet(Module):
         """Build `UNet`."""
         super().__init__()
 
-        self._in_conv = DoubleConvBlock(
+        self.in_conv = DoubleConvBlock(
             in_chans,
             process_num_feats(features_start),
             lr_slope,
         )
 
-        self._down_blocks = self._get_down_blocks(
+        self.down_blocks = self._get_down_blocks(
             process_u_architecture_layers(num_layers),
             features_start,
             pool_style,
             lr_slope,
         )
 
-        self._up_blocks = self._get_up_blocks(
+        self.up_blocks = self._get_up_blocks(
             process_u_architecture_layers(num_layers),
             features_start,
             bilinear,
             lr_slope,
         )
 
-        self._out_conv = Conv2d(
+        self.out_conv = Conv2d(
             process_num_feats(features_start),
             process_num_feats(out_chans),
             kernel_size=1,
@@ -164,7 +164,7 @@ class UNet(Module):
 
         """
         down_features = [batch]
-        for down_layer in self._down_blocks:
+        for down_layer in self.down_blocks:
             down_features.append(down_layer(down_features[-1]))
         return down_features
 
@@ -182,10 +182,10 @@ class UNet(Module):
             The up-sampled batch.
 
         """
-        up_batch = self._up_blocks[0](down_features[-1], down_features[-2])
+        up_batch = self.up_blocks[0](down_features[-1], down_features[-2])
         # Iterate over the remaining up layers zipped with the
         # third-last to zeroth down features.
-        for up_conv, feat in zip(self._up_blocks[1:], down_features[::-1][2:]):
+        for up_conv, feat in zip(self.up_blocks[1:], down_features[::-1][2:]):
             up_batch = up_conv(up_batch, feat)
         return up_batch
 
@@ -203,6 +203,6 @@ class UNet(Module):
             The result of passing `batch` through the model.
 
         """
-        batch = self._in_conv(batch)
+        batch = self.in_conv(batch)
         down_features = self._down_forward_pass(batch)
-        return self._out_conv(self._up_forward_pass(down_features))
+        return self.out_conv(self._up_forward_pass(down_features))
