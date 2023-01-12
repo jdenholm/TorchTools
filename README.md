@@ -4,7 +4,7 @@ Handy PyTorch models and utilities which should save you time.
 ---
 
 ## Description
-This Python library contains a bunch of neural networks, implemented in PyTorch, and a generic `Dataset` class with useful features to help you get started with your deep-learning problem more quickly, and spend a lot less time engineering—and testing—the PyTorch-specific software you need. There is also the hope that you will write, and duplicate, less code by being able to easily set and modify these models' architectures at instantiation.
+This Python library contains a bunch of neural networks, implemented in PyTorch, and a generic `Dataset` class with useful features to help you get started with your deep-learning problem more quickly, and spend a lot less time engineering and testing—because, especially if you're in academia, you *always* test your code—the PyTorch-specific software you need. There is also the hope that you will write, and duplicate, less code by being able to easily set and modify these models' architectures at instantiation.
 
 ---
 
@@ -61,7 +61,7 @@ pytest tests/
 
 ### Models
 
-All of the models are subclasses of `torch.nn.Module`, and therefore function like standard PyTorch models.
+All of the models inherit, either directly or through `torch.nn.Sequential`, from `torch.nn.Module`, and therefore function like standard PyTorch models.
 
 ---
 
@@ -116,7 +116,7 @@ DenseNetwork(in_feats=256,
 #### Convolutional Network 2D
 
 
-Torchvision's default models assume three-channel (RGB) images. To use a different number of channels, one has to overwrite the first convolutional layer, which results in ugly code that must be modified if you want to want to change architectures from, say, ResNet to VGG, etc. Furthermore, you may wish to experiment with the classification layer's architecture, which requires more ugly code to modify the default models. To circumvent this, you can use `ConvNet2d`.
+Torchvision's default models assume three-channel (RGB) images. To use a different number of channels, one has to overwrite the first convolutional layer, which results in ugly code that must be modified if you want to want to change architectures from, say, ResNet to VGG, etc. Furthermore, you may wish to experiment with the fully connected layers' architecture, which requires more ugly code to modify the default models. To circumvent this, you can use `ConvNet2d`.
 
 `ConvNet2d` is a convolution neural network made of three parts: an encoder, an adaptive pooling layer and a `DenseNetwork` (which serves as a classification/regression head). The model can be customised in a modular fashion:
 
@@ -199,10 +199,41 @@ ConvNet2d(out_feats=512,
 
 
 
-#### UNet—Semantic Segmentation
-The `UNet` has become a classic model which, again, is often implemented with the architecture hard-coded. Having an easy-to-instantiate `UNet` with an easily-modifiable architecture is always handy, so we include one here.
+Another useful feature of `ConvNet2d` is the ability to *freeze* the encoder: PyTorch have made available weights from pretrained models which you can leverage for a totally different problem.
 
-Suppose we want a `UNet` that takes three-channel inputs, produces 16 output channels, has an initial convolution block which produces 64 features, has three layers in the U, uses max pooling (rather than average), used `ConvTranspose2d` layers to upsample (rather than bilinear interpolation) and has `LeakyReLU` layers with a slope of 0.2.
+By choosing `pretrained=True`, the encoder part of the model will be loaded with the most
+up-to-date ImageNet pretrained weights available from Torchvision. You can then simple train the dense layers, leaving the weights of the enoder untouched.
+
+For example:
+
+
+
+```python
+from torch import rand
+from torch_tools import ConvNet2d
+
+model = ConvNet2d(out_feats=10)
+
+# Batch of 10 fake three-channel images of 256x256 pixels
+mini_batch = rand(10, 3, 256, 256)
+
+# With the encoder frozen
+preds = model(mini_batch, frozen_encoder=True)
+
+# Without the encoder frozen (default behaviour)
+preds = model(mini_batch, frozen_encoder=False)
+```
+
+Note:
+* Even if you load pretrained weights, but *don't* freeze the encoder, you will likely end up finding better performance than you would by randomly
+initialising the model—even if it doesn't make sense. Welcome to deep learning.
+* If you change the number of input channels, don't bother freezing the encoder—the first convolutional layer is overloaded and randomly initialised.
+* See `torch_tools.models._conv_net_2d.ConvNet2d` for more info.
+
+#### UNet—Semantic Segmentation
+The `UNet` has become a classic model which, again, is often implemented with the architecture hard-coded. Having an easy-to-instantiate `UNet` with a readily-modifiable architecture is always handy, so we include one here.
+
+Suppose we want a `UNet` that takes three-channel inputs, produces 16 output channels, has an initial convolutional block which produces 64 features, has three layers in the U, uses max pooling (rather than average), uses `ConvTranspose2d` layers to upsample (rather than bilinear interpolation) and has `LeakyReLU` layers with a slope of 0.2.
 
 While this is quite a mouthful, it is incredibly easy to instantiate:
 
@@ -312,7 +343,9 @@ UNet(in_chans=3,
 
 ---
 
-We also include a simple
+We also include a simple encoder model for image-like inputs. This model is effectively a `torch.nn.Sequential` of down-sampling blocks which half the size of the image-like inputs and double the number of channels.
+
+For example:
 
 
 ```python
@@ -388,17 +421,220 @@ Encoder2d(in_chans=3, num_blocks=4, pool_style="max", lr_slope=0.123)
 
 
 
-
+---
 
 #### Decoder
+
+abc
+
+
+```python
+from torch_tools import Decoder2d
+Decoder2d(in_chans=128, num_blocks=4, bilinear=False, lr_slope=0.123)
+```
+
+
+
+
+    Decoder2d(
+      (0): UpBlock(
+        (0): ConvTranspose2d(128, 128, kernel_size=(2, 2), stride=(2, 2))
+        (1): DoubleConvBlock(
+          (0): ConvBlock(
+            (0): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.123)
+          )
+          (1): ConvBlock(
+            (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.123)
+          )
+        )
+      )
+      (1): UpBlock(
+        (0): ConvTranspose2d(64, 64, kernel_size=(2, 2), stride=(2, 2))
+        (1): DoubleConvBlock(
+          (0): ConvBlock(
+            (0): Conv2d(64, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.123)
+          )
+          (1): ConvBlock(
+            (0): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.123)
+          )
+        )
+      )
+      (2): UpBlock(
+        (0): ConvTranspose2d(32, 32, kernel_size=(2, 2), stride=(2, 2))
+        (1): DoubleConvBlock(
+          (0): ConvBlock(
+            (0): Conv2d(32, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.123)
+          )
+          (1): ConvBlock(
+            (0): Conv2d(16, 16, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(16, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.123)
+          )
+        )
+      )
+      (3): UpBlock(
+        (0): ConvTranspose2d(16, 16, kernel_size=(2, 2), stride=(2, 2))
+        (1): DoubleConvBlock(
+          (0): ConvBlock(
+            (0): Conv2d(16, 8, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.123)
+          )
+          (1): ConvBlock(
+            (0): Conv2d(8, 8, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.123)
+          )
+        )
+      )
+    )
+
+
+
 
 ---
 
 
 #### Encoder–Decoder model
-This model is effectively a UNet without the skip connections. It can be used for segmentation and style transfer in the same way, however a roughly equivalent UNet will likely outperform it. That said, it carries the advantage that it requires less memory during training and inference, and is faster computationally.
+This model is effectively a UNet without the skip connections. It can be used for segmentation and style transfer in the same way, however a roughly equivalent UNet will likely outperform it (depending on the problem, of course). That said, it carries the advantage that it requires less memory during training and inference, and is faster computationally.
+
+The spatial dimensions of the image-like inputs (height and width) are necesseraliy preserved.
 
 ---
+
+
+
+```python
+from torch_tools import EncoderDecoder2d
+EncoderDecoder2d(in_chans=3)
+```
+
+
+
+
+    EncoderDecoder2d(
+      (in_conv): DoubleConvBlock(
+        (0): ConvBlock(
+          (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): LeakyReLU(negative_slope=0.1)
+        )
+        (1): ConvBlock(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): LeakyReLU(negative_slope=0.1)
+        )
+      )
+      (encoder): Encoder2d(
+        (0): DownBlock(
+          (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+          (1): DoubleConvBlock(
+            (0): ConvBlock(
+              (0): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+            (1): ConvBlock(
+              (0): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+          )
+        )
+        (1): DownBlock(
+          (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+          (1): DoubleConvBlock(
+            (0): ConvBlock(
+              (0): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+            (1): ConvBlock(
+              (0): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+          )
+        )
+        (2): DownBlock(
+          (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+          (1): DoubleConvBlock(
+            (0): ConvBlock(
+              (0): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+            (1): ConvBlock(
+              (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+          )
+        )
+      )
+      (decoder): Decoder2d(
+        (0): UpBlock(
+          (0): ConvTranspose2d(512, 512, kernel_size=(2, 2), stride=(2, 2))
+          (1): DoubleConvBlock(
+            (0): ConvBlock(
+              (0): Conv2d(512, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+            (1): ConvBlock(
+              (0): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+          )
+        )
+        (1): UpBlock(
+          (0): ConvTranspose2d(256, 256, kernel_size=(2, 2), stride=(2, 2))
+          (1): DoubleConvBlock(
+            (0): ConvBlock(
+              (0): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+            (1): ConvBlock(
+              (0): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+          )
+        )
+        (2): UpBlock(
+          (0): ConvTranspose2d(128, 128, kernel_size=(2, 2), stride=(2, 2))
+          (1): DoubleConvBlock(
+            (0): ConvBlock(
+              (0): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+            (1): ConvBlock(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+          )
+        )
+      )
+      (out_conv): Conv2d(64, 3, kernel_size=(1, 1), stride=(1, 1))
+    )
+
+
+
+
 
 #### Simple 2D convolution network
 While we've already included a two-dimensional convolutional model, it uses default architectures from Torchvision's available VGG and ResNet models, which are pretty hefty and might be too "overpowered" for certain applications (say, to be used as a discriminator when training a GAN). To address this, we also include a simpler two-dimensional convolutional neural network which is a lot more lightweight and customisable.
