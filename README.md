@@ -113,6 +113,8 @@ DenseNetwork(in_feats=256,
 
 
 
+---
+
 #### Convolutional Network 2D
 
 
@@ -341,7 +343,6 @@ UNet(in_chans=3,
 #### Encoder
 
 
----
 
 We also include a simple encoder model for image-like inputs. This model is effectively a `torch.nn.Sequential` of down-sampling blocks which half the size of the image-like inputs and double the number of channels.
 
