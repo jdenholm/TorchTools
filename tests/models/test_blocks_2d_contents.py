@@ -1,9 +1,10 @@
 """Test the contents of the blocks in `torch_tools.models._blocks_2d`."""
-from torch.nn import Conv2d, BatchNorm2d, LeakyReLU
-from torch.nn import MaxPool2d, AvgPool2d
+from torch.nn import Conv2d, BatchNorm2d, LeakyReLU, Upsample
+from torch.nn import MaxPool2d, AvgPool2d, ConvTranspose2d, Sequential
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
 from torch_tools.models._blocks_2d import ResidualBlock, DownBlock
+from torch_tools.models._blocks_2d import UpBlock
 
 
 # pylint: disable=protected-access
@@ -226,7 +227,7 @@ def test_down_block_contents_pool_assignment():
 
 
 def test_down_block_double_conv_contents():
-    """Test the contents of the `DoubleConv` block in `DownBlock`."""
+    """Test the contents of the `DoubleConvBlock` block in `DownBlock`."""
     block = DownBlock(in_chans=123, out_chans=321, pool="max", lr_slope=0.1234)
 
     in_conv = block[1][0]
@@ -248,3 +249,90 @@ def test_down_block_double_conv_contents():
     assert out_conv[0].out_channels == 321
     assert out_conv[1].num_features == 321
     assert out_conv[2].negative_slope == 0.1234
+
+
+def test_up_block_upsample_contents_with_bilinear_false():
+    """Test the contents of upsampling block in `UpBlock`."""
+    block = UpBlock(
+        in_chans=123,
+        out_chans=321,
+        bilinear=False,
+        lr_slope=0.54321,
+    )
+
+    assert isinstance(block[0], ConvTranspose2d), "Should be conv transpose."
+    assert block[0].kernel_size == (2, 2), "Kernal size should be 2."
+    assert block[0].stride == (2, 2), "Stride should be (2, 2)."
+    assert block[0].in_channels == 123, "Should be 123 input channels."
+    assert block[0].out_channels == 123, "Should be 123 output channels."
+
+
+def test_up_block_upsample_contents_with_bilinear_true():
+    """Test the contents of upsampling block in `UpBlock`."""
+    block = UpBlock(
+        in_chans=123,
+        out_chans=321,
+        bilinear=True,
+        lr_slope=0.54321,
+    )
+
+    assert isinstance(block[0], Sequential)
+    assert len(block[0]) == 2, "Should be two items in the Sequential."
+
+    assert isinstance(block[0][0], Upsample), "First layer should be Upsample."
+    assert block[0][0].mode == "bilinear", "Interpolation mode should be bilinear"
+
+    assert isinstance(block[0][1], Conv2d), "Second layer should be Conv2d."
+
+    assert block[0][1].kernel_size == (1, 1), "Kernel size should be (1, 1)."
+    assert block[0][1].stride == (1, 1), "Stride should be 1."
+
+
+def test_up_block_double_conv_first_conv_block_contents():
+    """Test contents of first conv block of `DoubleConvBlock` in `UpBlock`."""
+    block = UpBlock(
+        in_chans=123,
+        out_chans=321,
+        bilinear=False,
+        lr_slope=0.54321,
+    )
+
+    assert isinstance(block[1], DoubleConvBlock), "Should be double conv."
+
+    # Test the first conv block of double conv block
+    assert isinstance(block[1][0], ConvBlock), "Should be conv block."
+    assert isinstance(block[1][0][0], Conv2d), "Should be conv2d."
+    assert isinstance(block[1][0][1], BatchNorm2d), "Should be batchnorm."
+    assert isinstance(block[1][0][2], LeakyReLU), "Should be leaky relu."
+
+    assert len(block[1][0]) == 3, "Should be three items in the block."
+
+    assert block[1][0][0].in_channels == 123
+    assert block[1][0][0].out_channels == 321
+    assert block[1][0][1].num_features == 321
+    assert block[1][0][2].negative_slope == 0.54321
+
+
+def test_up_block_double_conv_second_conv_block_contents():
+    """Test contents of second conv block of `DoubleConvBlock` in `UpBlock`."""
+    block = UpBlock(
+        in_chans=123,
+        out_chans=321,
+        bilinear=False,
+        lr_slope=0.54321,
+    )
+
+    assert isinstance(block[1], DoubleConvBlock), "Should be double conv."
+
+    # Test the first conv block of double conv block
+    assert isinstance(block[1][1], ConvBlock), "Should be conv block."
+    assert isinstance(block[1][1][0], Conv2d), "Should be conv2d."
+    assert isinstance(block[1][1][1], BatchNorm2d), "Should be batchnorm."
+    assert isinstance(block[1][1][2], LeakyReLU), "Should be leaky relu."
+
+    assert len(block[1][1]) == 3, "Should be three items in the block."
+
+    assert block[1][1][0].in_channels == 321
+    assert block[1][1][0].out_channels == 321
+    assert block[1][1][1].num_features == 321
+    assert block[1][1][2].negative_slope == 0.54321
