@@ -195,3 +195,42 @@ def test_process_u_architecture_layers_values():
         _ = ap.process_u_architecture_layers(1)
     with pytest.raises(ValueError):
         _ = ap.process_u_architecture_layers(0)
+
+
+def test_process_hidden_sizes_argument_types():
+    """Test the types accepted by `ap.process_hidden_sizes`."""
+    # Should work with Tuple[int, ...] or None (ints should be 1 or more)
+    ap.process_hidden_sizes((10, 10, 1))
+    ap.process_hidden_sizes(None)
+
+    # Should break with non-tuple or non-None
+    with pytest.raises(TypeError):
+        ap.process_hidden_sizes([10, 10, 1])
+    with pytest.raises(TypeError):
+        ap.process_hidden_sizes("Elrond of Rivendell.")
+
+
+def test_process_hidden_sizes_argument_individual_size_types():
+    """Test the types of the individual sizes in the `hidden_sizes` arg."""
+    # Should work with Tuple[int, ...]
+    ap.process_hidden_sizes((10, 10, 1))
+
+    # Should break if there are any non-ints in the tuple
+    with pytest.raises(TypeError):
+        ap.process_hidden_sizes((10, 10, 1.0))
+    with pytest.raises(TypeError):
+        ap.process_hidden_sizes((10j, 10, 1))
+    with pytest.raises(TypeError):
+        ap.process_hidden_sizes((10, "Peregrin Took", 1))
+
+
+def test_process_hidden_sizes_argument_values():
+    """Test the values accepted by the `hidden_sizes` argument."""
+    # Should work with Tuple[int, ...] or None (with ints of 1 or more)
+    ap.process_hidden_sizes((10, 10, 1))
+
+    # Should break if any of the ints are less than 1
+    with pytest.raises(ValueError):
+        ap.process_hidden_sizes((10, 10, -1))
+    with pytest.raises(ValueError):
+        ap.process_hidden_sizes((0, 10, 1))

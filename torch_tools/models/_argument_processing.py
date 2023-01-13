@@ -1,5 +1,5 @@
 """Functions for processing arguments to models and blocks."""
-from typing import Tuple
+from typing import Tuple, Union
 
 
 def process_num_feats(num_feats: int) -> int:
@@ -220,3 +220,47 @@ def process_u_architecture_layers(num_layers: int) -> int:
         msg = f"Got '{num_layers}'."
         raise ValueError(msg)
     return num_layers
+
+
+def process_hidden_sizes(
+    hidden_sizes: Union[Tuple[int, ...], None]
+) -> Union[Tuple[int, ...], None]:
+    """Process the `hidden_sizes` argument passed to `DenseNetwork`.
+
+    Parameters
+    ----------
+    hidden_sizes : Tuple[int, ...] or None
+        A tuple of feature sizes.
+
+    Returns
+    -------
+    hidden_sizes : Tuple[int, ...] or None
+        See Parameters.
+
+    Raises
+    ------
+    TypeError
+        If `hidden_sizes` is not a tuple.
+    TypeError
+        If the elements of `hidden_sizes` are not all ints.
+    ValueError
+        If any og the elements in `hidden_sizes` are less than one.
+
+    """
+    if hidden_sizes is None:
+        return hidden_sizes
+
+    if not isinstance(hidden_sizes, tuple):
+        msg = f"Hidden sizes should be tuple. Got '{type(hidden_sizes)}'."
+        raise TypeError(msg)
+
+    if not all(map(lambda x: isinstance(x, int), hidden_sizes)):
+        msg = "All elements in hidden sizes should be int. Got types: "
+        msg += f"'{list(map(type, hidden_sizes))}'."
+        raise TypeError(msg)
+
+    if any(map(lambda x: x < 1, hidden_sizes)):
+        msg = f"Hidden sizes should all be one or more. Got '{hidden_sizes}'."
+        raise ValueError(msg)
+
+    return hidden_sizes
