@@ -5,6 +5,8 @@ from torch.nn import Module, Sequential
 
 from torch_tools.models._blocks_1d import DenseBlock, InputBlock
 
+from torch_tools.models._argument_processing import process_hidden_sizes
+
 # pylint: disable=too-many-arguments
 
 
@@ -50,7 +52,7 @@ class DenseNetwork(Sequential):
             *self._list_all_blocks(
                 in_feats,
                 out_feats,
-                hidden_sizes,
+                process_hidden_sizes(hidden_sizes),
                 input_bnorm,
                 input_dropout,
                 hidden_dropout,
