@@ -45,8 +45,8 @@ class SimpleConvNet2d(Sequential):
     ):
         """Build `SimpleConvNet2d`."""
         super().__init__(
-            DoubleConvBlock(in_chans, features_start, lr_slope),
             Encoder2d(
+                in_chans,
                 features_start,
                 num_blocks - 1,
                 downsample_pool,
