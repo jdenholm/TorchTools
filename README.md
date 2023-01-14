@@ -78,7 +78,7 @@ from torch_tools import DenseNetwork
 
 DenseNetwork(in_feats=256,
              out_feats=2,
-             hidden_sizes=(128, 64),
+             hidden_sizes=(128, 64, 32),
              input_bnorm=True,
              input_dropout=0.1,
              hidden_dropout=0.25,
@@ -107,7 +107,13 @@ DenseNetwork(in_feats=256,
         (3): LeakyReLU(negative_slope=0.2)
       )
       (3): DenseBlock(
-        (0): Linear(in_features=64, out_features=2, bias=True)
+        (0): Linear(in_features=64, out_features=32, bias=True)
+        (1): BatchNorm1d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): Dropout(p=0.25, inplace=False)
+        (3): LeakyReLU(negative_slope=0.2)
+      )
+      (4): DenseBlock(
+        (0): Linear(in_features=32, out_features=2, bias=True)
       )
     )
 
@@ -352,39 +358,36 @@ For example:
 
 ```python
 from torch_tools import Encoder2d
-Encoder2d(in_chans=3, num_blocks=4, pool_style="max", lr_slope=0.123)
+Encoder2d(in_chans=3, start_features=64, num_blocks=4, pool_style="max", lr_slope=0.123)
 ```
 
 
 
 
     Encoder2d(
-      (0): DownBlock(
-        (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
-        (1): DoubleConvBlock(
-          (0): ConvBlock(
-            (0): Conv2d(3, 6, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-            (1): BatchNorm2d(6, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-            (2): LeakyReLU(negative_slope=0.123)
-          )
-          (1): ConvBlock(
-            (0): Conv2d(6, 6, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-            (1): BatchNorm2d(6, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-            (2): LeakyReLU(negative_slope=0.123)
-          )
+      (0): DoubleConvBlock(
+        (0): ConvBlock(
+          (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): LeakyReLU(negative_slope=0.123)
+        )
+        (1): ConvBlock(
+          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+          (2): LeakyReLU(negative_slope=0.123)
         )
       )
       (1): DownBlock(
         (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
         (1): DoubleConvBlock(
           (0): ConvBlock(
-            (0): Conv2d(6, 12, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-            (1): BatchNorm2d(12, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (0): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
             (2): LeakyReLU(negative_slope=0.123)
           )
           (1): ConvBlock(
-            (0): Conv2d(12, 12, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-            (1): BatchNorm2d(12, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (0): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
             (2): LeakyReLU(negative_slope=0.123)
           )
         )
@@ -393,13 +396,13 @@ Encoder2d(in_chans=3, num_blocks=4, pool_style="max", lr_slope=0.123)
         (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
         (1): DoubleConvBlock(
           (0): ConvBlock(
-            (0): Conv2d(12, 24, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-            (1): BatchNorm2d(24, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (0): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
             (2): LeakyReLU(negative_slope=0.123)
           )
           (1): ConvBlock(
-            (0): Conv2d(24, 24, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-            (1): BatchNorm2d(24, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (0): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
             (2): LeakyReLU(negative_slope=0.123)
           )
         )
@@ -408,13 +411,13 @@ Encoder2d(in_chans=3, num_blocks=4, pool_style="max", lr_slope=0.123)
         (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
         (1): DoubleConvBlock(
           (0): ConvBlock(
-            (0): Conv2d(24, 48, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-            (1): BatchNorm2d(48, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (0): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
             (2): LeakyReLU(negative_slope=0.123)
           )
           (1): ConvBlock(
-            (0): Conv2d(48, 48, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-            (1): BatchNorm2d(48, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
             (2): LeakyReLU(negative_slope=0.123)
           )
         )
@@ -432,7 +435,11 @@ abc
 
 ```python
 from torch_tools import Decoder2d
-Decoder2d(in_chans=128, num_blocks=4, bilinear=False, lr_slope=0.123)
+Decoder2d(in_chans=128,
+          out_chans=3,
+          num_blocks=4,
+          bilinear=False,
+          lr_slope=0.123)
 ```
 
 
@@ -484,21 +491,7 @@ Decoder2d(in_chans=128, num_blocks=4, bilinear=False, lr_slope=0.123)
           )
         )
       )
-      (3): UpBlock(
-        (0): ConvTranspose2d(16, 16, kernel_size=(2, 2), stride=(2, 2))
-        (1): DoubleConvBlock(
-          (0): ConvBlock(
-            (0): Conv2d(16, 8, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-            (1): BatchNorm2d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-            (2): LeakyReLU(negative_slope=0.123)
-          )
-          (1): ConvBlock(
-            (0): Conv2d(8, 8, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-            (1): BatchNorm2d(8, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-            (2): LeakyReLU(negative_slope=0.123)
-          )
-        )
-      )
+      (3): Conv2d(16, 3, kernel_size=(1, 1), stride=(1, 1))
     )
 
 
@@ -516,27 +509,27 @@ The spatial dimensions of the image-like inputs (height and width) are necessera
 
 ```python
 from torch_tools import EncoderDecoder2d
-EncoderDecoder2d(in_chans=3)
+EncoderDecoder2d(in_chans=3, out_chans=3)
 ```
 
 
 
 
     EncoderDecoder2d(
-      (in_conv): DoubleConvBlock(
-        (0): ConvBlock(
-          (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-          (2): LeakyReLU(negative_slope=0.1)
-        )
-        (1): ConvBlock(
-          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-          (2): LeakyReLU(negative_slope=0.1)
-        )
-      )
       (encoder): Encoder2d(
-        (0): DownBlock(
+        (0): DoubleConvBlock(
+          (0): ConvBlock(
+            (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.1)
+          )
+          (1): ConvBlock(
+            (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.1)
+          )
+        )
+        (1): DownBlock(
           (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
           (1): DoubleConvBlock(
             (0): ConvBlock(
@@ -551,7 +544,7 @@ EncoderDecoder2d(in_chans=3)
             )
           )
         )
-        (1): DownBlock(
+        (2): DownBlock(
           (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
           (1): DoubleConvBlock(
             (0): ConvBlock(
@@ -566,11 +559,13 @@ EncoderDecoder2d(in_chans=3)
             )
           )
         )
-        (2): DownBlock(
-          (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+      )
+      (decoder): Decoder2d(
+        (0): UpBlock(
+          (0): ConvTranspose2d(1024, 1024, kernel_size=(2, 2), stride=(2, 2))
           (1): DoubleConvBlock(
             (0): ConvBlock(
-              (0): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (0): Conv2d(1024, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
               (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
               (2): LeakyReLU(negative_slope=0.1)
             )
@@ -581,9 +576,7 @@ EncoderDecoder2d(in_chans=3)
             )
           )
         )
-      )
-      (decoder): Decoder2d(
-        (0): UpBlock(
+        (1): UpBlock(
           (0): ConvTranspose2d(512, 512, kernel_size=(2, 2), stride=(2, 2))
           (1): DoubleConvBlock(
             (0): ConvBlock(
@@ -598,38 +591,8 @@ EncoderDecoder2d(in_chans=3)
             )
           )
         )
-        (1): UpBlock(
-          (0): ConvTranspose2d(256, 256, kernel_size=(2, 2), stride=(2, 2))
-          (1): DoubleConvBlock(
-            (0): ConvBlock(
-              (0): Conv2d(256, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-              (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-              (2): LeakyReLU(negative_slope=0.1)
-            )
-            (1): ConvBlock(
-              (0): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-              (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-              (2): LeakyReLU(negative_slope=0.1)
-            )
-          )
-        )
-        (2): UpBlock(
-          (0): ConvTranspose2d(128, 128, kernel_size=(2, 2), stride=(2, 2))
-          (1): DoubleConvBlock(
-            (0): ConvBlock(
-              (0): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-              (2): LeakyReLU(negative_slope=0.1)
-            )
-            (1): ConvBlock(
-              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-              (2): LeakyReLU(negative_slope=0.1)
-            )
-          )
-        )
+        (2): Conv2d(256, 3, kernel_size=(1, 1), stride=(1, 1))
       )
-      (out_conv): Conv2d(64, 3, kernel_size=(1, 1), stride=(1, 1))
     )
 
 
@@ -660,20 +623,20 @@ SimpleConvNet2d(in_chans=3,
 
 
     SimpleConvNet2d(
-      (0): DoubleConvBlock(
-        (0): ConvBlock(
-          (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-          (2): LeakyReLU(negative_slope=0.123)
+      (0): Encoder2d(
+        (0): DoubleConvBlock(
+          (0): ConvBlock(
+            (0): Conv2d(3, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.123)
+          )
+          (1): ConvBlock(
+            (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+            (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+            (2): LeakyReLU(negative_slope=0.123)
+          )
         )
-        (1): ConvBlock(
-          (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-          (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-          (2): LeakyReLU(negative_slope=0.123)
-        )
-      )
-      (1): Encoder2d(
-        (0): DownBlock(
+        (1): DownBlock(
           (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
           (1): DoubleConvBlock(
             (0): ConvBlock(
@@ -688,7 +651,7 @@ SimpleConvNet2d(in_chans=3,
             )
           )
         )
-        (1): DownBlock(
+        (2): DownBlock(
           (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
           (1): DoubleConvBlock(
             (0): ConvBlock(
@@ -703,27 +666,12 @@ SimpleConvNet2d(in_chans=3,
             )
           )
         )
-        (2): DownBlock(
-          (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
-          (1): DoubleConvBlock(
-            (0): ConvBlock(
-              (0): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-              (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-              (2): LeakyReLU(negative_slope=0.123)
-            )
-            (1): ConvBlock(
-              (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-              (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-              (2): LeakyReLU(negative_slope=0.123)
-            )
-          )
-        )
       )
-      (2): _ConcatMaxAvgPool2d(
+      (1): _ConcatMaxAvgPool2d(
         (_avg_pool): AdaptiveAvgPool2d(output_size=(1, 1))
         (_max_pool): AdaptiveMaxPool2d(output_size=(1, 1))
       )
-      (3): Linear(in_features=1024, out_features=128, bias=True)
+      (2): Linear(in_features=1024, out_features=128, bias=True)
     )
 
 
