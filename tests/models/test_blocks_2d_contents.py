@@ -4,7 +4,7 @@ from torch.nn import MaxPool2d, AvgPool2d, ConvTranspose2d, Sequential
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
 from torch_tools.models._blocks_2d import ResidualBlock, DownBlock
-from torch_tools.models._blocks_2d import UpBlock
+from torch_tools.models._blocks_2d import UpBlock, UNetUpBlock
 
 
 # pylint: disable=protected-access
@@ -336,3 +336,81 @@ def test_up_block_double_conv_second_conv_block_contents():
     assert block[1][1][0].out_channels == 321
     assert block[1][1][1].num_features == 321
     assert block[1][1][2].negative_slope == 0.54321
+
+
+def test_unet_up_block_upsample_contents_with_bilinear_false():
+    """Test the contents of the upsample block with bilinear set to false."""
+    up_block = UNetUpBlock(
+        in_chans=64,
+        out_chans=128,
+        bilinear=False,
+        lr_slope=0.12345,
+    )
+
+    assert isinstance(up_block.upsample, ConvTranspose2d)
+    assert up_block.upsample.in_channels == 64
+    assert up_block.upsample.out_channels == 64 // 2
+
+
+def test_unet_up_block_upsample_contents_with_bilinear_true():
+    """Test the contents of the upsample block with bilinar set to true."""
+    up_block = UNetUpBlock(
+        in_chans=64,
+        out_chans=128,
+        bilinear=True,
+        lr_slope=0.12345,
+    )
+
+    assert isinstance(up_block.upsample, Sequential)
+    assert isinstance(up_block.upsample[0], Upsample)
+    assert isinstance(up_block.upsample[1], Conv2d)
+
+    assert up_block.upsample[0].mode == "bilinear"
+    assert up_block.upsample[1].in_channels == 64
+    assert up_block.upsample[1].out_channels == 32
+
+
+def test_unet_up_block_double_conv_first_conv_block_contents():
+    """Test the contents of the first conv block in the double conv block."""
+    up_block = UNetUpBlock(
+        in_chans=64,
+        out_chans=128,
+        bilinear=False,
+        lr_slope=0.12345,
+    )
+
+    double_conv = up_block.double_conv
+
+    # Test the first conv block of the double conv
+    assert isinstance(double_conv[0], ConvBlock)
+    assert isinstance(double_conv[0][0], Conv2d)
+    assert isinstance(double_conv[0][1], BatchNorm2d)
+    assert isinstance(double_conv[0][2], LeakyReLU)
+
+    assert double_conv[0][0].in_channels == 64
+    assert double_conv[0][0].out_channels == 128
+    assert double_conv[0][1].num_features == 128
+    assert double_conv[0][2].negative_slope == 0.12345
+
+
+def test_unet_up_block_double_conv_second_conv_block_contents():
+    """Test the contents of the second conv block in the double conv block."""
+    up_block = UNetUpBlock(
+        in_chans=64,
+        out_chans=128,
+        bilinear=False,
+        lr_slope=0.12345,
+    )
+
+    double_conv = up_block.double_conv
+
+    # Test the second conv block of the double conv
+    assert isinstance(double_conv[1], ConvBlock)
+    assert isinstance(double_conv[1][0], Conv2d)
+    assert isinstance(double_conv[1][1], BatchNorm2d)
+    assert isinstance(double_conv[1][2], LeakyReLU)
+
+    assert double_conv[1][0].in_channels == 128
+    assert double_conv[1][0].out_channels == 128
+    assert double_conv[1][1].num_features == 128
+    assert double_conv[1][2].negative_slope == 0.12345
