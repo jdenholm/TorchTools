@@ -4,12 +4,14 @@ from typing import List
 from torch.nn import Sequential
 
 
-from torch_tools.models._blocks_2d import DownBlock
+from torch_tools.models._blocks_2d import DownBlock, DoubleConvBlock
 from torch_tools.models._argument_processing import (
     process_num_feats,
     process_str_arg,
     process_negative_slope_arg,
 )
+
+# pylint: disable=too-many-arguments
 
 
 class Encoder2d(Sequential):
@@ -19,6 +21,8 @@ class Encoder2d(Sequential):
     ----------
     in_chans : int
         The number of input channels the encoder should take.
+    start_features : int
+        The number of features the first conv block should produce.
     num_blocks : int
         The number of downsampling blocks in the encoder.
     pool_style : str
@@ -31,14 +35,20 @@ class Encoder2d(Sequential):
     def __init__(
         self,
         in_chans: int,
+        start_features: int,
         num_blocks: int,
         pool_style: str,
         lr_slope: float,
     ):
         """Build `Encoder`."""
         super().__init__(
-            *self._get_blocks(
+            DoubleConvBlock(
                 process_num_feats(in_chans),
+                process_num_feats(start_features),
+                process_negative_slope_arg(lr_slope),
+            ),
+            *self._get_blocks(
+                process_num_feats(start_features),
                 process_num_feats(num_blocks),
                 process_str_arg(pool_style),
                 process_negative_slope_arg(lr_slope),
@@ -67,13 +77,13 @@ class Encoder2d(Sequential):
 
         Returns
         -------
-        List[Module]
+        List[DownBlock]
             A list of the model's blocks.
 
         """
         chans = in_chans
         blocks = []
-        for _ in range(num_blocks):
+        for _ in range(num_blocks - 1):
             blocks.append(DownBlock(chans, chans * 2, pool_style, lr_slope))
             chans *= 2
         return blocks
