@@ -32,7 +32,6 @@ class DenseNetwork(Sequential):
     negative_slope : float, optional
         The negative slope argument to use in the leaky relu layers.
 
-    #TODO: Add tests for argument types and values.
 
     """
 
