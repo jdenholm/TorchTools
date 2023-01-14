@@ -48,7 +48,7 @@ class SimpleConvNet2d(Sequential):
             Encoder2d(
                 in_chans,
                 features_start,
-                num_blocks - 1,
+                num_blocks,
                 downsample_pool,
                 lr_slope,
             ),

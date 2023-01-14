@@ -700,6 +700,21 @@ SimpleConvNet2d(in_chans=3,
             )
           )
         )
+        (3): DownBlock(
+          (0): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+          (1): DoubleConvBlock(
+            (0): ConvBlock(
+              (0): Conv2d(256, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.123)
+            )
+            (1): ConvBlock(
+              (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.123)
+            )
+          )
+        )
       )
       (1): _ConcatMaxAvgPool2d(
         (_avg_pool): AdaptiveAvgPool2d(output_size=(1, 1))
