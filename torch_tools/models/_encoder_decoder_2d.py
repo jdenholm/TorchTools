@@ -1,14 +1,19 @@
 """A simple image encoder-decoder model."""
 
-from torch.nn import Module, Conv2d
+from torch.nn import Module
 
 from torch import Tensor, set_grad_enabled
 
 from torch_tools.models._encoder_2d import Encoder2d
 from torch_tools.models._decoder_2d import Decoder2d
-from torch_tools.models._blocks_2d import DoubleConvBlock
 
-from torch_tools.models._argument_processing import process_num_feats
+from torch_tools.models._argument_processing import (
+    process_num_feats,
+    process_u_architecture_layers,
+    process_str_arg,
+    process_negative_slope_arg,
+    process_boolean_arg,
+)
 
 from torch_tools.misc import batch_spatial_dims_power_of_2
 
@@ -39,6 +44,7 @@ class EncoderDecoder2d(Module):
     def __init__(
         self,
         in_chans: int,
+        out_chans: int,
         num_layers: int = 4,
         features_start: int = 64,
         lr_slope: float = 0.1,
@@ -48,31 +54,20 @@ class EncoderDecoder2d(Module):
         """Build `EncoderDecoder2d`."""
         super().__init__()
 
-        self.in_conv = DoubleConvBlock(
+        self.encoder = Encoder2d(
             process_num_feats(in_chans),
             process_num_feats(features_start),
-            lr_slope,
-        )
-
-        self.encoder = Encoder2d(
-            features_start,
-            num_layers - 1,
-            pool_style,
-            lr_slope,
+            process_u_architecture_layers(num_layers),
+            process_str_arg(pool_style),
+            process_negative_slope_arg(lr_slope),
         )
 
         self.decoder = Decoder2d(
-            (2 ** (num_layers - 1)) * features_start,
-            num_layers - 1,
-            bilinear,
-            lr_slope,
-        )
-
-        self.out_conv = Conv2d(
-            in_channels=features_start,
-            out_channels=in_chans,  # Return should have `in_chans` channels.
-            kernel_size=1,
-            stride=1,
+            process_num_feats((2**num_layers) * features_start),
+            process_num_feats(out_chans),
+            process_u_architecture_layers(num_layers),
+            process_boolean_arg(bilinear),
+            process_negative_slope_arg(lr_slope),
         )
 
     def forward(
@@ -103,9 +98,9 @@ class EncoderDecoder2d(Module):
         batch_spatial_dims_power_of_2(batch)
 
         with set_grad_enabled(not frozen_encoder):
-            encoded = self.in_conv(batch)
-            encoded = self.encoder(encoded)
+            encoded = self.encoder(batch)
+
         with set_grad_enabled(not frozen_decoder):
             decoded = self.decoder(encoded)
-            decoded = self.out_conv(decoded)
+
         return decoded
