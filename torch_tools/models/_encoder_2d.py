@@ -9,6 +9,7 @@ from torch_tools.models._argument_processing import (
     process_num_feats,
     process_str_arg,
     process_negative_slope_arg,
+    process_u_architecture_layers,
 )
 
 # pylint: disable=too-many-arguments
@@ -49,7 +50,7 @@ class Encoder2d(Sequential):
             ),
             *self._get_blocks(
                 process_num_feats(start_features),
-                process_num_feats(num_blocks),
+                process_u_architecture_layers(num_blocks),
                 process_str_arg(pool_style),
                 process_negative_slope_arg(lr_slope),
             )
