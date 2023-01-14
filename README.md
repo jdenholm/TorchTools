@@ -204,7 +204,7 @@ ConvNet2d(out_feats=512,
 Another useful feature of `ConvNet2d` is the ability to *freeze* the encoder: PyTorch have made available weights from pretrained models which you can leverage for a totally different problem.
 
 By choosing `pretrained=True`, the encoder part of the model will be loaded with the most
-up-to-date ImageNet pretrained weights available from Torchvision. You can then simple train the dense layers, leaving the weights of the enoder untouched.
+up-to-date ImageNet pretrained weights available from Torchvision. You can then simply train the dense layers, leaving the weights of the enoder untouched.
 
 For example:
 
