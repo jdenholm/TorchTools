@@ -4,7 +4,7 @@ import pytest
 
 from torch import rand  # pylint:disable=no-name-in-module
 
-from torch_tools.misc import batch_spatial_dims_power_of_2
+from torch_tools.misc import batch_spatial_dims_power_of_2, divides_by_two_check
 
 
 def test_batch_spatial_dims_divisible_by_2_types():
@@ -73,3 +73,35 @@ def test_batch_spatial_dims_power_of_2_width_values():
 
     with pytest.raises(RuntimeError):
         batch_spatial_dims_power_of_2(rand(16, 4, 64, 9))
+
+
+def test_divides_by_two_check_types():
+    """Test the types accepted by the `to_divide` argument."""
+    # Should work with ints which can be divided by 2
+    divides_by_two_check(10)
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        divides_by_two_check(2.0)
+    with pytest.raises(TypeError):
+        divides_by_two_check(2j)
+
+
+def test_divides_by_two_check_values():
+    """Test the values accepted by the `to_divide` argument."""
+    # Should work with ints which can be divided by 2
+    divides_by_two_check(10)
+
+    # Should break with ints of zero or less
+    with pytest.raises(ValueError):
+        divides_by_two_check(0)
+    with pytest.raises(ValueError):
+        divides_by_two_check(-1)
+
+    # Should break with positive ints which don't divide by 2
+    with pytest.raises(ValueError):
+        divides_by_two_check(1)
+    with pytest.raises(ValueError):
+        divides_by_two_check(3)
+    with pytest.raises(ValueError):
+        divides_by_two_check(5)
