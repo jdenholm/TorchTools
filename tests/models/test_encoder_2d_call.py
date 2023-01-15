@@ -38,7 +38,7 @@ def test_encoder_2d_return_channels_with_max_pool():
     assert block(rand(10, 3, 256, 256)).shape[1] == (64 * 2 ** (6 - 1))
 
 
-def test_encoder_2d_return_channels_with_avgavg_pool():
+def test_encoder_2d_return_channels_with_avg_pool():
     """Test the number of channels returned by the call method.
 
     Notes
