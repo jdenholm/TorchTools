@@ -581,21 +581,6 @@ EncoderDecoder2d(in_chans=3, out_chans=3)
       )
       (decoder): Decoder2d(
         (0): UpBlock(
-          (0): ConvTranspose2d(1024, 1024, kernel_size=(2, 2), stride=(2, 2))
-          (1): DoubleConvBlock(
-            (0): ConvBlock(
-              (0): Conv2d(1024, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-              (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-              (2): LeakyReLU(negative_slope=0.1)
-            )
-            (1): ConvBlock(
-              (0): Conv2d(512, 512, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
-              (1): BatchNorm2d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-              (2): LeakyReLU(negative_slope=0.1)
-            )
-          )
-        )
-        (1): UpBlock(
           (0): ConvTranspose2d(512, 512, kernel_size=(2, 2), stride=(2, 2))
           (1): DoubleConvBlock(
             (0): ConvBlock(
@@ -610,7 +595,7 @@ EncoderDecoder2d(in_chans=3, out_chans=3)
             )
           )
         )
-        (2): UpBlock(
+        (1): UpBlock(
           (0): ConvTranspose2d(256, 256, kernel_size=(2, 2), stride=(2, 2))
           (1): DoubleConvBlock(
             (0): ConvBlock(
@@ -625,7 +610,22 @@ EncoderDecoder2d(in_chans=3, out_chans=3)
             )
           )
         )
-        (3): Conv2d(128, 3, kernel_size=(1, 1), stride=(1, 1))
+        (2): UpBlock(
+          (0): ConvTranspose2d(128, 128, kernel_size=(2, 2), stride=(2, 2))
+          (1): DoubleConvBlock(
+            (0): ConvBlock(
+              (0): Conv2d(128, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+            (1): ConvBlock(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): LeakyReLU(negative_slope=0.1)
+            )
+          )
+        )
+        (3): Conv2d(64, 3, kernel_size=(1, 1), stride=(1, 1))
       )
     )
 
