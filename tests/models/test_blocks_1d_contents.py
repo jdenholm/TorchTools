@@ -1,4 +1,4 @@
-"""Test the contents of blocks in `torch_tools.models._blocks_1d.`"""
+"""Test the contents of blocks in `torch_tools.models._blocks_1d`."""
 # pylint: disable=protected-access
 
 from torch.nn import Linear, BatchNorm1d, LeakyReLU, Dropout
