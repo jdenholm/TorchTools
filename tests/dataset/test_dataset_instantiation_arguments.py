@@ -3,13 +3,15 @@ from pathlib import Path
 from string import ascii_lowercase
 
 import numpy as np
-import torch
+from torch import zeros  # pylint: disable=no-name-in-module
 
 import pytest
 
-from torchvision.transforms import Compose
+from torchvision.transforms import Compose  # type: ignore
 
 from torch_tools.datasets import DataSet
+
+# pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
@@ -29,7 +31,7 @@ def test_inputs_with_allowed_types():
     # `numpy.ndarray`
     _ = DataSet(inputs=list(np.zeros((10, 2))))
     # `torch.Tensor`
-    _ = DataSet(inputs=list(torch.zeros(10, 2)))
+    _ = DataSet(inputs=list(zeros(10, 2)))
 
 
 def test_inputs_with_forbidden_types():
@@ -69,7 +71,7 @@ def test_targets_with_allowed_types():
     # `numpy.ndarray`
     _ = DataSet(inputs=inputs, targets=list((np.zeros((5, 3)))))
     # `torch.Tensor`
-    _ = DataSet(inputs=inputs, targets=list(torch.zeros(5, 2)))
+    _ = DataSet(inputs=inputs, targets=list(zeros(5, 2)))
 
 
 def test_targets_with_forbidden_types():
