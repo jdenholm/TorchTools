@@ -21,4 +21,6 @@ repos:
         name: pytest
         entry: pytest
         language: system
+        pass_filenames: false
         stages: [push]
+        always_run: true
