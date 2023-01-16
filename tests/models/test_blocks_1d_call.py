@@ -1,6 +1,6 @@
 """Test the call behaviour of blocks in `torch_tools.models._blocks_1d`."""
 
-from torch import rand
+from torch import rand  # pylint: disable=no-name-in-module
 
 from torch_tools.models._blocks_1d import DenseBlock, InputBlock
 
