@@ -63,6 +63,3 @@ def test_encoder_2d_double_conv_contents():
     assert second_conv_block[0].out_channels == 64
     assert second_conv_block[1].num_features == 64
     assert second_conv_block[2].negative_slope == 0.123
-
-
-# TODO: continue adding tests ...
