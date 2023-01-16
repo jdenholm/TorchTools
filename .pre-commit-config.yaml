@@ -16,3 +16,10 @@ repos:
         pass_filenames: true
         types: [file, python]
         stages: [commit]
+
+      - id: pytest
+        name: pytest
+        entry: pytest
+        language: system
+        types: [file, python]
+        stages: [push]
