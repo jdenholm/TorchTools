@@ -16,6 +16,8 @@ from torch_tools.models._argument_processing import (
     process_str_arg,
 )
 
+# pylint: disable=too-many-arguments
+
 
 class ConvBlock(Sequential):
     """Single 2D convolutional block.
