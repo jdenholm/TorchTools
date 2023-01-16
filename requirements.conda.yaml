@@ -1,6 +1,7 @@
 name: torch-tools
 channels:
   - pytorch
+  - conda-forge
   - defaults
 dependencies:
   - anyio=3.5.0
@@ -13,14 +14,16 @@ dependencies:
   - babel=2.11.0
   - backcall=0.2.0
   - beautifulsoup4=4.11.1
-  - black=22.6.0
+  - black=22.12.0
+  - black-jupyter=22.12.0
   - blas=1.0
   - bleach=4.1.0
   - brotlipy=0.7.0
   - bzip2=1.0.8
-  - ca-certificates=2022.10.11
+  - ca-certificates=2022.12.7
   - certifi=2022.12.7
   - cffi=1.15.1
+  - cfgv=3.3.1
   - charset-normalizer=2.0.4
   - click=8.0.4
   - comm=0.1.2
@@ -29,9 +32,11 @@ dependencies:
   - decorator=5.1.1
   - defusedxml=0.7.1
   - dill=0.3.6
+  - distlib=0.3.6
   - entrypoints=0.4
   - executing=0.8.3
   - ffmpeg=4.3
+  - filelock=3.9.0
   - flit-core=3.6.0
   - freetype=2.12.1
   - future=0.18.2
@@ -43,6 +48,7 @@ dependencies:
   - gst-plugins-base=1.14.0
   - gstreamer=1.14.0
   - icu=58.2
+  - identify=2.5.5
   - idna=3.4
   - iniconfig=1.1.1
   - intel-openmp=2021.4.0
@@ -110,6 +116,7 @@ dependencies:
   - nettle=3.7.3
   - ninja=1.10.2
   - ninja-base=1.10.2
+  - nodeenv=1.7.0
   - notebook=6.5.2
   - notebook-shim=0.2.2
   - nspr=4.33
@@ -130,6 +137,8 @@ dependencies:
   - platformdirs=2.5.2
   - pluggy=1.0.0
   - ply=3.11
+  - pre-commit=2.20.0
+  - pre_commit=2.20.0
   - prometheus_client=0.14.1
   - prompt-toolkit=3.0.36
   - prompt_toolkit=3.0.36
@@ -149,6 +158,7 @@ dependencies:
   - python=3.10.8
   - python-dateutil=2.8.2
   - python-fastjsonschema=2.16.2
+  - python_abi=3.10
   - pytorch=1.13.1
   - pytz=2022.7
   - pyyaml=6.0
@@ -172,6 +182,7 @@ dependencies:
   - terminado=0.17.1
   - tinycss2=1.2.1
   - tk=8.6.12
+  - tokenize-rt=5.0.0
   - toml=0.10.2
   - tomli=2.0.1
   - tomlkit=0.11.1
@@ -181,7 +192,9 @@ dependencies:
   - typing-extensions=4.4.0
   - typing_extensions=4.4.0
   - tzdata=2022g
+  - ukkonen=1.0.1
   - urllib3=1.26.13
+  - virtualenv=20.16.2
   - wcwidth=0.2.5
   - webencodings=0.5.1
   - websocket-client=0.58.0
