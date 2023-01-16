@@ -1,10 +1,13 @@
 """Test the iteration behaviours of `torch_tools.datasets.DataSet`."""
 import pytest
 
-from torch import zeros, ones
+
+from torch import zeros, ones  # pylint: disable=no-name-in-module
 from torchvision.transforms import Compose
 
 from torch_tools.datasets import DataSet
+
+# pylint: disable=redefined-outer-name
 
 
 @pytest.fixture
@@ -103,6 +106,7 @@ def test_input_target_and_both_transforms_are_applied(inputs_and_targets):
 
         msg = "Target then both transforms not applied."
         assert (y_item == both_tfms(target_tfms(tgt_item))).all(), msg
+
 
 def test_len_method(inputs_and_targets):
     """Test the len method returns the correct values."""
