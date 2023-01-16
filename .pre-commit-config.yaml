@@ -17,6 +17,14 @@ repos:
         types: [file, python]
         stages: [commit]
 
+      - id: pydocstyle
+        name: pydocstyle
+        entry: pydocstyle --convention=numpy
+        language: system
+        pass_filenames: true
+        types: [file, python]
+        stages: [commit]
+
       - id: pytest
         name: pytest
         entry: pytest
