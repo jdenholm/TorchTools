@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 from torch import Tensor, concat  # pylint: disable=no-name-in-module
-from torchvision.transforms import Compose
+from torchvision.transforms import Compose  # type: ignore
 
 
 from numpy import ndarray
