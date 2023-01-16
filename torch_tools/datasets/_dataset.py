@@ -3,7 +3,7 @@ from typing import Sequence, Union, Optional, Tuple
 from pathlib import Path
 
 
-from torch import Tensor, concat
+from torch import Tensor, concat  # pylint: disable=no-name-in-module
 from torchvision.transforms import Compose
 
 
@@ -13,7 +13,7 @@ from numpy import ndarray
 from torch_tools.datasets._base_dataset import _BaseDataset
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-few-public-methods
 
 
 class DataSet(_BaseDataset):
@@ -87,7 +87,10 @@ class DataSet(_BaseDataset):
             raise TypeError(msg)
         return tfms
 
-    def _apply_input_tfms(self, x_item: Union[str, Path, Tensor, ndarray],) -> Tensor:
+    def _apply_input_tfms(
+        self,
+        x_item: Union[str, Path, Tensor, ndarray],
+    ) -> Tensor:
         """Apply the input-only transforms.
 
         Parameters
@@ -122,7 +125,9 @@ class DataSet(_BaseDataset):
         return self._y_tfms(y_item) if self._y_tfms is not None else y_item
 
     def _apply_both_tfms(
-        self, x_item: Tensor, y_item: Tensor,
+        self,
+        x_item: Tensor,
+        y_item: Tensor,
     ) -> Tuple[Tensor, Tensor]:
         """Apply `self._both_tfms` to `x_item` and `y_item`.
 

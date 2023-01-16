@@ -8,4 +8,11 @@ repos:
         pass_filenames: true
         types: [file, python]
         stages: [commit]
-        files: ^README.*.ipynb$
+
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        pass_filenames: true
+        types: [file, python]
+        stages: [commit]
