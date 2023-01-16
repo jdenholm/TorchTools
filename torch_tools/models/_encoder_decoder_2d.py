@@ -63,7 +63,7 @@ class EncoderDecoder2d(Module):
         )
 
         self.decoder = Decoder2d(
-            process_num_feats((2**(num_layers - 1)) * features_start),
+            process_num_feats((2 ** (num_layers - 1)) * features_start),
             process_num_feats(out_chans),
             process_u_architecture_layers(num_layers),
             process_boolean_arg(bilinear),
