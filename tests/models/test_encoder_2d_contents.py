@@ -1,6 +1,6 @@
 """Test the contents of `torch_tools.models._encoder_2d.Encoder2d`."""
 
-from torch.nn import Conv2d, BatchNorm2d, LeakyReLU
+from torch.nn import Conv2d, BatchNorm2d, LeakyReLU, MaxPool2d, AvgPool2d
 
 from torch_tools import Encoder2d
 
@@ -63,3 +63,70 @@ def test_encoder_2d_double_conv_contents():
     assert second_conv_block[0].out_channels == 64
     assert second_conv_block[1].num_features == 64
     assert second_conv_block[2].negative_slope == 0.123
+
+
+def test_encoder_2d_pool_type_with_avg_pool():
+    """Test the pooling layers are correctly set to average."""
+    encoder = Encoder2d(
+        in_chans=123,
+        start_features=111,
+        num_blocks=3,
+        pool_style="avg",
+        lr_slope=0.123,
+    )
+
+    # No pool in the first block, but there should be one in the others
+    for down_block in list(encoder.children())[1:]:
+        assert isinstance(down_block[0], AvgPool2d)
+
+
+def test_encoder_2d_pool_type_with_max_pool():
+    """Test the pooling layers are correctly set to max."""
+    encoder = Encoder2d(
+        in_chans=123,
+        start_features=111,
+        num_blocks=3,
+        pool_style="max",
+        lr_slope=0.123,
+    )
+
+    # No pool in the first block, but there should be one in the others
+    for down_block in list(encoder.children())[1:]:
+        assert isinstance(down_block[0], MaxPool2d)
+
+
+def test_encoder_2d_down_block_contents_first_block():
+    """Test the contents of the `DownBlocks`."""
+    encoder = Encoder2d(
+        in_chans=123,
+        start_features=111,
+        num_blocks=3,
+        pool_style="avg",
+        lr_slope=0.123,
+    )
+
+    assert isinstance(encoder[0], DoubleConvBlock)
+
+    # Test the layers in the first conv block of the double conv
+    assert isinstance(encoder[0][0], ConvBlock)
+    assert isinstance(encoder[0][0][0], Conv2d)
+    assert isinstance(encoder[0][0][1], BatchNorm2d)
+    assert isinstance(encoder[0][0][2], LeakyReLU)
+
+    # Test the channels/features of the first conv block of the double conv
+    assert encoder[0][0][0].in_channels == 123
+    assert encoder[0][0][0].out_channels == 111
+    assert encoder[0][0][1].num_features == 111
+    assert encoder[0][0][2].negative_slope == 0.123
+
+    # Test the layers in the second conv block of the double conv
+    assert isinstance(encoder[0][1], ConvBlock)
+    assert isinstance(encoder[0][1][0], Conv2d)
+    assert isinstance(encoder[0][1][1], BatchNorm2d)
+    assert isinstance(encoder[0][1][2], LeakyReLU)
+
+    # Test the channels/features of the second conv block of the double conv
+    assert encoder[0][1][0].in_channels == 111
+    assert encoder[0][1][0].out_channels == 111
+    assert encoder[0][1][1].num_features == 111
+    assert encoder[0][1][2].negative_slope == 0.123
