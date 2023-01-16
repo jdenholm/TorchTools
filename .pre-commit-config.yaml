@@ -3,32 +3,32 @@ repos:
     hooks :
       - id: black
         name: black
-        entry: black
         language: system
+        entry: black
         pass_filenames: true
         types: [file, python]
         stages: [commit]
 
       - id: pylint
         name: pylint
-        entry: pylint
         language: system
+        entry: pylint
         pass_filenames: true
         types: [file, python]
         stages: [commit]
 
       - id: pydocstyle
         name: pydocstyle
-        entry: pydocstyle --convention=numpy
         language: system
+        entry: pydocstyle --convention=numpy
         pass_filenames: true
         types: [file, python]
         stages: [commit]
 
       - id: pytest
         name: pytest
-        entry: pytest
         language: system
+        entry: pytest
         pass_filenames: false
         stages: [push]
         always_run: true
