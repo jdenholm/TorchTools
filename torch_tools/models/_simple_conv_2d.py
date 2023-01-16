@@ -4,7 +4,6 @@ from torch.nn import Sequential, Linear
 
 from torch_tools.models._encoder_2d import Encoder2d
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
-from torch_tools.models._blocks_2d import DoubleConvBlock
 
 # pylint: disable=too-many-arguments
 
