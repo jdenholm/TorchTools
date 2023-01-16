@@ -17,6 +17,15 @@ repos:
         types: [file, python]
         stages: [commit]
 
+      - id: mypy
+        name: mypy
+        language: system
+        entry: mypy
+        pass_filenames: true
+        types: [file, python]
+        stages: [commit]
+        exclude: ^setup.*.py$
+
       - id: pydocstyle
         name: pydocstyle
         language: system
