@@ -3,7 +3,7 @@ import pytest
 
 
 from torch import zeros, ones  # pylint: disable=no-name-in-module
-from torchvision.transforms import Compose
+from torchvision.transforms import Compose  # type: ignore
 
 from torch_tools.datasets import DataSet
 
