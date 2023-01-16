@@ -42,7 +42,7 @@ def process_boolean_arg(bool_arg: bool) -> bool:
         Boolean argument.
 
     Returns
-    ----------
+    -------
     bool_arg : bool
         See 'Parameters'.
 
