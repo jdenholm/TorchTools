@@ -96,7 +96,7 @@ def test_encoder_2d_pool_type_with_max_pool():
         assert isinstance(down_block[0], MaxPool2d)
 
 
-def test_encoder_2d_down_block_contents():
+def test_encoder_2d_first_down_block_contents():
     """Test the contents of the down blocks."""
     encoder = Encoder2d(
         in_chans=123,
@@ -132,3 +132,43 @@ def test_encoder_2d_down_block_contents():
     assert encoder[1][1][1][0].out_channels == 2 * 111
     assert encoder[1][1][1][1].num_features == 2 * 111
     assert encoder[1][1][1][2].negative_slope == 0.123
+
+
+def test_encoder_2d_second_down_block_contents():
+    """Test the contents of the down blocks."""
+    encoder = Encoder2d(
+        in_chans=123,
+        start_features=111,
+        num_blocks=3,
+        pool_style="max",
+        lr_slope=0.666,
+    )
+
+    # Test the second down block contents
+    assert isinstance(encoder[2], DownBlock)
+    assert isinstance(encoder[2][0], MaxPool2d)
+    assert isinstance(encoder[2][1], DoubleConvBlock)
+
+    # Test the contents of the first conv block of the double conv
+    assert isinstance(encoder[2][1][0], ConvBlock)
+    assert isinstance(encoder[2][1][0][0], Conv2d)
+    assert isinstance(encoder[2][1][0][1], BatchNorm2d)
+    assert isinstance(encoder[2][1][0][2], LeakyReLU)
+
+    # Test the attributes of the contents of the first conv block
+    assert encoder[2][1][0][0].in_channels == 2 * 111
+    assert encoder[2][1][0][0].out_channels == 4 * 111
+    assert encoder[2][1][0][1].num_features == 4 * 111
+    assert encoder[2][1][0][2].negative_slope == 0.666
+
+    # Test the contents of the second conv block of the double conv
+    assert isinstance(encoder[2][1][1], ConvBlock)
+    assert isinstance(encoder[2][1][1][0], Conv2d)
+    assert isinstance(encoder[2][1][1][1], BatchNorm2d)
+    assert isinstance(encoder[2][1][1][2], LeakyReLU)
+
+    # Test the attributes of the contents of the second conv block
+    assert encoder[2][1][1][0].in_channels == 4 * 111
+    assert encoder[2][1][1][0].out_channels == 4 * 111
+    assert encoder[2][1][1][1].num_features == 4 * 111
+    assert encoder[2][1][1][2].negative_slope == 0.666
