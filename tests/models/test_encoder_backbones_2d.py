@@ -2,8 +2,8 @@
 import pytest
 
 
-from torch_tools.models._encoder_backbones_2d import get_backbone
-from torch_tools.models._encoder_backbones_2d import _encoder_options
+from torch_tools.models._torchvision_encoder_backbones_2d import get_backbone
+from torch_tools.models._torchvision_encoder_backbones_2d import _encoder_options
 
 
 def test_get_backbone_with_bad_encoder_option_type():

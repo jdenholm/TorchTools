@@ -3,7 +3,7 @@
 import pytest
 
 from torch_tools.models import ConvNet2d
-from torch_tools.models._encoder_backbones_2d import _encoder_options
+from torch_tools.models._torchvision_encoder_backbones_2d import _encoder_options
 
 
 def test_out_feats_arg_types():

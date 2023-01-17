@@ -5,7 +5,7 @@ from torch import Tensor, set_grad_enabled
 from torch.nn import Module, Sequential, Flatten, Conv2d
 
 from torch_tools.models._argument_processing import process_num_feats
-from torch_tools.models._encoder_backbones_2d import get_backbone
+from torch_tools.models._torchvision_encoder_backbones_2d import get_backbone
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
 from torch_tools.models._dense_network import DenseNetwork
 
