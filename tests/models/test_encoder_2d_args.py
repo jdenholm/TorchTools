@@ -170,19 +170,19 @@ def test_num_blocks_argument_values():
     )
 
     # Should break with ints less than 2
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         _ = Encoder2d(
             in_chans=32,
             start_features=64,
-            num_blocks=2.0,
+            num_blocks=1,
             pool_style="max",
             lr_slope=0.1,
         )
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         _ = Encoder2d(
             in_chans=32,
             start_features=64,
-            num_blocks=1j,
+            num_blocks=0,
             pool_style="max",
             lr_slope=0.1,
         )
