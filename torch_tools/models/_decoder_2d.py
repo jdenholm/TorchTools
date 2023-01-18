@@ -6,7 +6,6 @@ from torch.nn import Sequential, Conv2d
 
 from torch_tools.models._blocks_2d import UpBlock
 from torch_tools.models._argument_processing import process_num_feats
-from torch_tools.misc import divides_by_two_check
 
 # pylint: disable=too-many-arguments
 
@@ -54,6 +53,31 @@ class Decoder2d(Sequential):
             ),
         )
 
+    @staticmethod
+    def _channel_size_check(in_chans: int, num_blocks: int):
+        """Check `in_chans` can be halved `num_layers - 1` times.
+
+        Parameters
+        ----------
+        in_chans : int
+            The number of inputs channels the model should take.
+        num_blocks : int
+            The number of layers in the model.
+
+        Raises
+        ------
+        ValueError
+            If `in_chans` cannot be divided by 2 `num_blocks - 1` times.
+
+        """
+        chans = in_chans
+        for _ in range(num_blocks - 1):
+            if (chans % 2) != 0:
+                msg = f"'in_chans' value {in_chans} can't be halved "
+                msg += f"{num_blocks - 1} times."
+                raise ValueError(msg)
+            chans //= 2
+
     def _get_blocks(
         self,
         in_chans: int,
@@ -81,11 +105,10 @@ class Decoder2d(Sequential):
             A list of the upsampling layers to include in the decoder.
 
         """
+        self._channel_size_check(in_chans, num_blocks)
         chans = in_chans
         blocks = []
         for _ in range(num_blocks - 1):
-
-            divides_by_two_check(chans)
 
             blocks.append(
                 UpBlock(
