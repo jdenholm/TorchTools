@@ -6,6 +6,8 @@ from torch.nn import Sequential, Conv2d
 
 from torch_tools.models._blocks_2d import UpBlock
 from torch_tools.models._argument_processing import process_num_feats
+from torch_tools.models._argument_processing import process_boolean_arg
+from torch_tools.models._argument_processing import process_negative_slope_arg
 
 # pylint: disable=too-many-arguments
 
@@ -41,13 +43,13 @@ class Decoder2d(Sequential):
         super().__init__(
             *self._get_blocks(
                 process_num_feats(in_chans),
-                num_blocks,
-                bilinear,
-                lr_slope,
+                process_num_feats(num_blocks),
+                process_boolean_arg(bilinear),
+                process_negative_slope_arg(lr_slope),
             ),
             Conv2d(
-                in_channels=in_chans // (2 ** (num_blocks - 1)),
-                out_channels=out_chans,
+                in_channels=in_chans // (2 ** (process_num_feats(num_blocks) - 1)),
+                out_channels=process_num_feats(out_chans),
                 kernel_size=1,
                 stride=1,
             ),
