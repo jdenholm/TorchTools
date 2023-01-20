@@ -29,7 +29,7 @@ class Encoder2d(Sequential):
     pool_style : str
         The type of pooling to use in downsampling (`"avg"` or `"max"`).
     lr_slope : float
-        The negative slope argument to use in the `LeakyReLU`s.
+        The negative slope argument to use in the `LeakyReLU` layers.
 
     """
 
