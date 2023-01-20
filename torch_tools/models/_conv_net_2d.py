@@ -40,6 +40,42 @@ class ConvNet2d(Module):
         Keyword arguments for `torch_tools.models._dense_network._DenseNetwork`
         which serves as the classification/regression part of the model.
 
+    Examples
+    --------
+    >>> from torch_tools import ConvNet2d
+    >>> model = ConvNet2d(out_feats=512,
+                          in_channels=3,
+                          encoder_style="vgg11_bn",
+                          pretrained=True,
+                          pool_style="avg-max-concat",
+                          dense_net_kwargs={"hidden_sizes": (1024, 1024), "hidden_dropout": 0.25})
+
+
+
+    >>> from torch import rand
+    >>> from torch_tools import ConvNet2d
+    >>> model = ConvNet2d(out_feats=10)
+    >>> # Batch of 10 fake three-channel images of 256x256 pixels
+    >>> mini_batch = rand(10, 3, 256, 256)
+    >>> # With the encoder frozen
+    >>> preds = model(mini_batch, frozen_encoder=True)
+    >>> # Without the encoder frozen (default behaviour)
+    >>> preds = model(mini_batch, frozen_encoder=False)
+
+
+    Notes
+    -----
+    — Even if you load pretrained weights, but *don't* freeze the encoder, you
+    will likely end up finding better performance than you would by randomly
+    initialising the model—even if it doesn't make sense. Welcome to deep
+    learning.
+
+    — If you change the number of input channels, don't bother freezing the
+    encoder—the first convolutional layer is overloaded and randomly
+    initialised.
+
+    — See `torch_tools.models._conv_net_2d.ConvNet2d` for more info.
+
     """
 
     def __init__(
@@ -104,7 +140,7 @@ class ConvNet2d(Module):
                 break
 
     def forward(self, batch: Tensor, frozen_encoder: bool = False) -> Tensor:
-        """Pass `batch`" through the model.
+        """Pass `batch` through the model.
 
         Parameters
         ----------
