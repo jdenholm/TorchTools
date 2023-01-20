@@ -51,7 +51,9 @@ class ConvNet2d(Module):
                           dense_net_kwargs={"hidden_sizes": (1024, 1024), "hidden_dropout": 0.25})
 
 
-    Another potentially usefull feature is the ability to *freeze* the encoder:
+    Another potentially useful feature is the ability to *freeze* the encoder,
+    and take advantage of the available pretrained weights by doing transfer
+    learning.
 
     >>> from torch import rand
     >>> from torch_tools import ConvNet2d
