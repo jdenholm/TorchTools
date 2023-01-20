@@ -13,7 +13,7 @@ from torch_tools.models._dense_network import DenseNetwork
 
 
 class ConvNet2d(Module):
-    """Two-dimensional CNN for image-like objects.
+    """Two-dimensional CNN model which wraps Torchvision models.
 
     Parameters
     ----------
