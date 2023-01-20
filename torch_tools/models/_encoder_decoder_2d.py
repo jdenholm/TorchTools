@@ -40,6 +40,14 @@ class EncoderDecoder2d(Module):
         Whether or not to upsample with bilinear interpolation ( `True` ) or
         `ConvTranspose2d` ( `False` ).
 
+    Notes
+    -----
+    — Depending on the application, it may be convenient to pretrain this model
+    and then use it for transfer learning—hence the `frozen_encoder` and
+    `frozen_decoder` arguments in the `forward` method. There are no
+    pretrained weights available, however.
+
+
     """
 
     def __init__(
@@ -85,10 +93,10 @@ class EncoderDecoder2d(Module):
             A mini-batch of inputs.
         frozen_encoder : bool
             Boolean switch controlling whether the encoder's gradients are
-            enabled or disabled (usefull for transfer learning).
+            enabled or disabled (useful for transfer learning).
         frozen_decoder : bool
             Boolean switch controlling whether the decoder's gradients are
-            enabled or disabled (usefull for transfer learning).
+            enabled or disabled (useful for transfer learning).
 
         Returns
         -------
