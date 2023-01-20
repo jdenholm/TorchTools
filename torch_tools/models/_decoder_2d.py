@@ -27,7 +27,7 @@ class Decoder2d(Sequential):
         Whether to use bilinear interpolation (`True`) or a `ConvTranspose2d`
         to do the upsampling.
     lr_slope : float
-        The negative slope to use in the `LeakyReLU`s.
+        The negative slope to use in the `LeakyReLU` layers.
 
     """
 
