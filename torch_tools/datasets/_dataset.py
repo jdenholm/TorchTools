@@ -26,7 +26,7 @@ class DataSet(_BaseDataset):
     targets : Optional[Sequence[str, Path, Tensor, ndarray]]
         Targets (or y items) for the dataset.
     input_tfms : Optional[Compose]
-        A composition of transfroms to apply to the inputs as they are
+        A composition of transforms to apply to the inputs as they are
         selected.
     target_tfms : Optional[Compose]
         A composition of transforms to apply to the targets as they are
