@@ -8,6 +8,7 @@ repos:
         pass_filenames: true
         types: [file, python]
         stages: [commit]
+        exclude: ^docs/
 
       - id: pylint
         name: pylint
@@ -16,6 +17,7 @@ repos:
         pass_filenames: true
         types: [file, python]
         stages: [commit]
+        exclude: ^docs/
 
       - id: mypy
         name: mypy
@@ -33,6 +35,7 @@ repos:
         pass_filenames: true
         types: [file, python]
         stages: [commit]
+        exclude: ^docs/
 
       - id: pytest
         name: pytest
