@@ -19,7 +19,7 @@ class DenseNetwork(Sequential):
         Number of input features to the model.
     out_feats : int
         Number of output features (classes).
-    hidden_sizes : Tuple[int], optional
+    hidden_sizes : Tuple[int, ...], optional
         The sizes of the hidden layers (or None).
     input_bnorm : bool, optional
         Should we apply batch-normalisation to the input batches?
@@ -32,6 +32,17 @@ class DenseNetwork(Sequential):
     negative_slope : float, optional
         The negative slope argument to use in the leaky relu layers.
 
+    Examples
+    --------
+    >>> from torch_tools import DenseNetwork
+    >>> DenseNetwork(in_feats=256,
+                     out_feats=2,
+                     hidden_sizes=(128, 64, 32),
+                     input_bnorm=True,
+                     input_dropout=0.1,
+                     hidden_dropout=0.25,
+                     hidden_bnorm=True,
+                     negative_slope=0.2)
 
     """
 
