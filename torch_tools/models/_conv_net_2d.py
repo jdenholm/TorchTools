@@ -1,4 +1,4 @@
-"""CNN classification/regression model."""
+"""Two-dimensional CNN model which wraps Torchvision ResNet and VGG models."""
 from typing import Dict, Any, Optional
 
 from torch import Tensor, set_grad_enabled
@@ -13,7 +13,7 @@ from torch_tools.models._dense_network import DenseNetwork
 
 
 class ConvNet2d(Module):
-    """Two-dimensional CNN model which wraps Torchvision models.
+    """Two-dimensional CNN model which wraps Torchvision ResNet and VGG models.
 
     Parameters
     ----------
@@ -51,6 +51,7 @@ class ConvNet2d(Module):
                           dense_net_kwargs={"hidden_sizes": (1024, 1024), "hidden_dropout": 0.25})
 
 
+    Another potentially usefull feature is the ability to *freeze* the encoder:
 
     >>> from torch import rand
     >>> from torch_tools import ConvNet2d
