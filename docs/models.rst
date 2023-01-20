@@ -30,3 +30,9 @@ EncoderDecoder2d
 ==================
 .. automodule:: torch_tools.models._encoder_decoder_2d
    :members:
+
+
+SimpleConvNet2d
+==================
+.. automodule:: torch_tools.models._simple_conv_2d
+   :members:
