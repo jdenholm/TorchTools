@@ -32,12 +32,13 @@ class EncoderDecoder2d(Module):
     features_start : int
         The number of features produced by the first conv block.
     lr_slope : float
-        The negative slope to use in the `LeakReLU`s.
+        The negative slope to use in the `LeakReLU` layers.
     pool_style : str
-        The pool style to use in the downsampling blocks (`"avg"` or `"max"`).
+        The pool style to use in the downsampling blocks
+        ( `"avg"` or `"max"` ).
     bilinear : bool
-        Whether or not to upsample with bilinear interpolation (`True`) or
-        `ConvTranspose2d` (`False`).
+        Whether or not to upsample with bilinear interpolation ( `True` ) or
+        `ConvTranspose2d` ( `False` ).
 
     """
 
