@@ -27,16 +27,18 @@ class EncoderDecoder2d(Module):
     ----------
     in_chans : int
         The number of input channels.
-    num_layers : int
+    out_chans : int
+        The number of output layers the model should produce.
+    num_layers : int, optional
         The number of layers in the encoder/decoder.
-    features_start : int
+    features_start : int, optional
         The number of features produced by the first conv block.
-    lr_slope : float
+    lr_slope : float, optional
         The negative slope to use in the `LeakReLU` layers.
-    pool_style : str
+    pool_style : str, optional
         The pool style to use in the downsampling blocks
         ( `"avg"` or `"max"` ).
-    bilinear : bool
+    bilinear : bool, optional
         Whether or not to upsample with bilinear interpolation ( `True` ) or
         `ConvTranspose2d` ( `False` ).
 
@@ -46,6 +48,18 @@ class EncoderDecoder2d(Module):
     and then use it for transfer learning—hence the `frozen_encoder` and
     `frozen_decoder` arguments in the `forward` method. There are no
     pretrained weights available, however.
+
+
+    Examples
+    --------
+    >>> from torch_tools import Encoder2d
+    >>> model = Encoder2d(
+                    in_chans=3,
+                    start_features=64,
+                    num_blocks=4,
+                    pool_style="max",
+                    lr_slope=0.123,
+                )
 
 
     """
@@ -91,10 +105,10 @@ class EncoderDecoder2d(Module):
         ----------
         batch : Tensor
             A mini-batch of inputs.
-        frozen_encoder : bool
+        frozen_encoder : bool, optional
             Boolean switch controlling whether the encoder's gradients are
             enabled or disabled (useful for transfer learning).
-        frozen_decoder : bool
+        frozen_decoder : bool, optional
             Boolean switch controlling whether the decoder's gradients are
             enabled or disabled (useful for transfer learning).
 
