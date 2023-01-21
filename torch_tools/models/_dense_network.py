@@ -20,7 +20,7 @@ class DenseNetwork(Sequential):
     out_feats : int
         Number of output features (classes).
     hidden_sizes : Tuple[int, ...], optional
-        The sizes of the hidden layers (or None).
+        The sizes of the hidden layers (or ``None``).
     input_bnorm : bool, optional
         Should we apply batch-normalisation to the input batches?
     input_dropout : float, optional
@@ -30,7 +30,7 @@ class DenseNetwork(Sequential):
     hidden_bnorm : bool, optional
         Should we include batch norms in the hidden layers?
     negative_slope : float, optional
-        The negative slope argument to use in the leaky relu layers.
+        The negative slope argument to use in the ``LeakyReLU`` layers.
 
     Examples
     --------
