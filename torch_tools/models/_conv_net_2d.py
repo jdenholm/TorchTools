@@ -13,7 +13,7 @@ from torch_tools.models._dense_network import DenseNetwork
 
 
 class ConvNet2d(Module):
-    """Two-dimensional CNN model which wraps Torchvision ResNet and VGG models.
+    """CNN model which wraps Torchvision's ResNet and VGG models.
 
     Parameters
     ----------
@@ -24,20 +24,21 @@ class ConvNet2d(Module):
         Number of input channels the model should take. Warning: if you don't
         use three input channels, the first conv layer is overwritten, which
         renders freezing the encoder pointless.
-    encoder_option : str
+    encoder_option : str, optional
         The encoder option to use. The encoders are loaded from torchvision's
         models. Options include all of torchvision's VGG and ResNET options
         (i.e. 'vgg11', 'vgg11_bn', 'resnet18', etc.).
-    pretrained : bool
-        Determines whether the encoder is initialised with torchvision's
-        pretrained weights. The model will load the most up-to-date
+    pretrained : bool, optional
+        Determines whether the encoder is initialised with Torchvision's
+        pretrained weights. If `True`, the model will load Torchvision's most
+        up-to-date
         image-net-trained weights.
-    pool_option : str
+    pool_option : str, optional
         The type of adaptive pooling layer to use. Choose from 'avg', 'max' or
         'avg-max-concat' (the latter simply concatenates the former two).
         See `torch_tools.models._adaptive_pools_2d` for more info.
-    dense_net_kwargs : Dict[str, Any]
-        Keyword arguments for `torch_tools.models._dense_network._DenseNetwork`
+    dense_net_kwargs : Dict[str, Any], optional
+        Keyword arguments for `torch_tools.models._dense_network.DenseNetwork`
         which serves as the classification/regression part of the model.
 
     Examples
