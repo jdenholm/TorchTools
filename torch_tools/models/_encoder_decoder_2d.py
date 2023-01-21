@@ -34,19 +34,19 @@ class EncoderDecoder2d(Module):
     features_start : int, optional
         The number of features produced by the first conv block.
     lr_slope : float, optional
-        The negative slope to use in the `LeakReLU` layers.
+        The negative slope to use in the ``LeakReLU`` layers.
     pool_style : str, optional
         The pool style to use in the downsampling blocks
-        ( `"avg"` or `"max"` ).
+        ( ``"avg"`` or ``"max"`` ).
     bilinear : bool, optional
-        Whether or not to upsample with bilinear interpolation ( `True` ) or
-        `ConvTranspose2d` ( `False` ).
+        Whether or not to upsample with bilinear interpolation ( ``True`` ) or
+        ``ConvTranspose2d`` ( ``False`` ).
 
     Notes
     -----
     — Depending on the application, it may be convenient to pretrain this model
-    and then use it for transfer learning—hence the `frozen_encoder` and
-    `frozen_decoder` arguments in the `forward` method. There are no
+    and then use it for transfer learning—hence the ``frozen_encoder`` and
+    ``frozen_decoder`` arguments in the ``forward`` method. There are no
     pretrained weights available, however.
 
 
@@ -74,7 +74,7 @@ class EncoderDecoder2d(Module):
         pool_style: str = "max",
         bilinear: bool = False,
     ):
-        """Build `EncoderDecoder2d`."""
+        """Build ``EncoderDecoder2d``."""
         super().__init__()
 
         self.encoder = Encoder2d(
@@ -99,7 +99,7 @@ class EncoderDecoder2d(Module):
         frozen_encoder: bool = False,
         frozen_decoder: bool = False,
     ) -> Tensor:
-        """Pass `batch` through the model.
+        """Pass ``batch`` through the model.
 
         Parameters
         ----------
@@ -115,7 +115,7 @@ class EncoderDecoder2d(Module):
         Returns
         -------
         Tensor
-            The result of passing `batch` through the model.
+            The result of passing ``batch`` through the model.
 
         """
         batch_spatial_dims_power_of_2(batch)
