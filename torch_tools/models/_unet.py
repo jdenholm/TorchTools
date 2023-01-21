@@ -24,18 +24,31 @@ class UNet(Module):
         The number of input channels.
     out_chans : int
         The number of output channels.
-    features_start : int
+    features_start : int, optional
         The number of features produced by the first convolutional block.
-    num_layers : int
+    num_layers : int, optional
         The number of layers in the `UNet`.
-    pool_style : str
+    pool_style : str, optional
         The pool style to use in the `DownBlock`s. Can be `"max"` or `"avg"`.
-    bilinear : bool
+    bilinear : bool, optional
         Whether to use use bilinear interpolation in the upsampling layers or
         not. If `True`, we use bilinear interpolation to upsample. If `False`,
         we use `ConvTranspose2d`.
-    lr_slope : float
+    lr_slope : float, optional
         The negative slope argument for `LeakyReLU` layers.
+
+
+    Examples
+    --------
+    >>> from torch_tools import UNet
+    >>> model = UNet(
+                    in_chans=3,
+                    out_chans=16,
+                    features_start=64,
+                    num_layers=3,
+                    pool_style="max",
+                    bilinear=False,
+                    lr_slope=0.2,
 
     """
 
