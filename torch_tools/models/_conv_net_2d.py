@@ -27,19 +27,20 @@ class ConvNet2d(Module):
     encoder_option : str, optional
         The encoder option to use. The encoders are loaded from torchvision's
         models. Options include all of torchvision's VGG and ResNET options
-        (i.e. 'vgg11', 'vgg11_bn', 'resnet18', etc.).
+        (i.e. ``"vgg11"``, ``"vgg11_bn"``, ``"resnet18"``, etc.).
     pretrained : bool, optional
         Determines whether the encoder is initialised with Torchvision's
-        pretrained weights. If `True`, the model will load Torchvision's most
-        up-to-date
-        image-net-trained weights.
+        pretrained weights. If ``True``, the model will load Torchvision's most
+        up-to-date image-net-trained weights.
     pool_option : str, optional
-        The type of adaptive pooling layer to use. Choose from 'avg', 'max' or
-        'avg-max-concat' (the latter simply concatenates the former two).
-        See `torch_tools.models._adaptive_pools_2d` for more info.
+        The type of adaptive pooling layer to use. Choose from ``"avg"``,
+        ``"max"`` or ``"avg-max-concat"`` (the latter simply concatenates the
+        former two). See ``torch_tools.models._adaptive_pools_2d`` for more
+        info.
     dense_net_kwargs : Dict[str, Any], optional
-        Keyword arguments for `torch_tools.models._dense_network.DenseNetwork`
-        which serves as the classification/regression part of the model.
+        Keyword arguments for
+        ``torch_tools.models._dense_network.DenseNetwork`` which serves as the
+        classification/regression part of the model.
 
     Examples
     --------
