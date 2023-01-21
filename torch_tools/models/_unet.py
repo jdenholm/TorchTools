@@ -27,15 +27,16 @@ class UNet(Module):
     features_start : int, optional
         The number of features produced by the first convolutional block.
     num_layers : int, optional
-        The number of layers in the `UNet`.
+        The number of layers in the ``UNet``.
     pool_style : str, optional
-        The pool style to use in the `DownBlock`s. Can be `"max"` or `"avg"`.
+        The pool style to use in the ``DownBlock`` blocks. Can be ``"max"`` or
+        ``"avg"``.
     bilinear : bool, optional
         Whether to use use bilinear interpolation in the upsampling layers or
-        not. If `True`, we use bilinear interpolation to upsample. If `False`,
-        we use `ConvTranspose2d`.
+        not. If ``True``, we use bilinear interpolation to upsample. If
+        ``False``, we use ``ConvTranspose2d``.
     lr_slope : float, optional
-        The negative slope argument for `LeakyReLU` layers.
+        The negative slope argument for ``LeakyReLU`` layers.
 
 
     Examples
@@ -108,15 +109,15 @@ class UNet(Module):
         features_start : int
             The number of features produced by the input conv block.
         pool_style : str
-            The style of pool to use in the `DownBlock`s.
+            The style of pool to use in the ``DownBlock`` blocks.
         lr_slope : float
-            The negative slope are for `DownBlock` (negative slope in
-            `LeakyReLU`s.)
+            The negative slope are for ``DownBlock`` (negative slope in
+            ``LeakyReLU`` layers.)
 
         Returns
         -------
         ModuleList
-            A `ModuleList` holding the downsampling blocks.
+            A ``ModuleList`` holding the downsampling blocks.
 
         """
         chans = features_start
@@ -134,7 +135,7 @@ class UNet(Module):
         bilinear: bool,
         lr_slope: float,
     ) -> ModuleList:
-        """Stack the upsampling blocks in a `ModuleList`.
+        """Stack the upsampling blocks in a ``ModuleList``.
 
         Parameters
         ----------
@@ -146,12 +147,12 @@ class UNet(Module):
             Whether the upsamplping should be done with bilinear interpolation
             or conv transpose.
         lr_slope : float
-            The negative slope to use in the `LeakReLU`s.
+            The negative slope to use in the ``LeakReLU``s.
 
         Returns
         -------
         ModuleList
-            The upsampling layers stacked in a `ModuleList`.
+            The upsampling layers stacked in a ``ModuleList``.
 
         """
         chans = features_start * (2 ** (num_layers - 1))
@@ -173,7 +174,7 @@ class UNet(Module):
         -------
         down_features : List[Tensor]
             A list of the features produced by each downsampling layer,
-            with `batch` at element zero.
+            with ``batch`` at element zero.
 
         """
         down_features = [batch]
@@ -203,7 +204,7 @@ class UNet(Module):
         return up_batch
 
     def forward(self, batch: Tensor) -> Tensor:
-        """Pass `batch` through the model.
+        """Pass ``batch`` through the model.
 
         Parameters
         ----------
@@ -213,7 +214,7 @@ class UNet(Module):
         Returns
         -------
         Tensor
-            The result of passing `batch` through the model.
+            The result of passing ``batch`` through the model.
 
         """
         batch = self.in_conv(batch)
