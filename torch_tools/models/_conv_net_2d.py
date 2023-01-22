@@ -79,7 +79,7 @@ class ConvNet2d(Module):
     encoder—the first convolutional layer is overloaded and randomly
     initialised.
 
-    — See `torch_tools.models._conv_net_2d.ConvNet2d` for more info.
+    — See ``torch_tools.models._conv_net_2d.ConvNet2d`` for more info.
 
     """
 
@@ -154,13 +154,13 @@ class ConvNet2d(Module):
             batch-size, C the number of channels and (H, W) the input
             size.
         frozen_encoder : bool, optional
-            If `True`, the gradients are disabled in the encoder. If `False`,
-            the gradients are enabled in the encoder.
+            If ``True``, the gradients are disabled in the encoder. If
+            ``False``, the gradients are enabled in the encoder.
 
         Returns
         -------
         Tensor
-            The result of passing `batch` through the model.
+            The result of passing ``batch`` through the model.
 
         """
         with set_grad_enabled(not frozen_encoder):
