@@ -27,9 +27,9 @@ class Encoder2d(Sequential):
     num_blocks : int
         The number of downsampling blocks in the encoder.
     pool_style : str
-        The type of pooling to use in downsampling (`"avg"` or `"max"`).
+        The type of pooling to use when downsampling (``"avg"`` or ``"max"``).
     lr_slope : float
-        The negative slope argument to use in the `LeakyReLU` layers.
+        The negative slope argument to use in the ``LeakyReLU`` layers.
 
     """
 
@@ -72,9 +72,9 @@ class Encoder2d(Sequential):
         num_blocks : int
             The number of blocks in the encoder.
         pool_style : str
-            The pool style to use when downsampling.
+            The pool style to use when downsampling (``"avg"`` or ``"max"``).
         lr_slope : float
-            The negative slope to use in the leak relu layers.
+            The negative slope to use in the ``LeakyReLU`` layers.
 
         Returns
         -------
