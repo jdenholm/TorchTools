@@ -18,6 +18,11 @@ from torch_tools.models._argument_processing import (
 class Encoder2d(Sequential):
     """Encoder model for image-like inputs.
 
+    A ``DoubleConvBlock`` which produces ``start_features`` features, followed
+    by ``num_blocks - 1`` ``DownBlock`` blocks. The ``DoubleConvBlock``
+    preserves the input's height and width, while each ``DownBlock`` halves
+    the spatial dimensions and doubles the number of channels.
+
     Parameters
     ----------
     in_chans : int
@@ -30,6 +35,18 @@ class Encoder2d(Sequential):
         The type of pooling to use when downsampling (``"avg"`` or ``"max"``).
     lr_slope : float
         The negative slope argument to use in the ``LeakyReLU`` layers.
+
+
+    Examples
+    --------
+    >>> from torch_tools import Encoder2d
+    >>> model = Encoder2d(
+                    in_chans=3,
+                    start_features=64,
+                    num_blocks=4,
+                    pool_style="max",
+                    lr_slope=0.123,
+                )
 
     """
 
