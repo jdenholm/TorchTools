@@ -34,7 +34,7 @@ class EncoderDecoder2d(Module):
     features_start : int, optional
         The number of features produced by the first conv block.
     lr_slope : float, optional
-        The negative slope to use in the ``LeakReLU`` layers.
+        The negative slope to use in the ``LeakyReLU`` layers.
     pool_style : str, optional
         The pool style to use in the downsampling blocks
         ( ``"avg"`` or ``"max"`` ).
