@@ -29,11 +29,11 @@ class ConvBlock(Sequential):
     out_chans : int
         The number of output channels the block should produce.
     batch_norm : bool
-        Should we include a `BatchNorm2d` layer?
+        Should we include a ``BatchNorm2d`` layer?
     leaky_relu : bool
         Should we include a `LeakyReLU` layer?
     lr_slope : float, optional
-        The negative slope to use in the `LeakyReLU` (use 0.0 for `ReLU`).
+        The negative slope to use in the ``LeakyReLU`` (use 0.0 for ``ReLU``).
 
     """
 
@@ -231,10 +231,10 @@ class UpBlock(Sequential):
     out_chans : int
         The number of output channels the block should take.
     bilinear : bool
-        Determines whether the block uses bilinear interpolation (`True`) or
-        `ConvTranspose2d` (`False`).
+        Determines whether the block uses bilinear interpolation (``True``) or
+        ``ConvTranspose2d`` (``False``).
     lr_slope : float
-        Negative slope to use in the `LeakyReLU`s.
+        Negative slope to use in the ``LeakyReLU`` layers.
 
     """
 
