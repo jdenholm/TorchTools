@@ -13,6 +13,11 @@ from torch_tools.models._argument_processing import process_hidden_sizes
 class DenseNetwork(Sequential):
     """Dense, fully connected neural network.
 
+    An optional input block, which applies batch normalisation and dropout
+    to the inputs, followed by a series of fully-connected blocks consisting
+    of ``Linear``, ``BatchNorm1d`` and ``LeakyReLU`` layers, followed by a
+    final ``Linear`` output layer.
+
     Parameters
     ----------
     in_feats : int
@@ -55,7 +60,7 @@ class DenseNetwork(Sequential):
         input_dropout: float = 0.0,
         hidden_dropout: float = 0.25,
         hidden_bnorm: bool = True,
-        negative_slope: float = 0.2,
+        negative_slope: float = 0.1,
     ):
         """Build `DenseClassifier`."""
         super().__init__(
