@@ -15,6 +15,13 @@ from torch_tools.models._dense_network import DenseNetwork
 class ConvNet2d(Module):
     """CNN model which wraps Torchvision's ResNet and VGG models.
 
+    The model contains:
+        — An encoder, taken from Torchvision's ResNet/VGG models.
+
+        — An adaptive pooling layer.
+
+        — A fully-connected classification/regression head.
+
     Parameters
     ----------
     out_feats : int
@@ -59,7 +66,7 @@ class ConvNet2d(Module):
 
     >>> from torch import rand
     >>> from torch_tools import ConvNet2d
-    >>> model = ConvNet2d(out_feats=10)
+    >>> model = ConvNet2d(out_feats=10, pretrained=True)
     >>> # Batch of 10 fake three-channel images of 256x256 pixels
     >>> mini_batch = rand(10, 3, 256, 256)
     >>> # With the encoder frozen
