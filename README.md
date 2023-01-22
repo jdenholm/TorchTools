@@ -4,7 +4,7 @@ Handy PyTorch models and utilities which should save you time.
 ---
 
 ## Description
-This Python library contains a bunch of neural networks, implemented in PyTorch, and a generic `Dataset` class with useful features to help you get started with your deep-learning problem more quickly, and spend a lot less time engineering and testing—because, especially if you're in academia, you *always* test your code—the PyTorch-specific software you need. There is also the hope that you will write, and duplicate, less code by being able to easily set and modify these models' architectures at instantiation.
+This Python library contains a bunch of neural networks, implemented in PyTorch, and a generic ``Dataset`` class with useful features to help you get started with your deep-learning problem more quickly, and spend less time engineering and testing—because researchers *always* test their code—the PyTorch-specific software you need. There is also the hope that you will write and duplicate less code by being able to easily set and modify these models' architectures at instantiation.
 
 ---
 
@@ -76,14 +76,16 @@ For example:
 ```python
 from torch_tools import DenseNetwork
 
-DenseNetwork(in_feats=256,
-             out_feats=2,
-             hidden_sizes=(128, 64, 32),
-             input_bnorm=True,
-             input_dropout=0.1,
-             hidden_dropout=0.25,
-             hidden_bnorm=True,
-             negative_slope=0.2)
+DenseNetwork(
+    in_feats=256,
+    out_feats=2,
+    hidden_sizes=(128, 64, 32),
+    input_bnorm=True,
+    input_dropout=0.1,
+    hidden_dropout=0.25,
+    hidden_bnorm=True,
+    negative_slope=0.2,
+)
 ```
 
 
@@ -138,12 +140,15 @@ For example, suppose we want an encoder in the style of Torchvision's VGG11 with
 
 ```python
 from torch_tools import ConvNet2d
-ConvNet2d(out_feats=512,
-          in_channels=3,
-          encoder_style="vgg11_bn",
-          pretrained=True,
-          pool_style="avg-max-concat",
-          dense_net_kwargs={"hidden_sizes": (1024, 1024), "hidden_dropout": 0.25})
+
+ConvNet2d(
+    out_feats=512,
+    in_channels=3,
+    encoder_style="vgg11_bn",
+    pretrained=True,
+    pool_style="avg-max-concat",
+    dense_net_kwargs={"hidden_sizes": (1024, 1024), "hidden_dropout": 0.25},
+)
 ```
 
 
@@ -250,13 +255,16 @@ While this is quite a mouthful, it is incredibly easy to instantiate:
 
 ```python
 from torch_tools import UNet
-UNet(in_chans=3,
-     out_chans=16,
-     features_start=64,
-     num_layers=3,
-     pool_style="max",
-     bilinear=False,
-     lr_slope=0.2)
+
+UNet(
+    in_chans=3,
+    out_chans=16,
+    features_start=64,
+    num_layers=3,
+    pool_style="max",
+    bilinear=False,
+    lr_slope=0.2,
+)
 ```
 
 
@@ -358,11 +366,14 @@ For example:
 
 ```python
 from torch_tools import Encoder2d
-Encoder2d(in_chans=3,
-          start_features=64,
-          num_blocks=4,
-          pool_style="max",
-          lr_slope=0.123)
+
+Encoder2d(
+    in_chans=3,
+    start_features=64,
+    num_blocks=4,
+    pool_style="max",
+    lr_slope=0.123,
+)
 ```
 
 
@@ -434,16 +445,24 @@ Encoder2d(in_chans=3,
 
 #### Decoder
 
-abc
+We also include a simple decoder model for image-like inputs. The decoder model essentially a series of up-sampling blocks which halve the number of channels in the outputs and double the height and width. It can therefore be used to "decode" images that have been encoded by, say, the "encoder".
+
+By setting `bilinear=False`, the upsampling is done using a `torch.nn.ConvTranspose2d`,
+and bilinear interpolation otherwise.
+
+For example:
 
 
 ```python
 from torch_tools import Decoder2d
-Decoder2d(in_chans=128,
-          out_chans=3,
-          num_blocks=4,
-          bilinear=False,
-          lr_slope=0.123)
+
+Decoder2d(
+    in_chans=128,
+    out_chans=3,
+    num_blocks=4,
+    bilinear=False,
+    lr_slope=0.123,
+)
 ```
 
 
@@ -513,6 +532,7 @@ The spatial dimensions of the image-like inputs (height and width) are necessera
 
 ```python
 from torch_tools import EncoderDecoder2d
+
 EncoderDecoder2d(in_chans=3, out_chans=3)
 ```
 
@@ -644,13 +664,15 @@ For example:
 ```python
 from torch_tools import SimpleConvNet2d
 
-SimpleConvNet2d(in_chans=3,
-                out_feats=128,
-                features_start=64,
-                num_blocks=4,
-                downsample_pool="max",
-                adaptive_pool="avg-max-concat",
-                lr_slope=0.123)
+SimpleConvNet2d(
+    in_chans=3,
+    out_feats=128,
+    features_start=64,
+    num_blocks=4,
+    downsample_pool="max",
+    adaptive_pool="avg-max-concat",
+    lr_slope=0.123,
+)
 ```
 
 
@@ -730,6 +752,8 @@ SimpleConvNet2d(in_chans=3,
 
 ### Datasets
 Now that we have these fancy neural networks to play with, we need a good way of supplying them with data. The standard way to do this in PyTorch to to create a Dataset class—specifically a class which inherits from `torch.utils.data.Dataset`, whose `__getitem__` method yields the inputs for your model.
+
+Add stuff here
 
 ---
 
