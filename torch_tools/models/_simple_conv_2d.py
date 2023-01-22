@@ -1,4 +1,4 @@
-"""Simple two dimensional convolutional neural network."""
+"""A simple two-dimensional convolutional neural network."""
 
 from torch.nn import Sequential, Linear
 
@@ -22,13 +22,13 @@ class SimpleConvNet2d(Sequential):
     num_blocks : int
         The number of encoding blocks to use.
     downsample_pool : str
-        The style of downsampling pool to use in the encoder (`"avg"` or
-        `"Max"`).
+        The style of downsampling pool to use in the encoder (``"avg"`` or
+        ``"Max"``).
     adaptive_pool : str
-        The style of adaptive pool to use on the encoder's output (`"avg"`,
-        `"max"` or `"avg-max-concat"`.)
+        The style of adaptive pool to use on the encoder's output (``"avg"``,
+        ``"max"`` or ``"avg-max-concat"``.)
     lr_slope : float
-        The negative slope to use in the `LeakReLU` layers.
+        The negative slope to use in the ``LeakyReLU`` layers.
 
     """
 
@@ -42,7 +42,7 @@ class SimpleConvNet2d(Sequential):
         adaptive_pool: str = "avg",
         lr_slope: float = 0.1,
     ):
-        """Build `SimpleConvNet2d`."""
+        """Build ``SimpleConvNet2d``."""
         super().__init__(
             Encoder2d(
                 in_chans,
