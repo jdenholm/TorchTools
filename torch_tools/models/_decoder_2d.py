@@ -24,10 +24,10 @@ class Decoder2d(Sequential):
     num_blocks : int
         The number of blocks to include in the decoder.
     bilinear : bool
-        Whether to use bilinear interpolation (`True`) or a `ConvTranspose2d`
-        to do the upsampling.
+        Whether to use bilinear interpolation (``True``) or a
+        ``ConvTranspose2d`` to do the upsampling.
     lr_slope : float
-        The negative slope to use in the `LeakyReLU` layers.
+        The negative slope to use in the ``LeakyReLU`` layers.
 
     """
 
@@ -57,7 +57,7 @@ class Decoder2d(Sequential):
 
     @staticmethod
     def _channel_size_check(in_chans: int, num_blocks: int):
-        """Check `in_chans` can be halved `num_layers - 1` times.
+        """Check ``in_chans`` can be halved ``num_layers - 1`` times.
 
         Parameters
         ----------
@@ -69,7 +69,7 @@ class Decoder2d(Sequential):
         Raises
         ------
         ValueError
-            If `in_chans` cannot be divided by 2 `num_blocks - 1` times.
+            If ``in_chans`` cannot be divided by 2 ``num_blocks - 1`` times.
 
         """
         chans = in_chans
@@ -87,7 +87,7 @@ class Decoder2d(Sequential):
         bilinear: bool,
         lr_slope: float,
     ) -> List[UpBlock]:
-        """Get the upsampling blocks in a `Sequential`.
+        """Get the upsampling blocks in a ``Sequential``.
 
         Parameters
         ----------
@@ -96,10 +96,10 @@ class Decoder2d(Sequential):
         num_blocks : int
             The number of blocks in the model.
         bilinear : bool
-            Whether to use bilinear interpolation (`True`) or a
-            `ConvTranspose2d` to upsample.
+            Whether to use bilinear interpolation (``True``) or a
+            ``ConvTranspose2d`` to upsample.
         lr_slope : float
-            Negative slope to use in the `LeakReLU`s.
+            Negative slope to use in the ``LeakReLU`` layers.
 
         Returns
         -------
