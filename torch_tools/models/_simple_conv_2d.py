@@ -23,7 +23,7 @@ class SimpleConvNet2d(Sequential):
         The number of encoding blocks to use.
     downsample_pool : str
         The style of downsampling pool to use in the encoder (``"avg"`` or
-        ``"Max"``).
+        ``"max"``).
     adaptive_pool : str
         The style of adaptive pool to use on the encoder's output (``"avg"``,
         ``"max"`` or ``"avg-max-concat"``.)
