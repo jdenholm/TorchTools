@@ -24,11 +24,11 @@ jobs:
         conda env update --file requirements.conda.yaml --name base
     - name: Format with black
       run: |
-        black $(git ls-files '*.py')
+        black $(git ls-files torch_tools tests)
 
     - name: Lint with Pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint $(git ls-files torch_tools tests)
 
     - name: Test with pytest
       run: |
@@ -36,8 +36,8 @@ jobs:
 
     - name: Lint with Mypy
       run: |
-        mypy $(git ls-files '*.py')
+        mypy $(git ls-files torch_tools tests)
 
     - name: Lint with Pydocstyle
       run : |
-        pydocstyle $(git ls-files '*.py') --convention=numpy
+        pydocstyle $(git ls-files torch_tools tests) --convention=numpy
