@@ -1,0 +1,46 @@
+repos:
+  - repo : local
+    hooks :
+      - id: black
+        name: black
+        language: system
+        entry: black
+        pass_filenames: true
+        types: [file, python]
+        stages: [commit]
+        exclude: ^docs/
+
+      - id: pylint
+        name: pylint
+        language: system
+        entry: pylint
+        pass_filenames: true
+        types: [file, python]
+        stages: [commit]
+        exclude: ^docs/
+
+      - id: mypy
+        name: mypy
+        language: system
+        entry: mypy
+        pass_filenames: true
+        types: [file, python]
+        stages: [commit]
+        exclude: ^setup.*.py$
+
+      - id: pydocstyle
+        name: pydocstyle
+        language: system
+        entry: pydocstyle --convention=numpy
+        pass_filenames: true
+        types: [file, python]
+        stages: [commit]
+        exclude: ^docs/
+
+      - id: pytest
+        name: pytest
+        language: system
+        entry: pytest
+        pass_filenames: false
+        stages: [push]
+        always_run: true
