@@ -28,7 +28,7 @@ Distributed under the MIT License. See LICENSE.md for more information.
 
 ### Installation
 
-To clone the repository (shouldn't work right now):
+To clone the repository:
 ```bash
 git clone https://github.com/jdenholm/TorchTools.git
 ```
