@@ -18,12 +18,27 @@ jobs:
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
+
     - name: Install dependencies
       run: |
         conda env update --file requirements.conda.yaml --name base
+
     - name: Format with black
       run: |
         black $(git ls-files '*.py')
+
+    - name: Lint with Pylint
+      run: |
+        pylint $(git ls-files '*.py')
+
     - name: Test with pytest
       run: |
-        pytest
+        pytest tests
+
+    - name: Lint with Mypy
+      run: |
+        mypy $(git ls-files '*.py')
+
+    - name: Lint with Pydocstyle
+      run : |
+        pydocstyle $(git ls-files '*.py') --convention=numpy
