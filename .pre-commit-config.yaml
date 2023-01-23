@@ -37,10 +37,3 @@ repos:
         stages: [commit]
         exclude: ^docs/
 
-      - id: pytest
-        name: pytest
-        language: system
-        entry: pytest
-        pass_filenames: false
-        stages: [push]
-        always_run: true
