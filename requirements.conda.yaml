@@ -1,12 +1,11 @@
 name: torch-tools
 channels:
-  - pytorch
   - conda-forge
   - defaults
 dependencies:
   - alabaster=0.7.12
   - anyio=3.5.0
-  - appnope=0.1.3
+  - appnope=0.1.2
   - argon2-cffi=21.3.0
   - argon2-cffi-bindings=21.2.0
   - astroid=2.11.7
@@ -161,7 +160,6 @@ dependencies:
   - pylint=2.14.5
   - pyopenssl=22.0.0
   - pyqt=5.15.7
-  - pyqt5-sip=12.11.0
   - pyrsistent=0.18.0
   - pysocks=1.7.1
   - pytest=7.1.2
@@ -169,7 +167,7 @@ dependencies:
   - python-dateutil=2.8.2
   - python-fastjsonschema=2.16.2
   - python_abi=3.10
-  - pytorch=1.13.1
+  - pytorch=1.12.1
   - pytz=2022.7
   - pyyaml=6.0
   - pyzmq=23.2.0
@@ -205,7 +203,7 @@ dependencies:
   - toml=0.10.2
   - tomli=2.0.1
   - tomlkit=0.11.1
-  - torchvision=0.14.1
+  - torchvision=0.13.1
   - tornado=6.2
   - traitlets=5.7.1
   - typing-extensions=4.4.0
@@ -226,4 +224,6 @@ dependencies:
   - zeromq=4.3.4
   - zlib=1.2.13
   - zstd=1.5.2
-
+  - pip:
+      - pyqt5-sip==12.11.0
+prefix: /Users/jimdenholm/miniconda3/envs/torch-tools
