@@ -284,3 +284,20 @@ def test_second_up_block_contents_with_bilinear_true():
     assert second_block[1][1][0].out_channels == 128
     assert second_block[1][1][1].num_features == 128
     assert second_block[1][1][2].negative_slope == 0.123456
+
+
+def test_final_block_contents():
+    """Test the final block."""
+    decoder = Decoder2d(
+        in_chans=512,
+        out_chans=123,
+        num_blocks=5,
+        bilinear=True,
+        lr_slope=0.123456,
+    )
+
+    assert isinstance(decoder[-1], Conv2d)
+    assert decoder[-1].in_channels == (521 // (2**4))
+    assert decoder[-1].out_channels == 123
+    assert decoder[-1].kernel_size == (1, 1)
+    assert decoder[-1].stride == (1, 1)
