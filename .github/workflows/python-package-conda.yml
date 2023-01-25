@@ -47,7 +47,7 @@ jobs:
       run : |
         pydocstyle $(git ls-files torch_tools) --convention=numpy
 
- build-linux:
+  build-linux:
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 5
