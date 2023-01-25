@@ -14,6 +14,10 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: '3.10'
+    - uses: actions/cache@v3
+        with:
+          path: ~/.cache/mac-conda
+          key: ${{ runner.os }}
     - name: Add conda to system path
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
