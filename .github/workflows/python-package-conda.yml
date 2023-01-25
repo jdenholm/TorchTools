@@ -6,7 +6,6 @@ jobs:
   build:
 
     strategy:
-      - max-parallel: 5
       matrix:
         include:
           - os: ubuntu-latest
