@@ -3,21 +3,32 @@ name: Python Package using Conda
 on: [push]
 
 jobs:
-  build-macos:
-    runs-on: macos-latest
-    strategy:
-      max-parallel: 5
+  build:
 
+    strategy:
+      matrix:
+        include:
+          - max-parallel: 5
+          - os: ubuntu-latest
+            label: linux-64
+            prefix: /usr/share/miniconda3/envs/my-env
+
+          - os: macos-latest
+            label: osx-64
+            prefix: /Users/runner/miniconda3/envs/my-env
+
+          - os: windows-latest
+            label: win-64
+            prefix: C:\Miniconda3\envs\my-env
+
+    name: ${{ matrix.label }}
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
         python-version: '3.10'
-    - uses: actions/cache@v3
-      with:
-        path: ~/.cache/mac_conda
-        key: ${{ runner.os }}-conda
     - name: Add conda to system path
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
@@ -58,3 +69,59 @@ jobs:
     - name: Lint with Pydocstyle
       run : |
         pydocstyle $(git ls-files torch_tools) --convention=numpy
+
+
+
+
+# jobs:
+#   build-macos:
+#     runs-on: macos-latest
+#     strategy:
+#       max-parallel: 5
+
+#     steps:
+#     - uses: actions/checkout@v3
+#     - name: Set up Python 3.10
+#       uses: actions/setup-python@v3
+#       with:
+#         python-version: '3.10'
+#     - name: Add conda to system path
+#       run: |
+#         # $CONDA is an environment variable pointing to the root of the miniconda directory
+#         echo $CONDA/bin >> $GITHUB_PATH
+
+#     - name: Update conda
+#       run : |
+#         conda update conda
+
+#     - name: Install dependencies
+#       run: |
+#         conda env update --file requirements.conda.yaml --name base
+
+#     - name: Install TorchTools
+#       run: |
+#         pip install -e .
+
+#     - name: Clean conda junk
+#       run: |
+#         yes | conda clean --all
+
+#     - name: Format with black
+#       run: |
+#         black $(git ls-files torch_tools)
+
+#     - name: Lint with Pylint
+#       run: |
+#         pylint $(git ls-files torch_tools)
+
+#     - name: Test with pytest
+#       run: |
+#         pytest tests
+
+#     - name: Lint with Mypy
+#       run: |
+#         mypy $(git ls-files torch_tools)
+
+#     - name: Lint with Pydocstyle
+#       run : |
+#         pydocstyle $(git ls-files torch_tools) --convention=numpy
