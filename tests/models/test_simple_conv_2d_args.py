@@ -104,10 +104,23 @@ def test_num_blocks_argument_values():
 
 
 def test_downsample_pool_argument_type():
-    """test the types accepted by the ``downsample_pool`` argument type."""
+    """Test the types accepted by the ``downsample_pool`` argument type."""
     # Should work with accepted str
     _ = SimpleConvNet2d(in_chans=64, out_feats=8, downsample_pool="max")
 
     # Should break with non-str
     with pytest.raises(TypeError):
         _ = SimpleConvNet2d(in_chans=64, out_feats=8, downsample_pool=123)
+    with pytest.raises(TypeError):
+        _ = SimpleConvNet2d(in_chans=64, out_feats=8, downsample_pool=[123])
+
+
+def test_downsample_pool_argument_values():
+    """Test the values accepted by the ``downsample_pool`` argument value."""
+    # Should work either ``"max"`` or ``"avg"``
+    _ = SimpleConvNet2d(in_chans=64, out_feats=8, downsample_pool="max")
+    _ = SimpleConvNet2d(in_chans=64, out_feats=8, downsample_pool="avg")
+
+    # Should break with any other string
+    with pytest.raises(KeyError):
+        _ = SimpleConvNet2d(in_chans=64, out_feats=8, downsample_pool="Gimli")
