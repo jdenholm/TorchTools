@@ -124,3 +124,37 @@ def test_downsample_pool_argument_values():
     # Should break with any other string
     with pytest.raises(KeyError):
         _ = SimpleConvNet2d(in_chans=64, out_feats=8, downsample_pool="Gimli")
+
+
+def test_adaptive_pool_argument_types():
+    """Test the types accepted by the ``adaptive_pool`` argument type."""
+    # Should work either ``"max"``, ``"avg"`` or ``"avg-max-concat"``
+    _ = SimpleConvNet2d(in_chans=64, out_feats=8, adaptive_pool="max")
+    _ = SimpleConvNet2d(in_chans=64, out_feats=8, adaptive_pool="avg")
+    _ = SimpleConvNet2d(
+        in_chans=64,
+        out_feats=8,
+        adaptive_pool="avg-max-concat",
+    )
+
+    # Should break with non-str
+    with pytest.raises(TypeError):
+        _ = SimpleConvNet2d(in_chans=64, out_feats=8, adaptive_pool=123)
+    with pytest.raises(TypeError):
+        _ = SimpleConvNet2d(in_chans=64, out_feats=8, adaptive_pool=1j)
+
+
+def test_adaptive_pool_argument_values():
+    """Test the values accepted by the ``adaptive_pool`` argument type."""
+    _ = SimpleConvNet2d(in_chans=64, out_feats=8, adaptive_pool="max")
+    _ = SimpleConvNet2d(in_chans=64, out_feats=8, adaptive_pool="avg")
+    _ = SimpleConvNet2d(
+        in_chans=64,
+        out_feats=8,
+        adaptive_pool="avg-max-concat",
+    )
+
+    with pytest.raises(ValueError):
+        _ = SimpleConvNet2d(in_chans=64, out_feats=8, adaptive_pool="Thorin")
+    with pytest.raises(ValueError):
+        _ = SimpleConvNet2d(in_chans=64, out_feats=8, adaptive_pool="Thrain")
