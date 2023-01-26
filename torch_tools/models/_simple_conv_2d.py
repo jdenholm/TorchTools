@@ -4,6 +4,7 @@ from torch.nn import Sequential, Linear
 
 from torch_tools.models._encoder_2d import Encoder2d
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
+from torch_tools.models._argument_processing import process_num_feats
 
 # pylint: disable=too-many-arguments
 
@@ -45,8 +46,8 @@ class SimpleConvNet2d(Sequential):
         """Build ``SimpleConvNet2d``."""
         super().__init__(
             Encoder2d(
-                in_chans,
-                features_start,
+                process_num_feats(in_chans),
+                process_num_feats(features_start),
                 num_blocks,
                 downsample_pool,
                 lr_slope,
@@ -58,10 +59,10 @@ class SimpleConvNet2d(Sequential):
             Linear(
                 self._num_output_features(
                     num_blocks,
-                    features_start,
+                    process_num_feats(features_start),
                     adaptive_pool,
                 ),
-                out_feats,
+                process_num_feats(out_feats),
             ),
         )
 
