@@ -29,47 +29,58 @@ jobs:
       with:
         python-version: '3.10'
     - name: Add conda to system path
+      shell: bash
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
 
     - name: Update conda
+      shell: bash
       run : |
         conda update conda
 
     - name: Set flexible solver
+      shell: bash
       run : |
         conda config --set channel_priority flexible
 
     - name: Install dependencies
+      shell: bash
       run: |
         conda env update --file requirements.conda.yaml --name base
 
     - name: Install TorchTools
+      shell: bash
       run: |
         pip install -e .
 
     - name: Clean conda junk
+      shell: bash
       run: |
         yes | conda clean --all
 
     - name: Format with black
+      shell: bash
       run: |
         black $(git ls-files torch_tools)
 
     - name: Lint with Pylint
+      shell: bash
       run: |
         pylint $(git ls-files torch_tools)
 
     - name: Test with pytest
+      shell: bash
       run: |
         pytest tests
 
     - name: Lint with Mypy
+      shell: bash
       run: |
         mypy $(git ls-files torch_tools)
 
     - name: Lint with Pydocstyle
+      shell: bash
       run : |
         pydocstyle $(git ls-files torch_tools) --convention=numpy
 
