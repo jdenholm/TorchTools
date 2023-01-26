@@ -2,14 +2,15 @@ name: torch-tools
 channels:
   - defaults
 dependencies:
-  - pytorch
+  - sphinx
+  - mypy
   - cudatoolkit
-  - torchvision
+  - python=3.10
+  - sphinx_rtd_theme
+  - torchvision=0.14.1
+  - pytorch=1.13.1
+  - black
+  - pytest
   - pydocstyle
   - pylint
-  - black
-  - mypy
-  - pytest
-  - sphinx
-  - sphinx_rtd_theme
 
