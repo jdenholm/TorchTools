@@ -22,7 +22,7 @@ jobs:
           #   label: win-64
           #   prefix: C:\Miniconda3\envs\my-env
 
-    name: ${{ matrix.label }}
+    name: ${{ matrix.os }} ${{ matrix.python-version }}
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
