@@ -158,3 +158,15 @@ def test_adaptive_pool_argument_values():
         _ = SimpleConvNet2d(in_chans=64, out_feats=8, adaptive_pool="Thorin")
     with pytest.raises(ValueError):
         _ = SimpleConvNet2d(in_chans=64, out_feats=8, adaptive_pool="Thrain")
+
+
+def test_lr_slope_argument_types():
+    """Test the types accepted the ``lr_slope`` argument."""
+    # Should work with floats
+    _ = SimpleConvNet2d(in_chans=64, out_feats=8, lr_slope=0.1)
+
+    # Should break with non-floats
+    with pytest.raises(TypeError):
+        _ = SimpleConvNet2d(in_chans=64, out_feats=8, lr_slope=1)
+    with pytest.raises(TypeError):
+        _ = SimpleConvNet2d(in_chans=64, out_feats=8, lr_slope=1.0j)
