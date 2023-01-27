@@ -66,7 +66,6 @@ class SimpleConvNet2d(Sequential):
                 process_num_feats(out_feats),
             ),
         )
-        print(self)
 
     def _num_output_features(
         self,
