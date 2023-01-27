@@ -1,6 +1,6 @@
 """A simple two-dimensional convolutional neural network."""
 
-from torch.nn import Sequential, Linear
+from torch.nn import Sequential, Linear, Flatten
 
 from torch_tools.models._encoder_2d import Encoder2d
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
@@ -56,6 +56,7 @@ class SimpleConvNet2d(Sequential):
                 option=adaptive_pool,
                 output_size=(1, 1),
             ),
+            Flatten(),
             Linear(
                 self._num_output_features(
                     num_blocks,
