@@ -1,4 +1,4 @@
-"""Two-dimensional CNN model which wraps Torchvision ResNet and VGG models."""
+"""2D CNN model which wraps Torchvision's ResNet and VGG models."""
 from typing import Dict, Any, Optional
 
 from torch import Tensor, set_grad_enabled
