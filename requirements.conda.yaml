@@ -1,6 +1,6 @@
 name: torch-tools
 channels:
-  -c pytorch
+  - pytorch
   - defaults
 dependencies:
   - sphinx
