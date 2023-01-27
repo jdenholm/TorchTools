@@ -6,6 +6,10 @@
 Welcome to TorchTools' documentation!
 ======================================
 
+See the `repository <https://github.com/jdenholm/TorchTools>`_ on `GitHub <https://github.com/>`_
+
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
