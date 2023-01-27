@@ -50,6 +50,7 @@ class UNet(Module):
                     pool_style="max",
                     bilinear=False,
                     lr_slope=0.2,
+                    )
 
     """
 
