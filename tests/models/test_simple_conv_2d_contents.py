@@ -1,10 +1,12 @@
 """Test the contents of ``torch_tools.SimpleConvNet2d``."""
 
 from torch.nn import AdaptiveAvgPool2d, AdaptiveMaxPool2d, Flatten, Linear
-from torch.nn import AvgPool2d, MaxPool2d
+from torch.nn import AvgPool2d, MaxPool2d, Conv2d, BatchNorm2d, LeakyReLU
 
 from torch_tools import SimpleConvNet2d, Encoder2d
 from torch_tools.models._adaptive_pools_2d import _ConcatMaxAvgPool2d
+from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
+from torch_tools.models._blocks_2d import DownBlock
 
 
 def test_simple_conv_net_contents():
@@ -127,3 +129,80 @@ def test_linear_layer_output_features():
 
     model = SimpleConvNet2d(in_chans=3, out_feats=321)
     assert model[3].out_features == 321
+
+
+def test_encoder_double_conv_contents():
+    """Test the layer sizes at each block in the encoder."""
+    model = SimpleConvNet2d(
+        in_chans=3,
+        out_feats=8,
+        num_blocks=5,
+        features_start=123,
+        lr_slope=0.123456,
+    )
+
+    encoder = model[0]
+    double_conv = encoder[0]
+    assert isinstance(double_conv, DoubleConvBlock)
+
+    for idx in range(2):
+        assert isinstance(double_conv[idx], ConvBlock)
+        assert isinstance(double_conv[idx][0], Conv2d)
+        assert isinstance(double_conv[idx][1], BatchNorm2d)
+        assert isinstance(double_conv[idx][2], LeakyReLU)
+
+    assert double_conv[0][0].in_channels == 3
+    assert double_conv[0][0].out_channels == 123
+    assert double_conv[0][1].num_features == 123
+    assert double_conv[0][2].negative_slope == 0.123456
+
+    assert double_conv[1][0].in_channels == 123
+    assert double_conv[1][0].out_channels == 123
+    assert double_conv[1][1].num_features == 123
+    assert double_conv[1][2].negative_slope == 0.123456
+
+
+def test_encoder_down_block_contents_with_avg_pool():
+    """Test the contents of the down blocks in the encoder."""
+    model = SimpleConvNet2d(
+        in_chans=3,
+        out_feats=8,
+        num_blocks=5,
+        features_start=64,
+        lr_slope=0.654321,
+        downsample_pool="avg",
+    )
+
+    encoder = model[0]
+
+    in_chans = 64
+
+    for down_block in list(encoder.children())[1:]:
+
+        assert isinstance(down_block, DownBlock)
+        assert isinstance(down_block[0], AvgPool2d)
+        assert isinstance(down_block[1], DoubleConvBlock)
+
+        # Test the contents of the first conv block in the down block
+        assert isinstance(down_block[1][0], ConvBlock)
+        assert isinstance(down_block[1][0][0], Conv2d)
+        assert isinstance(down_block[1][0][1], BatchNorm2d)
+        assert isinstance(down_block[1][0][2], LeakyReLU)
+
+        assert down_block[1][0][0].in_channels == in_chans
+        assert down_block[1][0][0].out_channels == in_chans * 2
+        assert down_block[1][0][1].num_features == in_chans * 2
+        assert down_block[1][0][2].negative_slope == 0.654321
+
+        # Test the contents of the first conv block in the down block
+        assert isinstance(down_block[1][1], ConvBlock)
+        assert isinstance(down_block[1][1][0], Conv2d)
+        assert isinstance(down_block[1][1][1], BatchNorm2d)
+        assert isinstance(down_block[1][1][2], LeakyReLU)
+
+        assert down_block[1][1][0].in_channels == in_chans * 2
+        assert down_block[1][1][0].out_channels == in_chans * 2
+        assert down_block[1][1][1].num_features == in_chans * 2
+        assert down_block[1][1][2].negative_slope == 0.654321
+
+        in_chans *= 2
