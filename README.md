@@ -6,6 +6,8 @@ Handy PyTorch models and utilities which should save you time.
 ## Description
 This Python library contains a bunch of neural networks, implemented in PyTorch, and a generic ``Dataset`` class with useful features to help you get started with your deep-learning problem more quickly, and spend less time engineering and testing—because researchers *always* test their code—the PyTorch-specific software you need. There is also the hope that you will write and duplicate less code by being able to easily set and modify these models' architectures at instantiation.
 
+Please find the documentation [here](https://jdenholm.github.io/TorchTools/).
+
 ---
 
 ## Authors and Acknowledgement
@@ -742,7 +744,8 @@ SimpleConvNet2d(
         (_avg_pool): AdaptiveAvgPool2d(output_size=(1, 1))
         (_max_pool): AdaptiveMaxPool2d(output_size=(1, 1))
       )
-      (2): Linear(in_features=1024, out_features=128, bias=True)
+      (2): Flatten(start_dim=1, end_dim=-1)
+      (3): Linear(in_features=1024, out_features=128, bias=True)
     )
 
 
