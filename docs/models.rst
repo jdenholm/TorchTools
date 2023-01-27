@@ -1,4 +1,6 @@
-.._models
+.. models
+
+All models inherit from ``torch.nn.Module``—either directly or through ``torch.nn.Sequential``—and therefore function like standard `PyTorch <https://pytorch.org/>`_ models.
 
 DenseNetwork
 ==================
