@@ -1,6 +1,5 @@
 name: torch-tools
 channels:
-  - pytorch
   - defaults
 dependencies:
   - sphinx
@@ -14,4 +13,6 @@ dependencies:
   - pytest
   - pydocstyle
   - pylint
+  - ipykernel
+  - nbconvert
 
