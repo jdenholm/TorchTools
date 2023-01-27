@@ -40,5 +40,6 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
-        publish_branch: your-branch
-        publish_dir: ./docs/_build/
+        with:
+          publish_branch: your-branch
+          publish_dir: ./docs/_build/
