@@ -6,6 +6,8 @@
 Welcome to TorchTools' documentation!
 ======================================
 
+Helpful PyTorch utilities which should save you time and heartache.
+
 See the `TorchTools <https://github.com/jdenholm/TorchTools>`_ repository on `GitHub <https://github.com/>`_
 
 
