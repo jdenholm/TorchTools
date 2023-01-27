@@ -6,7 +6,7 @@
 Welcome to TorchTools' documentation!
 ======================================
 
-See the `repository <https://github.com/jdenholm/TorchTools>`_ on `GitHub <https://github.com/>`_
+See the `TorchTools <https://github.com/jdenholm/TorchTools>`_ repository on `GitHub <https://github.com/>`_
 
 
 
