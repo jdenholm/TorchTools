@@ -32,7 +32,6 @@ def test_number_of_output_features():
 
 def test_call_with_different_pool_types():
     """Test with every pool type."""
-
     down_pools = ["max", "avg"]
     adaptive_pools = ["max", "avg", "avg-max-concat"]
 
