@@ -1,6 +1,7 @@
 name: torch-tools
 channels:
   - pytorch
+  - conda-forge
   - defaults
 dependencies:
   - sphinx
@@ -16,4 +17,4 @@ dependencies:
   - pylint
   - ipykernel
   - nbconvert
-
+  - black-jupyter
