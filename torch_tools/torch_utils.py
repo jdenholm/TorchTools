@@ -17,7 +17,8 @@ def target_from_mask_img(mask_img: Tensor, num_classes: int) -> Tensor:
     Returns
     -------
     Tensor
-        Target Tensor of shape ``(num_classes, H, W)``.
+        Target Tensor of shape ``(num_classes, H, W)``. Each element,
+        ``target[:, i, j]`` is a one-hot-encoded vector.
 
     Raises
     ------
@@ -28,7 +29,7 @@ def target_from_mask_img(mask_img: Tensor, num_classes: int) -> Tensor:
     ValueError
         If any of the values in ``mask_img`` cannot be cast as int.
     ValueError
-        If ``num_classes`` is less than two.
+        If ``num_classes < 2``.
     ValueError
         If ``mask_img`` has values less than zero, or greater than/equal to
         ``num_classes``.
