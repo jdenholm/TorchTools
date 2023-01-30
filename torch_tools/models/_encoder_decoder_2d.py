@@ -15,7 +15,7 @@ from torch_tools.models._argument_processing import (
     process_boolean_arg,
 )
 
-from torch_tools.misc import batch_spatial_dims_power_of_2
+from torch_tools.misc import img_batch_dims_power_of_2
 
 # pylint:disable=too-many-arguments
 
@@ -118,7 +118,7 @@ class EncoderDecoder2d(Module):
             The result of passing ``batch`` through the model.
 
         """
-        batch_spatial_dims_power_of_2(batch)
+        img_batch_dims_power_of_2(batch)
 
         with set_grad_enabled(not frozen_encoder):
             encoded = self.encoder(batch)

@@ -3,7 +3,7 @@
 from torch import Tensor, log2, as_tensor  # pylint: disable=no-name-in-module
 
 
-def batch_spatial_dims_power_of_2(batch: Tensor):
+def img_batch_dims_power_of_2(batch: Tensor):
     """Check height and width of `batch` are powers of 2.
 
     Parameters
