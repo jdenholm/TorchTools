@@ -19,6 +19,7 @@ See the `TorchTools <https://github.com/jdenholm/TorchTools>`_ repository on `Gi
 
    models.rst
    dataset.rst
+   misc.rst
    torch_utils.rst
 
 
