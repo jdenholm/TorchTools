@@ -4,7 +4,7 @@ from torch import Tensor, log2, as_tensor  # pylint: disable=no-name-in-module
 
 
 def img_batch_dims_power_of_2(batch: Tensor):
-    """Check height and width of `batch` are powers of 2.
+    """Check height and width of ``batch`` are powers of 2.
 
     Parameters
     ----------
@@ -14,13 +14,13 @@ def img_batch_dims_power_of_2(batch: Tensor):
     Raises
     ------
     TypeError
-        If `batch` is not a `Tensor`.
+        If ``batch`` is not a ``Tensor``.
     RuntimeError
-        If `batch` does not have four dimensions.
+        If ``batch`` does not have four dimensions.
     RuntimeError
-        If the batch's images' heights are not a power of 2.
+        If the ``batch``'s images' heights are not a power of 2.
     RuntimeError
-        If the batch's images' heights are not a power of 2.
+        If the ``batch``'s images' heights are not a power of 2.
 
     """
     if not isinstance(batch, Tensor):
@@ -42,7 +42,7 @@ def img_batch_dims_power_of_2(batch: Tensor):
 
 
 def divides_by_two_check(to_divide: int):
-    """Make sure `to_divide` can be divided by 2.
+    """Make sure ``to_divide`` can be divided by 2.
 
     Parameters
     ----------
@@ -52,11 +52,11 @@ def divides_by_two_check(to_divide: int):
     Raises
     ------
     TypeError
-        If `to_divide` is not an int.
+        If ``to_divide`` is not an int.
     ValueError
-        If `to_divide` is not greater than zero.
+        If ``to_divide`` is not greater than zero.
     ValueError
-        If `to_divide / 2` is irrational.
+        If ``to_divide / 2`` is irrational.
 
     """
     if not isinstance(to_divide, int):
