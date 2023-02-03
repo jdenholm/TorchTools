@@ -51,6 +51,16 @@ def test_traverse_directory_tree_directory_not_exists():
         traverse_directory_tree(Path("Minas", "Tirith/"))
 
 
+def test_traverse_directory_tree_with_non_dir():
+    """Test ``directory`` argument only accepts directories."""
+    # Should work with existing paths
+    traverse_directory_tree(_parent_dir)
+
+    # Should break with existing paths which are not directories
+    with pytest.raises(RuntimeError):
+        traverse_directory_tree(Path(__file__))
+
+
 def test_traverse_directory_tree_return():
     """Test the list of the returned files."""
 

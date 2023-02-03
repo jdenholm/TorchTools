@@ -23,13 +23,20 @@ def traverse_directory_tree(directory: Path) -> List[Path]:
         If ``directory`` is not a ``Path``.
     FileNotFoundError
         If ``directory`` does not exist.
+    RuntimeError
+        If ``directory`` is not a directory.
 
     """
     if not isinstance(directory, Path):
         msg = f"'{directory}' should be a 'Path'. Got '{type(directory)}'."
         raise TypeError(msg)
+
     if not directory.exists():
         raise FileNotFoundError(directory)
+
+    if not directory.is_dir():
+        raise RuntimeError(f"'{directory}' is not a a directory.")
+
     return _recursive_search(directory)
 
 
