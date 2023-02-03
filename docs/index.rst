@@ -21,6 +21,7 @@ See the `TorchTools <https://github.com/jdenholm/TorchTools>`_ repository on `Gi
    dataset.rst
    misc.rst
    torch_utils.rst
+   file_utils.rst
 
 
 Indices and tables
