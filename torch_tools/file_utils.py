@@ -10,7 +10,7 @@ def traverse_directory_tree(directory: Path) -> List[Path]:
     Parameters
     ----------
     directory : Path
-        The director whose contents to be searched.
+        The directory whose contents should be searched.
 
     Returns
     -------
