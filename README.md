@@ -754,9 +754,7 @@ SimpleConvNet2d(
 ---
 
 ### Datasets
-Now that we have these fancy neural networks to play with, we need a good way of supplying them with data. The standard way to do this in PyTorch to to create a Dataset class—specifically a class which inherits from `torch.utils.data.Dataset`, whose `__getitem__` method yields the inputs for your model.
-
-Add stuff here
+Now that we have these neural networks, we need a good way of supplying them with data. The standard way to do this in PyTorch to to create a Dataset class—specifically a class which inherits from `torch.utils.data.Dataset`, whose `__getitem__` method yields inputs, or input–target pairs for our model.
 
 ---
 
@@ -764,3 +762,15 @@ Add stuff here
 
 
 
+
+
+```python
+import torch
+
+from torch_tools import DataSet
+
+dataset = DataSet(inputs=list(torch.rand(100)))
+
+for x_item in dataset:
+    print(x_item)
+```
