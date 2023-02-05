@@ -99,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="misc.html">Misc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torch_utils.html">Torch utils</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">File utilities</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#torch_tools.file_utils.ls_zipfile"><code class="docutils literal notranslate"><span class="pre">ls_zipfile()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#torch_tools.file_utils.traverse_directory_tree"><code class="docutils literal notranslate"><span class="pre">traverse_directory_tree()</span></code></a></li>
 </ul>
 </li>
@@ -173,6 +174,27 @@
 <section id="module-torch_tools.file_utils">
 <span id="file-utilities"></span><h1>File utilities<a class="headerlink" href="#module-torch_tools.file_utils" title="Permalink to this heading">¶</a></h1>
 <p>File searching and path utilities.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="torch_tools.file_utils.ls_zipfile">
+<span class="sig-prename descclassname"><span class="pre">torch_tools.file_utils.</span></span><span class="sig-name descname"><span class="pre">ls_zipfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zip_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torch_tools.file_utils.ls_zipfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>List the contents of <code class="docutils literal notranslate"><span class="pre">zip_path</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>zip_path</strong> (<em>Path</em>) – Path to the zipfile whose contents we want to list.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A list of the files in the zipfile at <code class="docutils literal notranslate"><span class="pre">zip_path</span></code>, sorted by file
+name.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List[Path]</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">zip_path</span></code> is not a <code class="docutils literal notranslate"><span class="pre">Path</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="torch_tools.file_utils.traverse_directory_tree">
 <span class="sig-prename descclassname"><span class="pre">torch_tools.file_utils.</span></span><span class="sig-name descname"><span class="pre">traverse_directory_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torch_tools.file_utils.traverse_directory_tree" title="Permalink to this definition">¶</a></dt>
