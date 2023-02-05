@@ -1,6 +1,6 @@
 """Weight initialisaton functions."""
 
-from torch.nn import Module, init, Conv2d, Linear
+from torch.nn import Module, init, Conv1d, Conv2d, Conv3d, Linear
 
 
 def normal_init(model: Module, mean: float = 0.0, std: float = 0.02):
@@ -35,7 +35,7 @@ def normal_init(model: Module, mean: float = 0.0, std: float = 0.02):
     if not isinstance(std, float):
         raise TypeError(f"'std' should be a float. Got '{std}'.")
 
-    if isinstance(model, (Conv2d, Linear)):
+    if isinstance(model, (Conv1d, Conv2d, Conv3d, Linear)):
         init.normal_(model.weight, mean=mean, std=std)
         if model.bias is not None:
             init.normal_(model.bias, mean=mean, std=std)
