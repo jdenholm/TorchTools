@@ -179,7 +179,7 @@
 <dd><p>Recursively list all files in <code class="docutils literal notranslate"><span class="pre">directory</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>directory</strong> (<em>Path</em>) – The director whose contents to be searched.</p>
+<dd class="field-odd"><p><strong>directory</strong> (<em>Path</em>) – The directory whose contents should be searched.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of all of the files in <code class="docutils literal notranslate"><span class="pre">directory</span></code>.</p>
@@ -191,6 +191,7 @@
 <dd class="field-even"><ul class="simple">
 <li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">directory</span></code> is not a <code class="docutils literal notranslate"><span class="pre">Path</span></code>.</p></li>
 <li><p><strong>FileNotFoundError</strong> – If <code class="docutils literal notranslate"><span class="pre">directory</span></code> does not exist.</p></li>
+<li><p><strong>RuntimeError</strong> – If <code class="docutils literal notranslate"><span class="pre">directory</span></code> is not a directory.</p></li>
 </ul>
 </dd>
 </dl>
