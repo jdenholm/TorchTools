@@ -128,9 +128,9 @@ def patchify_img_batch(img_batch: Tensor, patch_size: int) -> Tensor:
     Parameters
     ----------
     img : Tensor
-        Convert img in a batch of sub-patches.
+        Convert ``img_batch`` into a batch of sub-patches.
     patch_size : int
-        Size of the patches to break the images into.
+        Size of the square patches to break the images into.
 
     Returns
     -------
