@@ -99,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">DataSet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">Misc</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Torch utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#torch_tools.torch_utils.patchify_img_batch"><code class="docutils literal notranslate"><span class="pre">patchify_img_batch()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#torch_tools.torch_utils.target_from_mask_img"><code class="docutils literal notranslate"><span class="pre">target_from_mask_img()</span></code></a></li>
 </ul>
 </li>
@@ -174,6 +175,27 @@
 <section id="module-torch_tools.torch_utils">
 <span id="torch-utils"></span><h1>Torch utils<a class="headerlink" href="#module-torch_tools.torch_utils" title="Permalink to this heading">¶</a></h1>
 <p>PyTorch utilities.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="torch_tools.torch_utils.patchify_img_batch">
+<span class="sig-prename descclassname"><span class="pre">torch_tools.torch_utils.</span></span><span class="sig-name descname"><span class="pre">patchify_img_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#torch_tools.torch_utils.patchify_img_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn <code class="docutils literal notranslate"><span class="pre">img_batch</span></code> into a collection of patches.</p>
+<p>Note: gradient flow works through this function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>img</strong> (<em>Tensor</em>) – Convert <code class="docutils literal notranslate"><span class="pre">img_batch</span></code> into a batch of sub-patches.</p></li>
+<li><p><strong>patch_size</strong> (<em>int</em>) – Size of the square patches to break the images in <code class="docutils literal notranslate"><span class="pre">img_batch</span></code> into.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">img_batch</span></code> as a collection of small parches.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="torch_tools.torch_utils.target_from_mask_img">
 <span class="sig-prename descclassname"><span class="pre">torch_tools.torch_utils.</span></span><span class="sig-name descname"><span class="pre">target_from_mask_img</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask_img</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_classes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#torch_tools.torch_utils.target_from_mask_img" title="Permalink to this definition">¶</a></dt>

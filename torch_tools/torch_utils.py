@@ -125,12 +125,14 @@ def _patch_size_check(img_batch: Tensor, patch_size: int):
 def patchify_img_batch(img_batch: Tensor, patch_size: int) -> Tensor:
     """Turn ``img_batch`` into a collection of patches.
 
+    Note: gradient flow works through this function.
+
     Parameters
     ----------
     img : Tensor
         Convert ``img_batch`` into a batch of sub-patches.
     patch_size : int
-        Size of the square patches to break the images into.
+        Size of the square patches to break the images in ``img_batch`` into.
 
     Returns
     -------
