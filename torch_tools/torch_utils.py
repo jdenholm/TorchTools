@@ -130,14 +130,20 @@ def patchify_img_batch(img_batch: Tensor, patch_size: int) -> Tensor:
     Parameters
     ----------
     img : Tensor
-        Convert ``img_batch`` into a batch of sub-patches.
+        Convert ``img_batch`` into a batch of sub-patches. Should have size
+        ``(N, C, H, W)``, where ``N`` is the batch size, ``C`` is the number
+        of channels, ``H`` is the image height and ``W`` the width.
     patch_size : int
         Size of the square patches to break the images in ``img_batch`` into.
 
     Returns
     -------
     Tensor
-        ``img_batch`` as a collection of small parches.
+        ``img_batch`` as a collection of small patches. The returned
+        ``Tensor`` has size
+        ``(N * (H / patch_size * W / patch_size, C, patch_size, patch_size))``.
+        For example: using a batch of 10 RGB images of size 16x16, and a patch
+        size of 4, will return a ``Tensor`` of shape ``(160, 3, 4, 4)``.
 
     """
     _img_batch_check(img_batch)

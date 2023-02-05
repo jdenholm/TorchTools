@@ -183,12 +183,18 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>img</strong> (<em>Tensor</em>) – Convert <code class="docutils literal notranslate"><span class="pre">img_batch</span></code> into a batch of sub-patches.</p></li>
+<li><p><strong>img</strong> (<em>Tensor</em>) – Convert <code class="docutils literal notranslate"><span class="pre">img_batch</span></code> into a batch of sub-patches. Should have size
+<code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">C,</span> <span class="pre">H,</span> <span class="pre">W)</span></code>, where <code class="docutils literal notranslate"><span class="pre">N</span></code> is the batch size, <code class="docutils literal notranslate"><span class="pre">C</span></code> is the number
+of channels, <code class="docutils literal notranslate"><span class="pre">H</span></code> is the image height and <code class="docutils literal notranslate"><span class="pre">W</span></code> the width.</p></li>
 <li><p><strong>patch_size</strong> (<em>int</em>) – Size of the square patches to break the images in <code class="docutils literal notranslate"><span class="pre">img_batch</span></code> into.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">img_batch</span></code> as a collection of small parches.</p>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">img_batch</span></code> as a collection of small patches. The returned
+<code class="docutils literal notranslate"><span class="pre">Tensor</span></code> has size
+<code class="docutils literal notranslate"><span class="pre">(N</span> <span class="pre">*</span> <span class="pre">(H</span> <span class="pre">/</span> <span class="pre">patch_size</span> <span class="pre">*</span> <span class="pre">W</span> <span class="pre">/</span> <span class="pre">patch_size,</span> <span class="pre">C,</span> <span class="pre">patch_size,</span> <span class="pre">patch_size))</span></code>.
+For example: using a batch of 10 RGB images of size 16x16, and a patch
+size of 4, will return a <code class="docutils literal notranslate"><span class="pre">Tensor</span></code> of shape <code class="docutils literal notranslate"><span class="pre">(160,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">4)</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Tensor</p>
