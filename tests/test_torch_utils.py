@@ -1,10 +1,28 @@
 """Tests for functions in ``torch_tools.torch_utils``."""
 import pytest
 
-from torch import randint, rand, full  # pylint: disable=no-name-in-module
+from torch import randint, rand, full, zeros, ones  # pylint: disable=no-name-in-module
 
 
-from torch_tools.torch_utils import target_from_mask_img
+from torch_tools.torch_utils import target_from_mask_img, patchify_img_batch
+
+# pylint: disable=redefined-outer-name
+
+
+@pytest.fixture()
+def create_fake_image_batch():
+    """Create a fake batch of images to test with."""
+    batch = zeros(10, 3, 64, 128)
+
+    counter = 0
+    for idx in range(10):
+        for row in range(0, 64, 4):
+            for col in range(0, 128, 4):
+                for chan in range(3):
+                    value = counter + (chan * 0.1)
+                    batch[idx, chan, row : (row + 4), col : (col + 4)] = value
+                counter += 1
+    return batch
 
 
 def test_target_from_mask_img_is_tensor():
@@ -98,3 +116,114 @@ def test_target_from_mask_img_return_values():
         mask_img = randint(100, (64, 64))
         target = target_from_mask_img(mask_img, num_classes=100)
         assert (target.argmax(dim=0) == mask_img).all()
+
+
+def test_patchify_img_batch_img_batch_arg_type():
+    """Test the ``img_batch`` argument only accepts ``Tensor``."""
+    # Should work with mini-batches of img-like
+    patchify_img_batch(rand(1, 3, 50, 50), patch_size=10)
+
+    # Should break with non-Tensor
+    with pytest.raises(TypeError):
+        patchify_img_batch(rand(1, 3, 50, 50).numpy(), patch_size=10)
+
+
+def test_patchify_img_batch_img_batch_dimensions():
+    """Test the dimensions accepted by ``img_batch``."""
+    # Should work with four-dimensional image batches
+    patchify_img_batch(rand(1, 3, 50, 50), patch_size=10)
+
+    # Should break with non-4D inputs
+    with pytest.raises(RuntimeError):
+        patchify_img_batch(rand(10), patch_size=10)
+    with pytest.raises(RuntimeError):
+        patchify_img_batch(rand(6, 6), patch_size=2)
+    with pytest.raises(RuntimeError):
+        patchify_img_batch(rand(6, 6, 6), patch_size=2)
+    with pytest.raises(RuntimeError):
+        patchify_img_batch(rand(2, 2, 2, 2, 2), patch_size=2)
+
+
+def test_patchify_img_batch_patch_size_arg_type():
+    """Test the ``patch_size`` argument only accepts ``int``."""
+    # Should work with int
+    patchify_img_batch(rand(1, 3, 50, 50), patch_size=10)
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        patchify_img_batch(rand(1, 3, 50, 50), patch_size=10.0)
+    with pytest.raises(TypeError):
+        patchify_img_batch(rand(1, 3, 50, 50), patch_size=1j)
+
+
+def test_patchify_img_batch_zero_or_negative_patch_size():
+    """Test zero or negative ``patch_size``s are caught."""
+    # Should work with positive int
+    patchify_img_batch(rand(1, 3, 50, 50), patch_size=10)
+
+    with pytest.raises(ValueError):
+        patchify_img_batch(rand(1, 3, 50, 50), patch_size=0)
+    with pytest.raises(ValueError):
+        patchify_img_batch(rand(1, 3, 50, 50), patch_size=-1)
+    with pytest.raises(ValueError):
+        patchify_img_batch(rand(1, 3, 50, 50), patch_size=-2)
+
+
+def test_patchify_img_batch_patch_and_img_size_mismatch():
+    """Test the ``patch_size`` divides the image height and width."""
+    # Should work if the patch_size divides the image height and width
+    patchify_img_batch(rand(1, 3, 40, 20), patch_size=10)
+    patchify_img_batch(rand(1, 3, 20, 40), patch_size=4)
+    patchify_img_batch(rand(1, 3, 40, 40), patch_size=2)
+
+    # Should break if the patch size doesn't divide height
+    with pytest.raises(ValueError):
+        patchify_img_batch(rand(1, 3, 41, 40), patch_size=2)
+    with pytest.raises(ValueError):
+        patchify_img_batch(rand(1, 3, 40, 41), patch_size=2)
+
+
+def test_patchify_img_batch_return_size():
+    """Test the dimensionality of the returned batches."""
+    batch = rand(1, 3, 512, 512)
+    patched = patchify_img_batch(batch, patch_size=64)
+    assert patched.shape == (64, 3, 64, 64)
+
+    batch = rand(10, 3, 512, 512)
+    patched = patchify_img_batch(batch, patch_size=64)
+    assert patched.shape == (640, 3, 64, 64)
+
+
+def test_patchify_img_batch_return_values(create_fake_image_batch):
+    """Test the values returned in each patch.
+
+    Notes
+    -----
+    See ``create_fake_image_batch``.
+
+    """
+    batch = create_fake_image_batch
+
+    patches = patchify_img_batch(batch, 4)
+    for idx, patch in enumerate(patches):
+
+        assert (patch[0, :, :] == idx).all()
+        assert (patch[1, :, :] == idx + 0.1).all()
+        assert (patch[2, :, :] == idx + 0.2).all()
+
+
+def test_patchify_img_batch_allows_gradient_flow():
+    """Test gradient flow works through function."""
+    batch = ones(10, 3, 32, 32, requires_grad=True)
+    patches = patchify_img_batch(batch, 4)
+    out = (patches * 2).sum()
+    out.backward()
+
+    assert (batch.grad == 2).all()
+
+    batch = ones(10, 3, 32, 32, requires_grad=True)
+    patches = patchify_img_batch(batch, 4)
+    out = (patches * 123).sum()
+    out.backward()
+
+    assert (batch.grad == 123).all()
