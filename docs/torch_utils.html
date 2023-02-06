@@ -99,6 +99,7 @@
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">DataSet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">Misc</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Torch utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#torch_tools.torch_utils.img_batch_dims_power_of_2"><code class="docutils literal notranslate"><span class="pre">img_batch_dims_power_of_2()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#torch_tools.torch_utils.patchify_img_batch"><code class="docutils literal notranslate"><span class="pre">patchify_img_batch()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#torch_tools.torch_utils.target_from_mask_img"><code class="docutils literal notranslate"><span class="pre">target_from_mask_img()</span></code></a></li>
 </ul>
@@ -175,6 +176,25 @@
 <section id="module-torch_tools.torch_utils">
 <span id="torch-utils"></span><h1>Torch utils<a class="headerlink" href="#module-torch_tools.torch_utils" title="Permalink to this heading">¶</a></h1>
 <p>PyTorch utilities.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="torch_tools.torch_utils.img_batch_dims_power_of_2">
+<span class="sig-prename descclassname"><span class="pre">torch_tools.torch_utils.</span></span><span class="sig-name descname"><span class="pre">img_batch_dims_power_of_2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torch_tools.torch_utils.img_batch_dims_power_of_2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check height and width of <code class="docutils literal notranslate"><span class="pre">batch</span></code> are powers of 2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch</strong> (<em>Tensor</em>) – A mini-batch of image-like inputs.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">batch</span></code> is not a <code class="docutils literal notranslate"><span class="pre">Tensor</span></code>.</p></li>
+<li><p><strong>RuntimeError</strong> – If <code class="docutils literal notranslate"><span class="pre">batch</span></code> does not have four dimensions.</p></li>
+<li><p><strong>RuntimeError</strong> – If the <code class="docutils literal notranslate"><span class="pre">batch</span></code>’s images’ heights are not a power of 2.</p></li>
+<li><p><strong>RuntimeError</strong> – If the <code class="docutils literal notranslate"><span class="pre">batch</span></code>’s images’ heights are not a power of 2.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="torch_tools.torch_utils.patchify_img_batch">
 <span class="sig-prename descclassname"><span class="pre">torch_tools.torch_utils.</span></span><span class="sig-name descname"><span class="pre">patchify_img_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">img_batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">patch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="headerlink" href="#torch_tools.torch_utils.patchify_img_batch" title="Permalink to this definition">¶</a></dt>
