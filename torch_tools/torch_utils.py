@@ -1,7 +1,13 @@
 """PyTorch utilities."""
 from itertools import chain
 
-from torch import Tensor, eye, concat  # pylint: disable=no-name-in-module
+from torch import (  # pylint: disable=no-name-in-module
+    Tensor,
+    eye,
+    concat,
+    log2,
+    as_tensor,
+)
 
 
 def target_from_mask_img(mask_img: Tensor, num_classes: int) -> Tensor:
@@ -160,3 +166,41 @@ def patchify_img_batch(img_batch: Tensor, patch_size: int) -> Tensor:
 
     unfolded_list = list(chain(*chain(*unfolded)))
     return concat(list(map(lambda x: x.unsqueeze(0), unfolded_list)), dim=0)
+
+
+def img_batch_dims_power_of_2(batch: Tensor):
+    """Check height and width of ``batch`` are powers of 2.
+
+    Parameters
+    ----------
+    batch : Tensor
+        A mini-batch of image-like inputs.
+
+    Raises
+    ------
+    TypeError
+        If ``batch`` is not a ``Tensor``.
+    RuntimeError
+        If ``batch`` does not have four dimensions.
+    RuntimeError
+        If the ``batch``'s images' heights are not a power of 2.
+    RuntimeError
+        If the ``batch``'s images' heights are not a power of 2.
+
+    """
+    if not isinstance(batch, Tensor):
+        raise TypeError(f"'batch' should be a 'Tensor'. Got '{type(batch)}'.")
+    if not batch.dim() == 4:
+        msg = f"Mini-batch of images should have 4 dims. Got '{batch.dim()}'."
+        raise RuntimeError(msg)
+
+    _, _, height, width = batch.shape
+
+    if (log2(as_tensor(height)) % 1) != 0:
+        msg = "Mini-batch of image-like's height should be power of 2. Got "
+        msg += f"'{height}'."
+        raise RuntimeError(msg)
+    if (log2(as_tensor(width)) % 1) != 0:
+        msg = "Mini-batch of image-like's width should be power of 2. Got "
+        msg += f"'{width}'."
+        raise RuntimeError(msg)

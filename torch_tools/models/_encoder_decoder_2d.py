@@ -15,7 +15,7 @@ from torch_tools.models._argument_processing import (
     process_boolean_arg,
 )
 
-from torch_tools.misc import img_batch_dims_power_of_2
+from torch_tools.torch_utils import img_batch_dims_power_of_2
 
 # pylint:disable=too-many-arguments
 
