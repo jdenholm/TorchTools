@@ -141,7 +141,7 @@ def patchify_img_batch(img_batch: Tensor, patch_size: int) -> Tensor:
     Tensor
         ``img_batch`` as a collection of small patches. The returned
         ``Tensor`` has size
-        ``(N * (H / patch_size * W / patch_size, C, patch_size, patch_size))``.
+        ``(N * H / patch_size * W / patch_size, C, patch_size, patch_size)``.
         For example: using a batch of 10 RGB images of size 16x16, and a patch
         size of 4, will return a ``Tensor`` of shape ``(160, 3, 4, 4)``.
 

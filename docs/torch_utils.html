@@ -192,7 +192,7 @@ of channels, <code class="docutils literal notranslate"><span class="pre">H</spa
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">img_batch</span></code> as a collection of small patches. The returned
 <code class="docutils literal notranslate"><span class="pre">Tensor</span></code> has size
-<code class="docutils literal notranslate"><span class="pre">(N</span> <span class="pre">*</span> <span class="pre">(H</span> <span class="pre">/</span> <span class="pre">patch_size</span> <span class="pre">*</span> <span class="pre">W</span> <span class="pre">/</span> <span class="pre">patch_size,</span> <span class="pre">C,</span> <span class="pre">patch_size,</span> <span class="pre">patch_size))</span></code>.
+<code class="docutils literal notranslate"><span class="pre">(N</span> <span class="pre">*</span> <span class="pre">H</span> <span class="pre">/</span> <span class="pre">patch_size</span> <span class="pre">*</span> <span class="pre">W</span> <span class="pre">/</span> <span class="pre">patch_size,</span> <span class="pre">C,</span> <span class="pre">patch_size,</span> <span class="pre">patch_size)</span></code>.
 For example: using a batch of 10 RGB images of size 16x16, and a patch
 size of 4, will return a <code class="docutils literal notranslate"><span class="pre">Tensor</span></code> of shape <code class="docutils literal notranslate"><span class="pre">(160,</span> <span class="pre">3,</span> <span class="pre">4,</span> <span class="pre">4)</span></code>.</p>
 </dd>
