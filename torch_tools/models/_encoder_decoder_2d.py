@@ -61,6 +61,21 @@ class EncoderDecoder2d(Module):
                     lr_slope=0.123,
                 )
 
+    Another (potentially) useful feature (if you want to do transfer learning)
+    if the ability to *freeze*—i.e. fix—the parameters of either the encoder
+    or the decoder:
+
+    >>> from torch import rand
+    >>> from torch_tools import EncoderDecoder2d
+    >>> # Mini-batch of ten, three-channel images of 64 by 64 pixels
+    >>> mini_batch = rand(10, 3, 64, 64)
+    >>> model = EncoderDecoder2d(in_chans=3, out_chans=3)
+    >>> # With nothing frozen (default behaviour)
+    >>> pred = model(mini_batch, frozen_encoder=False, frozen_decoder=False)
+    >>> # With the encoder frozen:
+    >>> pred = model(mini_batch, frozen_encoder=True, frozen_decoder=False)
+    >>> # With both the encoder and decoder frozen:
+    >>> pred = model(mini_batch, frozen_encoder=True, frozen_decoder=True)
 
     """
 

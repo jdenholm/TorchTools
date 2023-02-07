@@ -653,6 +653,27 @@ EncoderDecoder2d(in_chans=3, out_chans=3)
 
 
 
+Another useful feature of the ``EncoderDecoder2d`` model is the ability to *freeze* the encoding and decoding blocks, which could make the model useful for transfer learning.
+
+For example
+
+
+```python
+from torch import rand
+from torch_tools import EncoderDecoder2d
+
+mini_batch = rand(10, 3, 64, 64)
+
+model = EncoderDecoder2d(in_chans=3, out_chans=3)
+
+# With nothing frozen (default behaviour)
+prediction = model(mini_batch, frozen_encoder=False, frozen_decoder=False)
+# With the encoder frozen:
+prediction = model(mini_batch, frozen_encoder=True, frozen_decoder=False)
+# With both the encoder and decoder frozen:
+prediction = model(mini_batch, frozen_encoder=True, frozen_decoder=True)
+```
+
 ---
 
 
@@ -769,8 +790,20 @@ import torch
 
 from torch_tools import DataSet
 
-dataset = DataSet(inputs=list(torch.rand(100)))
+dataset = DataSet(inputs=list(torch.rand(10)))
 
 for x_item in dataset:
     print(x_item)
 ```
+
+    tensor(0.7063)
+    tensor(0.9121)
+    tensor(0.9270)
+    tensor(0.9238)
+    tensor(0.9960)
+    tensor(0.8320)
+    tensor(0.6709)
+    tensor(0.8917)
+    tensor(0.3716)
+    tensor(0.5006)
+
