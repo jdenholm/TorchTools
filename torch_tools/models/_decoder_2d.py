@@ -38,7 +38,7 @@ class Decoder2d(Sequential):
                     num_blocks=4,
                     bilinear=False,
                     lr_slope=0.123,
-                    )
+                )
 
     """
 
@@ -122,7 +122,6 @@ class Decoder2d(Sequential):
         chans = in_chans
         blocks = []
         for _ in range(num_blocks - 1):
-
             blocks.append(
                 UpBlock(
                     process_num_feats(chans),
