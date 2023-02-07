@@ -1,15 +1,17 @@
-"""Weight initialisaton functions."""
+"""Weight initialisation functions."""
 
 from torch.nn import Module, init, Conv1d, Conv2d, Conv3d, Linear
 
 
 def normal_init(model: Module, mean: float = 0.0, std: float = 0.02):
-    """Initialise the weights of the `model`.
+    """Initialise ``model``'s weights by sampling from a normal distribution.
+
+    The weights *and* biases are intitialised.
 
     Parameters
     ----------
     model : Module
-        The Module to be initialised.
+        The ``Module`` to be initialised.
     mean : float, optional
         The mean of the normal distribution the weights are sampled from.
     std : float, optional

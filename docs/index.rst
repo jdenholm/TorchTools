@@ -21,6 +21,7 @@ See the `TorchTools <https://github.com/jdenholm/TorchTools>`_ repository on `Gi
    dataset.rst
    misc.rst
    torch_utils.rst
+   weight_init.rst
    file_utils.rst
 
 

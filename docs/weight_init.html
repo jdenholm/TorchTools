@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>File utilities &mdash; TorchTools 0.0.0 documentation</title>
+  <title>Weight initialisation &mdash; TorchTools 0.0.0 documentation</title>
   
 
   
@@ -41,7 +41,8 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Weight initialisation" href="weight_init.html" /> 
+    <link rel="next" title="File utilities" href="file_utils.html" />
+    <link rel="prev" title="Torch utils" href="torch_utils.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -98,12 +99,11 @@
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">DataSet</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">Misc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torch_utils.html">Torch utils</a></li>
-<li class="toctree-l1"><a class="reference internal" href="weight_init.html">Weight initialisation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">File utilities</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#torch_tools.file_utils.ls_zipfile"><code class="docutils literal notranslate"><span class="pre">ls_zipfile()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#torch_tools.file_utils.traverse_directory_tree"><code class="docutils literal notranslate"><span class="pre">traverse_directory_tree()</span></code></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Weight initialisation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#torch_tools.weight_init.normal_init"><code class="docutils literal notranslate"><span class="pre">normal_init()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="file_utils.html">File utilities</a></li>
 </ul>
 
             
@@ -152,13 +152,13 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>File utilities</li>
+      <li>Weight initialisation</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/file_utils.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/weight_init.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -171,50 +171,29 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <p>File and path utilities.</p>
-<section id="module-torch_tools.file_utils">
-<span id="file-utilities"></span><h1>File utilities<a class="headerlink" href="#module-torch_tools.file_utils" title="Permalink to this heading">¶</a></h1>
-<p>File searching and path utilities.</p>
+  <p>Weight initialisation functions</p>
+<section id="module-torch_tools.weight_init">
+<span id="weight-initialisation"></span><h1>Weight initialisation<a class="headerlink" href="#module-torch_tools.weight_init" title="Permalink to this heading">¶</a></h1>
+<p>Weight initialisation functions.</p>
 <dl class="py function">
-<dt class="sig sig-object py" id="torch_tools.file_utils.ls_zipfile">
-<span class="sig-prename descclassname"><span class="pre">torch_tools.file_utils.</span></span><span class="sig-name descname"><span class="pre">ls_zipfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zip_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torch_tools.file_utils.ls_zipfile" title="Permalink to this definition">¶</a></dt>
-<dd><p>List the contents of <code class="docutils literal notranslate"><span class="pre">zip_path</span></code>.</p>
+<dt class="sig sig-object py" id="torch_tools.weight_init.normal_init">
+<span class="sig-prename descclassname"><span class="pre">torch_tools.weight_init.</span></span><span class="sig-name descname"><span class="pre">normal_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mean</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.02</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#torch_tools.weight_init.normal_init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialise <code class="docutils literal notranslate"><span class="pre">model</span></code>’s weights by sampling from a normal distribution.</p>
+<p>The weights <em>and</em> biases are intitialised.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>zip_path</strong> (<em>Path</em>) – Path to the zipfile whose contents we want to list.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of the files in the zipfile at <code class="docutils literal notranslate"><span class="pre">zip_path</span></code>, sorted by file
-name.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List[Path]</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">zip_path</span></code> is not a <code class="docutils literal notranslate"><span class="pre">Path</span></code>.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="torch_tools.file_utils.traverse_directory_tree">
-<span class="sig-prename descclassname"><span class="pre">torch_tools.file_utils.</span></span><span class="sig-name descname"><span class="pre">traverse_directory_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#torch_tools.file_utils.traverse_directory_tree" title="Permalink to this definition">¶</a></dt>
-<dd><p>Recursively list all files in <code class="docutils literal notranslate"><span class="pre">directory</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>directory</strong> (<em>Path</em>) – The directory whose contents should be searched.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of all of the files in <code class="docutils literal notranslate"><span class="pre">directory</span></code>.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>List[Path]</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Module</em>) – The <code class="docutils literal notranslate"><span class="pre">Module</span></code> to be initialised.</p></li>
+<li><p><strong>mean</strong> (<em>float</em><em>, </em><em>optional</em>) – The mean of the normal distribution the weights are sampled from.</p></li>
+<li><p><strong>std</strong> (<em>float</em><em>, </em><em>optional</em>) – The standard deviation of the normal distribution the weights are
+sampled from.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">directory</span></code> is not a <code class="docutils literal notranslate"><span class="pre">Path</span></code>.</p></li>
-<li><p><strong>FileNotFoundError</strong> – If <code class="docutils literal notranslate"><span class="pre">directory</span></code> does not exist.</p></li>
-<li><p><strong>RuntimeError</strong> – If <code class="docutils literal notranslate"><span class="pre">directory</span></code> is not a directory.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">model</span></code> is not an instance of <code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code>.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">mean</span></code> is not a float.</p></li>
+<li><p><strong>TypeError</strong> – If <code class="docutils literal notranslate"><span class="pre">std</span></code> is not a float.</p></li>
 </ul>
 </dd>
 </dl>
@@ -228,7 +207,8 @@ name.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="weight_init.html" class="btn btn-neutral float-left" title="Weight initialisation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="file_utils.html" class="btn btn-neutral float-right" title="File utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="torch_utils.html" class="btn btn-neutral float-left" title="Torch utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>
