@@ -1,0 +1,22 @@
+name: torch-tools-demo
+channels:
+  - pytorch
+  - conda-forge
+  - anaconda
+  - defaults
+dependencies:
+  - sphinx
+  - mypy
+  - cudatoolkit
+  - python=3.10
+  - sphinx_rtd_theme
+  - torchvision=0.14.1
+  - pytorch=1.13.1
+  - black
+  - black-jupyter
+  - pytest
+  - pydocstyle
+  - pylint
+  - ipykernel
+  - nbconvert
+  - scikit-learn
