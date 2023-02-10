@@ -31,12 +31,9 @@ jobs:
       run: |
         conda env update --file requirements.conda.yaml
 
-    - name: Active conda env
-      run: |
-        $CONDA/bin/activate torch-tools
-
     - name: Install TorchTools
       run: |
+        $CONDA/bin/activate torch-tools
         pip install -e .
 
     - name: Format with black
