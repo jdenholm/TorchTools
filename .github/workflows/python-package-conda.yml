@@ -33,8 +33,7 @@ jobs:
 
     - name: Active conda env
       run: |
-        conda init bash
-        conda activate torch-tools
+        $CONDA/bin/activate torch-tools
 
     - name: Install TorchTools
       run: |
