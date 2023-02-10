@@ -38,20 +38,25 @@ jobs:
 
     - name: Format with black
       run: |
+        $CONDA/bin/activate torch-tools
         black $(git ls-files torch_tools)
 
     - name: Lint with Pylint
       run: |
+        $CONDA/bin/activate torch-tools
         pylint $(git ls-files torch_tools)
 
     - name: Test with pytest
       run: |
+        $CONDA/bin/activate torch-tools
         pytest tests
 
     - name: Lint with Mypy
       run: |
+        $CONDA/bin/activate torch-tools
         mypy $(git ls-files torch_tools)
 
     - name: Lint with Pydocstyle
       run : |
+        $CONDA/bin/activate torch-tools
         pydocstyle $(git ls-files torch_tools) --convention=numpy
