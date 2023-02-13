@@ -2,15 +2,15 @@ name: torch-tools
 channels:
   - pytorch
   - conda-forge
-  - defaults
+  - anaconda
 dependencies:
+  - python>=3.10
   - sphinx
   - mypy
-  - cudatoolkit
   - python=3.10
   - sphinx_rtd_theme
-  - torchvision=0.14.1
-  - pytorch=1.13.1
+  - pytorch::torchvision=0.14.1
+  - pytorch::pytorch>=1.13+gpu
   - black
   - black-jupyter
   - pytest
