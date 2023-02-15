@@ -18,3 +18,6 @@ dependencies:
   - pylint
   - ipykernel
   - nbconvert
+  - pip
+  - pip:
+    - "--editable=."
