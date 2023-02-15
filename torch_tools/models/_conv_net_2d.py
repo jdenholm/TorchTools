@@ -114,6 +114,7 @@ class ConvNet2d(Module):
         )
 
         if dense_net_kwargs is not None:
+            _forbidden_args_in_dn_kwargs(dense_net_kwargs)
             self._dn_args.update(dense_net_kwargs)
 
         self.dense_layers = DenseNetwork(
@@ -142,7 +143,6 @@ class ConvNet2d(Module):
 
         """
         for _, module in self.backbone.named_children():
-
             if isinstance(module, Conv2d):
                 config = _conv_config(module)
 
@@ -196,3 +196,34 @@ def _conv_config(conv: Conv2d) -> Dict[str, Any]:
         "bias": not conv.bias is None,
         "padding_mode": conv.padding_mode,
     }
+
+
+def _forbidden_args_in_dn_kwargs(user_dn_kwargs: Dict[str, Any]):
+    """Check there are no forbidden arguments in ``user_dn_kwargs``.
+
+    Parameters
+    ----------
+    user_dn_kwargs : Dict[str, Any]
+        The dense net kwargs supplied by the user.
+
+    Raises
+    ------
+    RuntimeError
+        If ``in_feats`` is in ``self._dn_args``, the user has tried to
+        set the number of input features to the fully connected final
+        layer, which is forbidden.
+    RuntimeError
+        If ``out_feats`` is in ``self._dn_args``, the user has tried to
+        set the number of input features to the fully connected final
+        layer, which is forbidden.
+
+    """
+    if "in_feats" in user_dn_kwargs:
+        msg = "Do not supply 'in_feats' in 'dense_net_kwargs'. This "
+        msg += "quantity is determined by the choice of encoder."
+        raise RuntimeError(msg)
+    if "out_feats" in user_dn_kwargs:
+        msg = "Do not supply 'out_feats' in 'dense_net_kwargs'. Instead "
+        msg += "set this quanitiy using the 'out_feats' argument of "
+        msg += "'ConvNet2d' at instantiation."
+        raise RuntimeError(msg)
