@@ -21,3 +21,4 @@ dependencies:
   - scikit-learn
   - pandas
   - matplotlib
+  - scikit-image
