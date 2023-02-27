@@ -109,6 +109,13 @@ def test_traverse_directory_tree_with_zip_inside():
     assert all(map(lambda x: x[0].name == x[1].name, zip(_paths, files)))
 
 
+def test_traverse_directory_tree_does_not_return_zipfiles():
+    """Make sure the function does not list files with suffix ``".zip"``."""
+    files = traverse_directory_tree(_zip_path)
+
+    assert not any(map(lambda x: x.suffix == ".zip", files))
+
+
 def test_ls_zipfile_argument_type():
     """Test the ``zip_path`` argument only accepts ``Path``s.
 
