@@ -97,11 +97,9 @@ def _recursive_search(
     for item in directory.iterdir():
         if item.suffix == ".zip":
             files += ls_zipfile(item)
-
-        if item.is_file():
+        elif item.is_file():
             files.append(item)
-
-        if item.is_dir():
+        elif item.is_dir():
             _ = _recursive_search(item, files=files)
 
     return files
