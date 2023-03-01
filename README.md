@@ -3,30 +3,25 @@ Handy PyTorch models and utilities which should save you time.
 
 Please see [**the documentation**](https://jdenholm.github.io/TorchTools/).
 
----
 
 ## Description
 This Python library contains a bunch of neural networks, implemented in PyTorch, and a generic ``Dataset`` class with useful features to help you get started with your deep-learning problem more quickly, and spend less time engineering and testing—because researchers *always* test their code—the PyTorch-specific software you need. There is also the hope that you will write and duplicate less code by being able to easily set and modify these models' architectures at instantiation.
 
----
 
 ## Authors and Acknowledgement
 This project was created by Jim Denholm. Any contributions, criticisms or suggestions are welcome.
 
 
----
 
 
 ## License
 Distributed under the MIT License. See LICENSE.md for more information.
 
 
----
 
 
 ## Getting Started
 
----
 
 ### Installation
 
@@ -47,7 +42,6 @@ conda activate torch-tools
 pip install -e .
 ```
 
----
 
 ### Run tests
 To run the tests:
@@ -55,17 +49,26 @@ To run the tests:
 pytest tests/
 ```
 
----
+
+### Demonstrations
+
+There are demos for each of the models in the ``demos/`` directory. Note: the demos require a different python environment, which is specified in ``demo-requirements.conda.yaml``. To build it, use:
+
+```bash
+cd /path/to/TorchTools
+conda env create -f demo-requirements.conda.yaml
+conda activate torch-tools-demo
+pip install -e .
+```
+
+
 
 ## Contents
 
----
 
 ### Models
 
 All of the models inherit, either directly or through `torch.nn.Sequential`, from `torch.nn.Module`, and therefore function like standard PyTorch models.
-
----
 
 #### Dense Network
 Often people share code with simple perceptron-style networks where they have hard-coded the architecture—the number of layers, dropout probabilities and the number of input/output features, etc. Hard-coding these features is inelegant and doesn't allow one to easily modify the architecture.
@@ -123,7 +126,6 @@ DenseNetwork(
 
 
 
----
 
 #### Convolutional Network 2D
 
@@ -245,7 +247,6 @@ initialising the model—even if it doesn't make sense. Welcome to deep learning
 * If you change the number of input channels, don't bother freezing the encoder—the first convolutional layer is overloaded and randomly initialised.
 * See `torch_tools.models._conv_net_2d.ConvNet2d` for more info.
 
----
 
 #### UNet—Semantic Segmentation
 The `UNet` has become a classic model which, again, is often implemented with the architecture hard-coded. Having an easy-to-instantiate `UNet` with a readily-modifiable architecture is always handy, so we include one here.
@@ -355,7 +356,6 @@ UNet(
 
 
 
----
 
 
 #### Encoder
@@ -443,7 +443,6 @@ Encoder2d(
 
 
 
----
 
 #### Decoder
 
@@ -522,7 +521,6 @@ Decoder2d(
 
 
 
----
 
 
 #### Encoder–Decoder model
@@ -674,7 +672,6 @@ prediction = model(mini_batch, frozen_encoder=True, frozen_decoder=False)
 prediction = model(mini_batch, frozen_encoder=True, frozen_decoder=True)
 ```
 
----
 
 
 
@@ -772,12 +769,10 @@ SimpleConvNet2d(
 
 
 
----
 
 ### Datasets
 Now that we have these neural networks, we need a good way of supplying them with data. The standard way to do this in PyTorch to to create a Dataset class—specifically a class which inherits from `torch.utils.data.Dataset`, whose `__getitem__` method yields inputs, or input–target pairs for our model.
 
----
 
 #### DataSet
 
@@ -806,4 +801,3 @@ for x_item in dataset:
     tensor(0.8917)
     tensor(0.3716)
     tensor(0.5006)
-
