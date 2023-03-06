@@ -217,7 +217,7 @@ def process_u_architecture_layers(num_layers: int) -> int:
         raise TypeError(msg)
     if num_layers < 2:
         msg = "Number of layers in U-like archiecture should be at least 2. "
-        msg = f"Got '{num_layers}'."
+        msg += f"Got '{num_layers}'."
         raise ValueError(msg)
     return num_layers
 
