@@ -15,12 +15,10 @@ from torch_tools.models._argument_processing import (
     process_boolean_arg,
 )
 
-from torch_tools.torch_utils import img_batch_dims_power_of_2
-
 # pylint:disable=too-many-arguments
 
 
-class EncoderDecoder2d(Module):
+class AutoEncoder2d(Module):
     """A simple encoder-decoder pair for image-like inputs.
 
     Parameters
@@ -133,8 +131,6 @@ class EncoderDecoder2d(Module):
             The result of passing ``batch`` through the model.
 
         """
-        img_batch_dims_power_of_2(batch)
-
         with set_grad_enabled(not frozen_encoder):
             encoded = self.encoder(batch)
 

@@ -9,6 +9,7 @@ from torch_tools.file_utils import traverse_directory_tree, ls_zipfile
 
 _parent_dir = Path(".test-paths/").resolve()
 _base_path = Path(_parent_dir, "Meriadoc/Peregrin/Samwise/Frodo/").resolve()
+_zip_path = Path(".contains_zip/").resolve()
 
 _paths = sorted(
     [
@@ -17,8 +18,23 @@ _paths = sorted(
         _base_path.parent.parent / "Legolas.txt",
         _base_path.parent.parent.parent / "Gimli.txt",
         _base_path.parent.parent.parent / "Gandalf.txt",
-    ]
+    ],
+    key=lambda x: x.name,
 )
+
+
+@pytest.fixture(scope="module", autouse=True)
+def create_tree_with_zips():
+    """Create a directory tree with zip files inside."""
+    path = _zip_path / "got-zips/"
+    path.mkdir(exist_ok=True, parents=True)
+    _ = list(map(lambda x: (path / x.name).touch(), _paths))
+    make_archive(str(path), "zip", path)
+    rmtree(path)
+
+    yield
+
+    rmtree(_zip_path)
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -80,9 +96,24 @@ def test_traverse_directory_tree_with_non_dir():
 def test_traverse_directory_tree_return():
     """Test the list of the returned files."""
 
-    files = sorted(traverse_directory_tree(_parent_dir))
+    files = traverse_directory_tree(_parent_dir)
 
     assert all(map(lambda paths: paths[0] == paths[1], zip(files, _paths)))
+
+
+def test_traverse_directory_tree_with_zip_inside():
+    """Test ``traverse_directory_tree`` return correctly with zip inside."""
+
+    files = traverse_directory_tree(_zip_path)
+
+    assert all(map(lambda x: x[0].name == x[1].name, zip(_paths, files)))
+
+
+def test_traverse_directory_tree_does_not_return_zipfiles():
+    """Make sure the function does not list files with suffix ``".zip"``."""
+    files = traverse_directory_tree(_zip_path)
+
+    assert not any(map(lambda x: x.suffix == ".zip", files))
 
 
 def test_ls_zipfile_argument_type():
@@ -135,5 +166,4 @@ def test_ls_zipfile_return_values():
     returned = ls_zipfile(Path(".good_zip.zip"))
 
     for exp, ret in zip(expected, returned):
-
         assert exp == ret

@@ -49,7 +49,7 @@ def traverse_directory_tree(directory: Path) -> List[Path]:
     Returns
     -------
     List[Path]
-        A list of all of the files in ``directory``.
+        A list of all of the files in ``directory``, sorted by name.
 
     Raises
     ------
@@ -71,7 +71,7 @@ def traverse_directory_tree(directory: Path) -> List[Path]:
     if not directory.is_dir():
         raise RuntimeError(f"'{directory}' is not a a directory.")
 
-    return _recursive_search(directory)
+    return sorted(_recursive_search(directory), key=lambda x: x.name)
 
 
 def _recursive_search(
@@ -95,11 +95,11 @@ def _recursive_search(
     """
     files = [] if files is None else files
     for item in directory.iterdir():
-
-        if item.is_file():
+        if item.suffix == ".zip":
+            files += ls_zipfile(item)
+        elif item.is_file():
             files.append(item)
-
-        if item.is_dir():
+        elif item.is_dir():
             _ = _recursive_search(item, files=files)
 
     return files
