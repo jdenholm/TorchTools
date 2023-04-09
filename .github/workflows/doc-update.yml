@@ -31,6 +31,11 @@ jobs:
       run: |
         pip install -e .
 
-    - name: build html
-      run: |
-        cd docs && ls && make clean && make html && cp _build/html/*.html .
+    - name: Running the Sphinx to gh-pages Action
+      uses: uibcdf/action-sphinx-docs-to-gh-pages@v1.1.0
+      with:
+        branch: dev
+        dir_docs: docs
+        sphinxapiopts: '--separate -o . ../'
+        sphinxapiexclude: '../*setup* ../*.ipynb'
+        sphinxopts: ''
