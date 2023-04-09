@@ -33,4 +33,4 @@ jobs:
 
     - name: build html
       run: |
-        cd docs && ls && make clean && make html
+        cd docs && ls && make clean && make html && cp _build/html/* .
