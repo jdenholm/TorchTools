@@ -27,9 +27,9 @@ Decoder2d
 .. automodule:: torch_tools.models._decoder_2d
    :members:
 
-EncoderDecoder2d
+AutoEncoder2d
 ==================
-.. automodule:: torch_tools.models._encoder_decoder_2d
+.. automodule:: torch_tools.models._autoencoder_2d
    :members:
 
 
