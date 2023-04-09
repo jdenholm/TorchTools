@@ -25,7 +25,7 @@ jobs:
 
     - name: build html
       run: |
-        cd docs && ls
+        cd docs && ls && make clean && make html
 
 
     # - name: Create conda env
