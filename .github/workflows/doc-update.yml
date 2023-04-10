@@ -33,4 +33,4 @@ jobs:
 
     - name: Update docs
       run : |
-        ./build_docs
+        ./build_docs.sh
