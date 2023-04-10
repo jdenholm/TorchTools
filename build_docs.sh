@@ -12,6 +12,7 @@ target_branch="doc-branch"
 cd docs
 make clean
 make html
+cp -r _build/html/* .
 
 
 # Create the documentation branch and update it with current_branch
@@ -21,7 +22,6 @@ git checkout $current_branch -- docs/
 shopt -s extglob
 git rm -rf !("docs")
 
-cp -r _build/html/* .
 
 cd ..
 git add --all
