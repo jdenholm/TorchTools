@@ -31,11 +31,6 @@ jobs:
       run: |
         pip install -e .
 
-    - name: Running the Sphinx to gh-pages Action
-      uses: uibcdf/action-sphinx-docs-to-gh-pages@v1.1.0
-      with:
-        branch: main
-        dir_docs: docs
-        sphinxapiopts: '--separate -o . ../'
-        sphinxapiexclude: '../*setup* ../*.ipynb'
-        sphinxopts: ''
+    - name: Update docs
+      run : |
+        ./build_docs.sh
