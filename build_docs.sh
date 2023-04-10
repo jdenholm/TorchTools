@@ -6,13 +6,9 @@ make html
 
 target_branch="doc-branch"
 
-git ls-remote --exit-code --heads origin $target_branch
-# If the target documentation branch exists, delete it
-if [ $? -eq 0 ]; then git push --delete origin $target_branch; fi
-
 
 # Create the documentation branch
-git checkout --orphan $target_branch
+git checkout $target_branch
 shopt -s extglob
 git rm -rf !("docs")
 
