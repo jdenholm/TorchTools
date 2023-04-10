@@ -16,10 +16,10 @@ make html
 
 # Create the documentation branch and update it with current_branch
 git checkout $target_branch
-git merge origin $doc_branch
+git merge origin/$doc_branch
 
 # Delete everything except the docs folder
-rm -r !("docs")
+git rm -rf !("docs")
 
 cd docs
 cp _build/html/*.html .
