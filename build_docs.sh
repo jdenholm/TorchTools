@@ -24,7 +24,7 @@ git checkout $target_branch
 cd ..
 
 # shopt -s extglob
-# git rm -rf !("docs")
+git rm -rf ./!("docs")
 
 ls
 
