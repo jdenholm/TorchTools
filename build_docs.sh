@@ -20,7 +20,7 @@ cd ..
 git pull --all
 git checkout origin/$target_branch
 git checkout $target_branch
-git checkout $current_branch -- ../docs/
+git checkout $current_branch -- docs/
 
 
 # shopt -s extglob
