@@ -12,6 +12,7 @@ target_branch="doc-branch"
 cd docs
 make clean
 make html
+ls
 cp -r _build/html/* .
 
 
