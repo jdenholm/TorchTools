@@ -21,7 +21,6 @@ git checkout $current_branch -- docs/
 shopt -s extglob
 git rm -rf !("docs")
 
-cd docs
 cp -r _build/html/* .
 
 cd ..
