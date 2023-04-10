@@ -8,7 +8,7 @@ git checkout --orphan doc-branch
 
 
 shopt -s extglob
-rm -r !("docs")
+git rm -r !("docs")
 
 
 cd docs
