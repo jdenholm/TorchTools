@@ -21,6 +21,8 @@ git checkout origin/$target_branch
 git checkout $target_branch
 # git checkout $current_branch -- ../docs/
 
+cd ..
+
 shopt -s extglob
 git rm -rf !("docs")
 
