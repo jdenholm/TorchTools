@@ -22,6 +22,7 @@ git checkout $current_branch -- "docs/"
 shopt -s extglob
 git rm -rf !("docs")
 
+pwd
 
 cd ..
 git add --all
