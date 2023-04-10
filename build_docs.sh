@@ -4,7 +4,9 @@ cd docs
 make clean
 make html
 
-git checkout --orphan doc-branch
+target_branch="doc-branch"
+
+git checkout --orphan $target_branch
 
 
 shopt -s extglob
@@ -15,10 +17,10 @@ cd docs
 cp _build/html/*.html .
 
 cd ..
-git add docs
+git add --all
 
 git config user.name "jdenholm"
 git config user.email "j.denholm.2017@gmail.com"
 
 git commit -m "Updated docs"
-git push -u origin doc-branch
+git push -u origin $target_branch
