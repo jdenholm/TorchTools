@@ -30,10 +30,10 @@ echo "\n\n\n\n"
 ls
 echo "\n\n\n\n\n"
 
-# cd ..
-# git add --all
+cd ..
+git add --all
 
-# git commit -m "Updated docs"
-# git push -u origin $target_branch --force
+git commit -m "Updated docs"
+git push -u origin $target_branch --force
 
 git checkout $current_branch
