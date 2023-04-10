@@ -21,12 +21,10 @@ git pull --all
 git checkout origin/$target_branch
 git checkout $target_branch
 
-echo "\n\n\n\n"
 git checkout $current_branch -- docs/
-echo "\n\n\n\n"
 
-# shopt -s extglob
-# git rm -rf ./!("docs")
+shopt -s extglob
+rm -rf !("docs")
 
 
 # cd ..
