@@ -16,11 +16,7 @@ cp -r _build/html/*.html .
 cd ..
 
 
-# Create the documentation branch and update it with current_branch
 git pull --all
-# git checkout origin/$target_branch
-# git checkout $target_branch
-# git checkout $current_branch -- docs/
 
 git branch -c $current_branch $target_branch
 git checkout $target_branch
