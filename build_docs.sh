@@ -5,7 +5,12 @@ make clean
 make html
 
 git checkout --orphan doc-branch
-find . -type f -not -name 'docs' -delete
+
+
+shopt -s extglob
+rm -r !("docs")
+
+
 cd docs
 cp _build/html/*.html .
 
