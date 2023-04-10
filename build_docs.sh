@@ -12,7 +12,6 @@ target_branch="doc-branch"
 cd docs
 make clean
 make html
-ls
 cp -r _build/html/* .
 
 
@@ -22,9 +21,10 @@ git checkout origin/$target_branch
 git checkout $target_branch
 # git checkout $current_branch -- ../docs/
 
-# shopt -s extglob
-# git rm -rf !("docs")
+shopt -s extglob
+git rm -rf !("docs")
 
+ls
 
 # cd ..
 # git add --all
