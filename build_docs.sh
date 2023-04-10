@@ -19,6 +19,7 @@ cp -r _build/html/* .
 # Create the documentation branch and update it with current_branch
 git pull --all
 git checkout origin/$target_branch
+git checkout $target_branch
 # git checkout $current_branch -- ../docs/
 
 # shopt -s extglob
@@ -31,4 +32,4 @@ git checkout origin/$target_branch
 # git commit -m "Updated docs"
 # git push -u origin $target_branch --force
 
-# git checkout $current_branch
+git checkout $current_branch
