@@ -14,7 +14,7 @@ if [ $? -eq 0 ]; then git push --delete origin $target_branch; fi
 # Create the documentation branch
 git checkout --orphan $target_branch
 shopt -s extglob
-git rm -r !("docs")
+git rm -rf !("docs")
 
 
 cd docs
