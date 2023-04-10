@@ -15,7 +15,7 @@ make html
 
 
 # Create the documentation branch and update it with current_branch
-git checkout --orphan $target_branch
+git checkout $target_branch
 
 shopt -s extglob
 git rm -rf !("docs")
