@@ -26,11 +26,6 @@ git checkout $current_branch -- docs/
 shopt -s extglob
 rm -rf !("docs")
 
-echo "\n\n\n\n"
-ls
-echo "\n\n\n\n\n"
-
-cd ..
 git add --all
 
 git commit -m "Updated docs"
