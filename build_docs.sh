@@ -13,6 +13,7 @@ cd docs
 make clean
 make html
 cp -r _build/html/* .
+cd ..
 
 
 # Create the documentation branch and update it with current_branch
@@ -21,10 +22,9 @@ git checkout origin/$target_branch
 git checkout $target_branch
 # git checkout $current_branch -- ../docs/
 
-cd ..
 
 # shopt -s extglob
-git rm -rf ./!("docs")
+# git rm -rf ./!("docs")
 
 ls
 
