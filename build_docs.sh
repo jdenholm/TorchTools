@@ -21,10 +21,12 @@ shopt -s extglob
 git rm -rf !("docs")
 
 cd docs
-cp _build/html/*.html .
+cp -r _build/html/* .
 
 cd ..
 git add --all
 
 git commit -m "Updated docs"
 git push -u origin $target_branch --force
+
+git checkout $current_branch
