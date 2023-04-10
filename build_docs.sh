@@ -16,13 +16,12 @@ cp -r _build/html/* .
 
 
 # Create the documentation branch and update it with current_branch
-git checkout $target_branch
+git checkout origin $target_branch
 git checkout $current_branch -- "docs/"
 
 shopt -s extglob
 git rm -rf !("docs")
 
-pwd
 
 cd ..
 git add --all
