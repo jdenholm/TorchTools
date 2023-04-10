@@ -1,8 +1,6 @@
 name: Publish docs
 
-on:
-  pull_request:
-    branches: [ main, dev ]
+on: [push]
 
 jobs:
   build:
