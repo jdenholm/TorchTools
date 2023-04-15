@@ -7,7 +7,6 @@ channels:
 dependencies:
   - sphinx
   - mypy
-  - cudatoolkit
   - python=3.10
   - sphinx_rtd_theme
   - pytorch>=1.13.1
