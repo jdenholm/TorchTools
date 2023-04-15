@@ -3,7 +3,7 @@ message: "If you use this software, please cite it as below."
 authors:
 - family-names: "Denholm"
   given-names: "James"
-  # orcid: "https://orcid.org/0000-0000-0000-0000"
+  orcid: "https://orcid.org/0000-0002-2389-3134"
 title: "TorchTools"
 version: 0.0.0
 # doi: 10.5281/zenodo.1234
