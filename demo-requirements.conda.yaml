@@ -9,6 +9,7 @@ dependencies:
   - mypy
   - python=3.10
   - sphinx_rtd_theme
+  - cudatoolkit
   - pytorch>=1.13.1
   - pytorch-cuda
   - torchvision
