@@ -29,9 +29,6 @@ cp -r _build/html/*.html .
 cd ..
 
 
-shopt -s extglob
-rm -rf !("docs"|"requirements.conda.yaml")
-
 git add --all
 
 git commit -m "Updated docs"
