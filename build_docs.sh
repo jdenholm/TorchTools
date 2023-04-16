@@ -30,7 +30,7 @@ cd ..
 
 
 shopt -s extglob
-git rm -rf !("docs")
+git rm -rf !("docs"|"requirements.conda.yaml")
 
 git add --all
 
