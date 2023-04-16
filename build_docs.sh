@@ -29,6 +29,9 @@ cp -r _build/html/*.html .
 cd ..
 
 
+shopt -s extglob
+git rm -rf !("docs")
+
 git add --all
 
 git commit -m "Updated docs"
