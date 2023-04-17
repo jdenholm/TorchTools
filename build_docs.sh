@@ -7,7 +7,6 @@ git config user.email "j.denholm.2017@gmail.com"
 current_branch="$(git branch --show-current)"
 target_branch="doc-branch"
 
-
 git pull --all
 
 git branch -c $current_branch $target_branch
