@@ -5,8 +5,6 @@ on: [push]
 jobs:
   build-linux:
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 5
 
     steps:
     - uses: actions/checkout@v3
@@ -27,6 +25,14 @@ jobs:
       run: |
         pylint $(git ls-files torch_tools)
 
-    - name: Lint with mypy
+    - name: Lint with Mypy
       run: |
         mypy $(git ls-files torch_tools)
+
+    - name: Lint with Pydocstyle
+      run: |
+        pydocstyle --convention=numpy $(git ls-files torch_tools)
+
+    - name: Test with Pytest
+      run: |
+        pytest .
