@@ -23,4 +23,4 @@ jobs:
         conda env update --file requirements.conda.yaml --name base
     - name: Lint with flake8
       run: |
-        conda activate base && python --version
+        python --version
