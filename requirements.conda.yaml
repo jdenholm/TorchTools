@@ -1,6 +1,5 @@
 name: torch-tools
 channels:
-  - pytorch
   - conda-forge
   - anaconda
 dependencies:
@@ -8,8 +7,6 @@ dependencies:
   - sphinx
   - mypy
   - sphinx_rtd_theme
-  - pytorch::torchvision=0.14.1
-  - pytorch::pytorch>=1.13+gpu
   - black
   - black-jupyter
   - pytest
@@ -17,3 +14,7 @@ dependencies:
   - pylint
   - ipykernel
   - nbconvert
+  - pip
+  - pip:
+    - torch
+    - torchvision
