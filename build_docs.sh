@@ -21,7 +21,7 @@ cd ..
 
 
 shopt -s extglob
-git rm -rf !("docs")
+rm -rf !("docs")
 
 git add --all
 
