@@ -27,9 +27,9 @@ jobs:
       run: |
         conda env update --file requirements.conda.yaml --name base
 
-    - name : Activate conda env
+    - name : Print python version
       run: |
-        conda init bash && source ~/.bashrc && conda activate base
+        python --version
 
     - name: Install TorchTools
       run: |
