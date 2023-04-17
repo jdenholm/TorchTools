@@ -18,14 +18,11 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python_version }}
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
 
     - name: Install dependencies
       run: |
-        conda env update --file requirements.conda.yaml --name base
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        $CONDA/bin/conda env update --file requirements.conda.yml --name base
 
     - name : Print python version
       run: |
