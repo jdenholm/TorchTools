@@ -3,51 +3,24 @@ name: Python Package using Conda
 on: [push]
 
 jobs:
-  build:
-
+  build-linux:
+    runs-on: ubuntu-latest
     strategy:
-      matrix:
-        python_version: ["3.11"]
-        os: ["ubuntu-latest"]
+      max-parallel: 5
 
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v2
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
       with:
-        python-version: ${{ matrix.python_version }}
-
-    - name: Install dependencies
+        python-version: '3.10'
+    - name: Add conda to system path
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
-        $CONDA/bin/conda env update --file requirements.conda.yml --name base
-
-    - name : Print python version
+        echo $CONDA/bin >> $GITHUB_PATH
+    - name: Install dependencies
       run: |
-        python --version
-
-    - name: Install TorchTools
+        conda env update --file environment.yml --name base
+    - name: Lint with flake8
       run: |
-        pip install -e .
-
-    - name: Format with black
-      run: |
-        black $(git ls-files torch_tools)
-
-    - name: Lint with Pylint
-      run: |
-        pylint $(git ls-files torch_tools)
-
-    - name: Test with Pytest
-      run: |
-        pytest tests
-
-    - name: Lint with Mypy
-      run: |
-        mypy $(git ls-files torch_tools)
-
-    - name: Lint with Pydocstyle
-      run : |
-        pydocstyle $(git ls-files torch_tools) --convention=numpy
+        conda activate base && python --version
