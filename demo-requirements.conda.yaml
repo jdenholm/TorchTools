@@ -1,7 +1,5 @@
 name: torch-tools-demo
 channels:
-  - pytorch
-  - nvidia
   - conda-forge
   - anaconda
 dependencies:
@@ -9,9 +7,6 @@ dependencies:
   - mypy
   - python=3.10
   - sphinx_rtd_theme
-  - pytorch>=1.13.1
-  - pytorch-cuda
-  - torchvision
   - black
   - black-jupyter
   - pytest
@@ -23,3 +18,7 @@ dependencies:
   - pandas
   - matplotlib
   - scikit-image
+  - pip
+  - pip:
+    - torch
+    - torchvision
