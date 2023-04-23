@@ -35,3 +35,7 @@ jobs:
     - name: Install TorchTools
       run: |
         pip install -e .
+
+    - name: Print python version
+      run: |
+        python --version

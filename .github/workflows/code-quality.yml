@@ -29,6 +29,10 @@ jobs:
       run: |
         pip install -e .
 
+    - name: Print python version
+      run: |
+        python --version
+
     - name: Lint with Pylint
       run: |
         pylint $(git ls-files torch_tools)

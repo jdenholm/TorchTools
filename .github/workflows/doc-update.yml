@@ -35,6 +35,11 @@ jobs:
       run: |
         pip install -e .
 
+    - name: Print python version
+      run: |
+        python --version
+
+
     - name: Update docs
       run : |
         ./build_docs.sh
