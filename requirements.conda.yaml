@@ -1,12 +1,12 @@
 name: torch-tools
 channels:
-  - conda-forge
-  - anaconda
   - pytorch
   - nvidia
+  - conda-forge
+  - anaconda
 dependencies:
-  - python>=3.11
-  - pytorch
+  - python>=3.10.5
+  - pytorch>=1.13.0
   - pytorch-cuda
   - torchvision
   - sphinx
@@ -18,5 +18,3 @@ dependencies:
   - pydocstyle
   - pylint
   - ipykernel
-  - nbconvert
-  - pip
