@@ -1,11 +1,10 @@
 name: torch-tools
 channels:
+  - defaults
   - pytorch
   - nvidia
   - conda-forge
-  - defaults
 dependencies:
-  - python>=3.10
   - pytorch>=1.13.0
   - pytorch-cuda
   - torchvision
