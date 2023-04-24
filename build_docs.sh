@@ -24,4 +24,4 @@ cd ..
 git add --all
 
 git commit -m "Updated docs"
-git push $source_branch HEAD:$source_branch
+git push -u origin gh-pages
