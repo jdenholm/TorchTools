@@ -26,9 +26,13 @@ jobs:
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
 
-    - name: Print branch name
-      run : |
+    - name: Print target branch name
+      run: |
         echo $GITHUB_BASE_REF
+
+    - name: Print source branch name
+      run: |
+        echo $GITHUB_HEAD_REF
 
 
     # - name: Update conda
