@@ -26,32 +26,22 @@ jobs:
         # $CONDA is an environment variable pointing to the root of the miniconda directory
         echo $CONDA/bin >> $GITHUB_PATH
 
-    - name: Print target branch name
+    - name: Update conda
       run: |
-        echo $GITHUB_BASE_REF
+        conda update -n base -c defaults conda
 
-    - name: Print source branch name
+    - name: Create conda env
       run: |
-        echo $GITHUB_HEAD_REF
+        conda env update --file requirements.conda.yaml --name base
 
+    - name: Install TorchTools
+      run: |
+        pip install -e .
 
-    # - name: Update conda
-    #   run: |
-    #     conda update -n base -c defaults conda
+    - name: Print python version
+      run: |
+        python --version
 
-    # - name: Create conda env
-    #   run: |
-    #     conda env update --file requirements.conda.yaml --name base
-
-    # - name: Install TorchTools
-    #   run: |
-    #     pip install -e .
-
-    # - name: Print python version
-    #   run: |
-    #     python --version
-
-
-    # - name: Update docs
-    #   run : |
-    #     ./build_docs.sh
+    - name: Update docs
+      run : |
+        ./.build_docs.sh
