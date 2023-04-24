@@ -7,7 +7,8 @@ git config user.email "j.denholm.2017@gmail.com"
 current_branch="$(git branch --show-current)"
 target_branch="doc-branch"
 
-echo $current_branch
+# echo $current_branch
+echo "branch=$(echo ${GITHUB_REF#refs/heads/})"
 
 
 # git checkout $current_branch
