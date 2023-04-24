@@ -25,6 +25,6 @@ cd ..
 git add --all
 git commit -m "Updated docs"
 
-git push --delte origin gh-pages
+git push --delete origin gh-pages
 
 git push -u origin gh-pages
