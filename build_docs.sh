@@ -7,7 +7,6 @@ git config user.email "j.denholm.2017@gmail.com"
 source_branch=$GITHUB_HEAD_REF
 target_branch=$GITHUB_BASE_REF
 
-git checkout origin $source_branch
 
 # Build the html
 cd docs
@@ -25,4 +24,4 @@ cd ..
 git add --all
 
 git commit -m "Updated docs"
-git push -u $source_branch
+git push $source_branch git push dev HEAD:$source_branch
