@@ -1,20 +1,21 @@
 name: torch-tools
 channels:
-  - conda-forge
-  - anaconda
   - pytorch
   - nvidia
 dependencies:
-  - python>=3.10.10
+  - python>=3.10.9
   - pytorch>=2.0.0
   - pytorch-cuda
   - torchvision
-  - sphinx
-  - sphinx_rtd_theme
-  - mypy
-  - black
-  - black-jupyter
-  - pytest
-  - pydocstyle
-  - pylint
-  - ipykernel
+  - pip
+  - pip:
+    - sphinx
+    - sphinx_rtd_theme
+    - mypy
+    - black
+    - black-nb
+    - pytest
+    - pydocstyle
+    - pylint
+    - ipykernel
+    - "--editable ."
