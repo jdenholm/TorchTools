@@ -1,10 +1,10 @@
-name: Publish docs
+name: Python Package using Conda
 
 on:
+  push:
+    branches: [ dev ]
   pull_request:
-    branches:
-      - main
-
+    branches: [ dev ]
 jobs:
   build:
 
@@ -21,6 +21,7 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python_version }}
+
     - name: Add conda to system path
       run: |
         # $CONDA is an environment variable pointing to the root of the miniconda directory
@@ -30,7 +31,7 @@ jobs:
       run: |
         conda update -n base -c defaults conda
 
-    - name: Create conda env
+    - name: Install dependencies
       run: |
         conda env update --file requirements.conda.yaml --name base
 
@@ -41,8 +42,3 @@ jobs:
     - name: Print python version
       run: |
         python --version
-
-
-    - name: Update docs
-      run : |
-        ./build_docs.sh
