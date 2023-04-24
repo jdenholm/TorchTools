@@ -10,6 +10,7 @@ source_branch=$GITHUB_HEAD_REF
 target_branch=$GITHUB_BASE_REF
 
 
+
 git checkout -b gh-pages
 
 # Build the html
@@ -22,6 +23,8 @@ cd ..
 
 
 git add --all
-
 git commit -m "Updated docs"
+
+git push --delte origin gh-pages
+
 git push -u origin gh-pages
