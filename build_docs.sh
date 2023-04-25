@@ -1,15 +1,6 @@
 #!/usr/bin/bash
-
-
-git config user.name "jdenholm"
-git config user.email "j.denholm.2017@gmail.com"
-
-# Note: if you are merging from dev to main, source_branch would be dev and
-# target branch would be main.
-source_branch=$GITHUB_HEAD_REF
-target_branch=$GITHUB_BASE_REF
-
-
+git config --local user.email "action@github.com"
+git config --local user.name "GitHub Action"
 
 git checkout -b gh-pages
 
