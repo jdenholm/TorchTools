@@ -1,8 +1,8 @@
 #!/usr/bin/bash
+git config --local user.email "action@github.com"
+git config --local user.name "GitHub Action"
 
-
-git config user.name "jdenholm"
-git config user.email "j.denholm.2017@gmail.com"
+git checkout -b gh-pages
 
 # Build the html
 cd docs
@@ -12,14 +12,7 @@ cp -r _build/html/*.html .
 cd ..
 
 
-# Note: if you are merging from dev to main, source_branch would be dev and
-# target branch would be main.
-
-source_branch=$GITHUB_HEAD_REF
-target_branch=$GITHUB_BASE_REF
-
 
 git add --all
-
 git commit -m "Updated docs"
-git push -u $source_branch
+git push -u origin gh-pages --force
