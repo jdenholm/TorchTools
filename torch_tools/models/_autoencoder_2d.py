@@ -15,12 +15,10 @@ from torch_tools.models._argument_processing import (
     process_boolean_arg,
 )
 
-from torch_tools.misc import img_batch_dims_power_of_2
-
 # pylint:disable=too-many-arguments
 
 
-class EncoderDecoder2d(Module):
+class AutoEncoder2d(Module):
     """A simple encoder-decoder pair for image-like inputs.
 
     Parameters
@@ -61,6 +59,21 @@ class EncoderDecoder2d(Module):
                     lr_slope=0.123,
                 )
 
+    Another (potentially) useful feature (if you want to do transfer learning)
+    if the ability to *freeze*—i.e. fix—the parameters of either the encoder
+    or the decoder:
+
+    >>> from torch import rand
+    >>> from torch_tools import EncoderDecoder2d
+    >>> # Mini-batch of ten, three-channel images of 64 by 64 pixels
+    >>> mini_batch = rand(10, 3, 64, 64)
+    >>> model = EncoderDecoder2d(in_chans=3, out_chans=3)
+    >>> # With nothing frozen (default behaviour)
+    >>> pred = model(mini_batch, frozen_encoder=False, frozen_decoder=False)
+    >>> # With the encoder frozen:
+    >>> pred = model(mini_batch, frozen_encoder=True, frozen_decoder=False)
+    >>> # With both the encoder and decoder frozen:
+    >>> pred = model(mini_batch, frozen_encoder=True, frozen_decoder=True)
 
     """
 
@@ -118,8 +131,6 @@ class EncoderDecoder2d(Module):
             The result of passing ``batch`` through the model.
 
         """
-        img_batch_dims_power_of_2(batch)
-
         with set_grad_enabled(not frozen_encoder):
             encoded = self.encoder(batch)
 

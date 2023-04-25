@@ -31,6 +31,19 @@ class SimpleConvNet2d(Sequential):
     lr_slope : float
         The negative slope to use in the ``LeakyReLU`` layers.
 
+    Examples
+    --------
+    >>> from torch_tools import SimpleConvNet2d
+    >>> SimpleConvNet2d(
+            in_chans=3,
+            out_feats=128,
+            features_start=64,
+            num_blocks=4,
+            downsample_pool="max",
+            adaptive_pool="avg-max-concat",
+            lr_slope=0.123,
+        )
+
     """
 
     def __init__(

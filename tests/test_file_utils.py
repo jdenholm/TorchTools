@@ -1,13 +1,15 @@
 """Tests for ``torch_tools.file_utils``."""
 from pathlib import Path
-from shutil import rmtree
+from shutil import rmtree, make_archive
+from zipfile import BadZipFile
 
 import pytest
 
-from torch_tools.file_utils import traverse_directory_tree
+from torch_tools.file_utils import traverse_directory_tree, ls_zipfile
 
 _parent_dir = Path(".test-paths/").resolve()
 _base_path = Path(_parent_dir, "Meriadoc/Peregrin/Samwise/Frodo/").resolve()
+_zip_path = Path(".contains_zip/").resolve()
 
 _paths = sorted(
     [
@@ -16,8 +18,23 @@ _paths = sorted(
         _base_path.parent.parent / "Legolas.txt",
         _base_path.parent.parent.parent / "Gimli.txt",
         _base_path.parent.parent.parent / "Gandalf.txt",
-    ]
+    ],
+    key=lambda x: x.name,
 )
+
+
+@pytest.fixture(scope="module", autouse=True)
+def create_tree_with_zips():
+    """Create a directory tree with zip files inside."""
+    path = _zip_path / "got-zips/"
+    path.mkdir(exist_ok=True, parents=True)
+    _ = list(map(lambda x: (path / x.name).touch(), _paths))
+    make_archive(str(path), "zip", path)
+    rmtree(path)
+
+    yield
+
+    rmtree(_zip_path)
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -29,6 +46,21 @@ def create_directory_tree():
     yield
 
     rmtree(_parent_dir)
+
+
+@pytest.fixture(scope="module", autouse=True)
+def create_zipfile():
+    """Create a zipfile to test with."""
+    path = Path(".good_zip/")
+    path.mkdir()
+    for idx in range(10):
+        (path / f"{idx}.txt").touch()
+    make_archive(str(path), "zip", path)
+    rmtree(path)
+
+    yield
+
+    path.with_suffix(".zip").unlink()
 
 
 def test_traverse_directory_tree_type_checking():
@@ -51,9 +83,87 @@ def test_traverse_directory_tree_directory_not_exists():
         traverse_directory_tree(Path("Minas", "Tirith/"))
 
 
+def test_traverse_directory_tree_with_non_dir():
+    """Test ``directory`` argument only accepts directories."""
+    # Should work with existing paths
+    traverse_directory_tree(_parent_dir)
+
+    # Should break with existing paths which are not directories
+    with pytest.raises(RuntimeError):
+        traverse_directory_tree(Path(__file__))
+
+
 def test_traverse_directory_tree_return():
     """Test the list of the returned files."""
 
-    files = sorted(traverse_directory_tree(_parent_dir))
+    files = traverse_directory_tree(_parent_dir)
 
     assert all(map(lambda paths: paths[0] == paths[1], zip(files, _paths)))
+
+
+def test_traverse_directory_tree_with_zip_inside():
+    """Test ``traverse_directory_tree`` return correctly with zip inside."""
+
+    files = traverse_directory_tree(_zip_path)
+
+    assert all(map(lambda x: x[0].name == x[1].name, zip(_paths, files)))
+
+
+def test_traverse_directory_tree_does_not_return_zipfiles():
+    """Make sure the function does not list files with suffix ``".zip"``."""
+    files = traverse_directory_tree(_zip_path)
+
+    assert not any(map(lambda x: x.suffix == ".zip", files))
+
+
+def test_ls_zipfile_argument_type():
+    """Test the ``zip_path`` argument only accepts ``Path``s.
+
+    Notes
+    -----
+    See the pytest fixture ``create_zipfile``.
+
+    """
+    # Should work with Path
+    ls_zipfile(Path(".good_zip.zip"))
+
+    # Should break with non-path
+    with pytest.raises(TypeError):
+        ls_zipfile(".good_zip.zip")
+
+
+def test_ls_zipfile_with_non_existing_file():
+    """Test with a file that doesn't exist."""
+    with pytest.raises(FileNotFoundError):
+        ls_zipfile(Path("Eowyn.zip"))
+
+
+def test_ls_zipfile_with_directory():
+    """Test with a directory and not a zip file."""
+    with pytest.raises(IsADirectoryError):
+        ls_zipfile(Path(__file__).parent)
+
+
+def test_ls_zipfile_with_non_zipfile():
+    """Test with a file which is not a zip file."""
+    with pytest.raises(BadZipFile):
+        ls_zipfile(Path(__file__))
+
+
+def test_ls_zipfile_return_types():
+    """Test the return is of type ``List[Path]``."""
+    out_list = ls_zipfile(Path(".good_zip.zip"))
+    assert isinstance(out_list, list), "Should return a list"
+
+    msg = "Should only contain Paths"
+    assert all(map(lambda x: isinstance(x, Path), out_list)), msg
+
+
+def test_ls_zipfile_return_values():
+    """Test the returned values are correct."""
+    expected = [Path(".good_zip.zip") / f"{idx}.txt" for idx in range(10)]
+
+    returned = ls_zipfile(Path(".good_zip.zip"))
+
+    for exp, ret in zip(expected, returned):
+        assert exp == ret

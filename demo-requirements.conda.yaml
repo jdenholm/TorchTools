@@ -1,4 +1,4 @@
-name: torch-tools
+name: torch-tools-demo
 channels:
   - pytorch
   - nvidia
@@ -18,4 +18,8 @@ dependencies:
     - pydocstyle
     - pylint
     - ipykernel
+    - scikit-learn
+    - pandas
+    - matplotlib
+    - scikit-image
     - "--editable ."

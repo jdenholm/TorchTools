@@ -29,6 +29,17 @@ class Decoder2d(Sequential):
     lr_slope : float
         The negative slope to use in the ``LeakyReLU`` layers.
 
+    Examples
+    --------
+    >>> from torch_tools import Decoder2d
+    >>> model = Decoder2d(
+                    in_chans=128,
+                    out_chans=3,
+                    num_blocks=4,
+                    bilinear=False,
+                    lr_slope=0.123,
+                )
+
     """
 
     def __init__(
@@ -111,7 +122,6 @@ class Decoder2d(Sequential):
         chans = in_chans
         blocks = []
         for _ in range(num_blocks - 1):
-
             blocks.append(
                 UpBlock(
                     process_num_feats(chans),
