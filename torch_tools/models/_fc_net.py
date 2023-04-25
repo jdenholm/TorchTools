@@ -10,8 +10,8 @@ from torch_tools.models._argument_processing import process_hidden_sizes
 # pylint: disable=too-many-arguments
 
 
-class DenseNetwork(Sequential):
-    """Dense, fully connected neural network.
+class FCNet(Sequential):
+    """Fully-connected neural network.
 
     An optional input block, which applies batch normalisation and dropout
     to the inputs, followed by a series of fully-connected blocks consisting
@@ -40,14 +40,14 @@ class DenseNetwork(Sequential):
     Examples
     --------
     >>> from torch_tools import DenseNetwork
-    >>> DenseNetwork(in_feats=256,
-                     out_feats=2,
-                     hidden_sizes=(128, 64, 32),
-                     input_bnorm=True,
-                     input_dropout=0.1,
-                     hidden_dropout=0.25,
-                     hidden_bnorm=True,
-                     negative_slope=0.2)
+    >>> FCNet(in_feats=256,
+              out_feats=2,
+              hidden_sizes=(128, 64, 32),
+              input_bnorm=True,
+              input_dropout=0.1,
+              hidden_dropout=0.25,
+              hidden_bnorm=True,
+              negative_slope=0.2)
 
     """
 
