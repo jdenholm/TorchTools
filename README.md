@@ -34,13 +34,6 @@ cd /path/to/TorchTools/
 conda env create -f requirements.conda.yaml
 ```
 
-To install TorchTools:
-```bash
-conda activate torch-tools
-pip install -e .
-```
-
-
 ### Run tests
 To run the tests:
 ```bash
@@ -55,6 +48,4 @@ There are demos for each of the models in the ``demos/`` directory. Note: the de
 ```bash
 cd /path/to/TorchTools
 conda env create -f demo-requirements.conda.yaml
-conda activate torch-tools-demo
-pip install -e .
 ```
