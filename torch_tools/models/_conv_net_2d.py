@@ -7,7 +7,7 @@ from torch.nn import Module, Sequential, Flatten, Conv2d
 from torch_tools.models._argument_processing import process_num_feats
 from torch_tools.models._torchvision_encoder_backbones_2d import get_backbone
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
-from torch_tools.models._dense_network import DenseNetwork
+from torch_tools.models._fc_net import FCNet
 
 # pylint: disable=too-many-arguments
 
@@ -44,9 +44,9 @@ class ConvNet2d(Module):
         ``"max"`` or ``"avg-max-concat"`` (the latter simply concatenates the
         former two). See ``torch_tools.models._adaptive_pools_2d`` for more
         info.
-    dense_net_kwargs : Dict[str, Any], optional
+    fc_net_kwargs : Dict[str, Any], optional
         Keyword arguments for
-        ``torch_tools.models._dense_network.DenseNetwork`` which serves as the
+        ``torch_tools.models.fc_net.FCNet`` which serves as the
         classification/regression part of the model.
 
     Examples
@@ -57,7 +57,7 @@ class ConvNet2d(Module):
                           encoder_style="vgg11_bn",
                           pretrained=True,
                           pool_style="avg-max-concat",
-                          dense_net_kwargs={"hidden_sizes": (1024, 1024), "hidden_dropout": 0.25})
+                          fc_net_kwargs={"hidden_sizes": (1024, 1024), "hidden_dropout": 0.25})
 
 
     Another potentially useful feature is the ability to *freeze* the encoder,
@@ -97,7 +97,7 @@ class ConvNet2d(Module):
         encoder_style: str = "resnet34",
         pretrained=True,
         pool_style: str = "avg-max-concat",
-        dense_net_kwargs: Optional[Dict[str, Any]] = None,
+        fc_net_kwargs: Optional[Dict[str, Any]] = None,
     ):
         """Build `ConvNet2d`."""
         super().__init__()
@@ -113,11 +113,11 @@ class ConvNet2d(Module):
             Flatten(),
         )
 
-        if dense_net_kwargs is not None:
-            _forbidden_args_in_dn_kwargs(dense_net_kwargs)
-            self._dn_args.update(dense_net_kwargs)
+        if fc_net_kwargs is not None:
+            _forbidden_args_in_dn_kwargs(fc_net_kwargs)
+            self._dn_args.update(fc_net_kwargs)
 
-        self.dense_layers = DenseNetwork(
+        self.dense_layers = FCNet(
             2 * num_feats if pool_style == "avg-max-concat" else num_feats,
             process_num_feats(out_feats),
             **self._dn_args,
@@ -219,11 +219,11 @@ def _forbidden_args_in_dn_kwargs(user_dn_kwargs: Dict[str, Any]):
 
     """
     if "in_feats" in user_dn_kwargs:
-        msg = "Do not supply 'in_feats' in 'dense_net_kwargs'. This "
+        msg = "Do not supply 'in_feats' in 'fc_net_kwargs'. This "
         msg += "quantity is determined by the choice of encoder."
         raise RuntimeError(msg)
     if "out_feats" in user_dn_kwargs:
-        msg = "Do not supply 'out_feats' in 'dense_net_kwargs'. Instead "
+        msg = "Do not supply 'out_feats' in 'fc_net_kwargs'. Instead "
         msg += "set this quanitiy using the 'out_feats' argument of "
         msg += "'ConvNet2d' at instantiation."
         raise RuntimeError(msg)
