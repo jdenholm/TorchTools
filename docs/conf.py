@@ -12,6 +12,7 @@
 #
 import os
 import sys
+from pathlib import Path as _path
 
 sys.path.insert(0, os.path.abspath("../torch_tools"))
 
@@ -24,7 +25,9 @@ author = "J. Denholm"
 root_doc = "index"
 
 # The full version, including alpha/beta/rc tags
-release = "0.0.0"
+# pylint: disable=unspecified-encoding
+with open(_path(__file__).parent.parent / "VERSION.txt", "r") as ver:
+    release = ver.read().strip()
 
 
 # -- General configuration ---------------------------------------------------
