@@ -22,7 +22,7 @@ J.D. kindly thanks:
 for their help and time in reviewing demos for this repo.
 
 ## Contributions
-If you would like to contribute to this reopsitory, or request something—such as a particular model—be added to it, simply create an issue on [GitHub](https://github.com/jdenholm/TorchTools) and I'll be glad to discuss collaborating or adding the model.
+If you would like to contribute to this repository, or request something—such as a particular model—be added to it, simply create an issue on [GitHub](https://github.com/jdenholm/TorchTools) and I'll be glad to discuss collaborating or adding the model.
 
 ## License
 Distributed under the MIT License. See LICENSE.md for more information.
