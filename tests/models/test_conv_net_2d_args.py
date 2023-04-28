@@ -119,23 +119,23 @@ def test_pool_style_argument_values():
         _ = ConvNet2d(out_feats=1, pool_style="Durin's bane")
 
 
-def test_dense_net_kwarg_dict_type():
-    """Test the types accepted by the `dense_net_kwargs` arg."""
+def test_fc_net_kwarg_dict_type():
+    """Test the types accepted by the `fc_net_kwargs` arg."""
     # Should work with dictionary
-    _ = ConvNet2d(out_feats=1, dense_net_kwargs={})
+    _ = ConvNet2d(out_feats=1, fc_net_kwargs={})
 
     # Should break with non-dict
     with pytest.raises(TypeError):
-        _ = ConvNet2d(out_feats=1, dense_net_kwargs=[1])
+        _ = ConvNet2d(out_feats=1, fc_net_kwargs=[1])
 
 
 def test_in_feats_not_in_dn_kwargs():
-    """Test the user cannot supply ``in_feats`` in ``dense_net_kwargs``."""
+    """Test the user cannot supply ``in_feats`` in ``fc_net_kwargs``."""
     with pytest.raises(RuntimeError):
-        _ = ConvNet2d(out_feats=1, dense_net_kwargs={"in_feats": 10})
+        _ = ConvNet2d(out_feats=1, fc_net_kwargs={"in_feats": 10})
 
 
 def test_out_feats_not_in_dn_kwargs():
-    """Test the user cannot supply ``out_feats`` in ``dense_net_kwargs``."""
+    """Test the user cannot supply ``out_feats`` in ``fc_net_kwargs``."""
     with pytest.raises(RuntimeError):
-        _ = ConvNet2d(out_feats=1, dense_net_kwargs={"out_feats": 10})
+        _ = ConvNet2d(out_feats=1, fc_net_kwargs={"out_feats": 10})

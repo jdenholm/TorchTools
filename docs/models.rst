@@ -1,10 +1,10 @@
 
 All models inherit from ``torch.nn.Module``—either directly or through ``torch.nn.Sequential``—and therefore function like standard `PyTorch <https://pytorch.org/>`_ models.
 
-DenseNetwork
+FCNet
 ==================
 
-.. automodule:: torch_tools.models._dense_network
+.. automodule:: torch_tools.models._fc_net
    :members:
 
 ConvNet2d

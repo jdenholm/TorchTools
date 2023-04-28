@@ -1,8 +1,8 @@
-"""Test the contents of `torch_tools.models.DenseNetwork`."""
+"""Test the contents of `torch_tools.models.FCNet`."""
 
 from torch.nn import Dropout, BatchNorm1d, Linear, LeakyReLU
 
-from torch_tools.models import DenseNetwork
+from torch_tools.models import FCNet
 
 
 # pylint: disable=protected-access
@@ -10,7 +10,7 @@ from torch_tools.models import DenseNetwork
 
 def test_full_input_block_contents():
     """Test contents of input block with `BatchNorm1d` and `Dropout`."""
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         input_bnorm=True,
@@ -33,7 +33,7 @@ def test_input_block_contents_with_batchnorm_only():
     layer.
 
     """
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         input_bnorm=True,
@@ -53,7 +53,7 @@ def test_input_block_contents_with_dropout_only():
     To ask for input dropout only, we set `input_bnorm=False`.
 
     """
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         input_bnorm=False,
@@ -70,33 +70,29 @@ def test_input_block_contents_with_dropout_only():
 def test_input_batchnorm_number_of_feats_assignment():
     """Test the input batchnorm layer is assigned correct number of feats."""
     msg = "Unexpected number of batchnorm features."
-    model = DenseNetwork(123, 2, input_bnorm=True)
+    model = FCNet(123, 2, input_bnorm=True)
     input_bnorm = model[0][0]
     assert input_bnorm.num_features == 123, msg
 
     msg = "Unexpected number of batchnorm features."
-    model = DenseNetwork(321, 2, input_bnorm=True)
+    model = FCNet(321, 2, input_bnorm=True)
     input_bnorm = model[0][0]
     assert input_bnorm.num_features == 321, msg
 
 
 def test_input_block_dropout_probability_assignment():
     """Test the dropout probability in input block is correctly assigned."""
-    model = DenseNetwork(
-        in_feats=10, out_feats=2, input_bnorm=True, input_dropout=0.123456
-    )
+    model = FCNet(in_feats=10, out_feats=2, input_bnorm=True, input_dropout=0.123456)
     input_dropout_prob = model[0][1].p
     assert input_dropout_prob == 0.123456, "Dropout prob incorrectly assigned."
 
-    model = DenseNetwork(
-        in_feats=10, out_feats=2, input_bnorm=True, input_dropout=0.654321
-    )
+    model = FCNet(in_feats=10, out_feats=2, input_bnorm=True, input_dropout=0.654321)
     input_dropout_prob = model[0][1].p
     assert input_dropout_prob == 0.654321, "Dropout prob incorrectly assigned."
 
 
 def test_number_of_dense_blocks_with_no_hidden_layers():
-    """Test the number of dense blocks in `DenseNetwork`.
+    """Test the number of dense blocks in `FCNet`.
 
     Notes
     -----
@@ -107,7 +103,7 @@ def test_number_of_dense_blocks_with_no_hidden_layers():
     """
     # With no hidden layers (hidden_sizes=None), the model should only have
     # one dense block.
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         hidden_sizes=None,
@@ -130,7 +126,7 @@ def test_number_of_hidden_blocks_with_one_hidden_layer():
         — input_dropout=0.0
 
     """
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         hidden_sizes=((5,)),
@@ -155,7 +151,7 @@ def test_number_of_dense_blocks_with_seven_hidden_layers():
         — input_dropout=0.0
 
     """
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         hidden_sizes=(7 * (10,)),
@@ -179,7 +175,7 @@ def test_linear_layer_sizes_in_dense_blocks_with_no_hidden_layers():
 
     """
     # Test with no hidden layers
-    model = DenseNetwork(
+    model = FCNet(
         10,
         2,
         hidden_sizes=None,
@@ -206,7 +202,7 @@ def test_linear_layer_sizes_in_dense_blocks_with_hidden_layers():
     # Test with hidden layers
     in_feats, out_feats = 128, 2
     hidden_sizes = (64, 32, 16, 8, 16, 32, 64)
-    model = DenseNetwork(
+    model = FCNet(
         in_feats,
         out_feats,
         hidden_sizes=hidden_sizes,
@@ -217,7 +213,6 @@ def test_linear_layer_sizes_in_dense_blocks_with_hidden_layers():
     in_sizes = iter((in_feats,) + hidden_sizes)
     out_sizes = iter(hidden_sizes + (out_feats,))
     for _, module in model.named_children():
-
         msg = "Unexpected number of input features in linear layer."
         assert module[0].in_features == next(in_sizes), msg
 
@@ -239,7 +234,7 @@ def test_hidden_block_contents_with_dropout_and_batchnorm():
         — input_dropout=0.0
 
     """
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         hidden_sizes=(5, 5, 5),
@@ -253,7 +248,6 @@ def test_hidden_block_contents_with_dropout_and_batchnorm():
     non_final_blocks = list(model.named_children())[:-1]
 
     for _, block in non_final_blocks:
-
         msg = "Each non-final block should contain four layers."
         assert len(block) == 4, msg
 
@@ -284,7 +278,7 @@ def test_hidden_block_contents_with_batchnorm_and_no_dropout():
         — input_dropout=0.0
 
     """
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         hidden_dropout=0.0,
@@ -296,7 +290,6 @@ def test_hidden_block_contents_with_batchnorm_and_no_dropout():
     non_final_blocks = list(model.named_children())[:-1]
 
     for _, block in non_final_blocks:
-
         msg = "Each non-final block should contain three layers."
         assert len(block) == 3, msg
 
@@ -324,7 +317,7 @@ def test_hidden_block_contents_with_dropout_and_no_batchnorm():
         — input_dropout=0.0
 
     """
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         hidden_dropout=0.5,
@@ -336,7 +329,6 @@ def test_hidden_block_contents_with_dropout_and_no_batchnorm():
     non_final_blocks = list(model.named_children())[:-1]
 
     for _, block in non_final_blocks:
-
         msg = "There should be three layers in the block."
         assert len(block) == 3, msg
 
@@ -364,7 +356,7 @@ def test_hidden_block_contents_with_no_dropout_and_no_batch_norm():
         — input_dropout=0.0
 
     """
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         hidden_dropout=0.0,
@@ -376,7 +368,6 @@ def test_hidden_block_contents_with_no_dropout_and_no_batch_norm():
     non_final_blocks = list(model.named_children())[:-1]
 
     for _, block in non_final_blocks:
-
         msg = "The dense block should contain two layers."
         assert len(block) == 2, msg
 
@@ -398,7 +389,7 @@ def test_hidden_batchnorm_number_of_features_are_correct():
 
     """
     hidden_sizes = (2, 4, 6, 8)
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         hidden_sizes=(2, 4, 6, 8),
@@ -411,7 +402,6 @@ def test_hidden_batchnorm_number_of_features_are_correct():
     non_final_blocks = list(model.named_children())[:-1]
 
     for (_, block), bnorm_feats in zip(non_final_blocks, hidden_sizes):
-
         msg = "Unexpected number of features in hidden block's batch norm."
         batch_norm = block[1]
         assert batch_norm.num_features == bnorm_feats, msg
@@ -427,7 +417,7 @@ def test_hidden_block_dropout_probability_assignment():
         — input_dropout=0.0
 
     """
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=10,
         out_feats=2,
         hidden_sizes=(8, 6, 4),
@@ -440,7 +430,6 @@ def test_hidden_block_dropout_probability_assignment():
     non_final_blocks = list(model.named_children())[:-1]
 
     for _, block in non_final_blocks:
-
         dropout_layer = block[2]
         msg = "Unexpected dropout prob in hidden blocks."
         assert dropout_layer.p == 0.123456789, msg
@@ -460,7 +449,7 @@ def test_final_layer_feature_sizes_with_no_hidden_layers():
 
 
     """
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=987,
         out_feats=123,
         hidden_sizes=None,
@@ -500,7 +489,7 @@ def test_final_linear_layer_feature_sizes_with_hidden_layers():
     """
     in_feats, out_feats = 128, 2
     hidden_sizes = (63, 32, 666)
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=in_feats,
         out_feats=out_feats,
         hidden_sizes=hidden_sizes,
@@ -530,7 +519,7 @@ def test_leaky_relu_negative_slope_assignment():
 
 
     """
-    model = DenseNetwork(
+    model = FCNet(
         in_feats=100,
         out_feats=10,
         hidden_sizes=(50, 50),
@@ -541,7 +530,6 @@ def test_leaky_relu_negative_slope_assignment():
 
     non_final_blocks = list(model.named_children())[:-1]
     for _, block in non_final_blocks:
-
         leaky_relu = block[-1]
 
         msg = "Wrong slope value in leaky relu."
