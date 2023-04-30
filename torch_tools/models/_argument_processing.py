@@ -33,6 +33,18 @@ def process_num_feats(num_feats: int) -> int:
     return num_feats
 
 
+def process_2d_kernel_size(kernel_size: int) -> int:
+    """Process kernel size argument for ``torch.nn.Conv2d`` layers.
+
+    Parameters
+    ----------
+    kernel_size : int
+        Length of the square kernel to use in ``torch.nn.Conv2d`` blocks.
+
+    """
+    raise NotImplementedError()
+
+
 def process_boolean_arg(bool_arg: bool) -> bool:
     """Process argument which should be a bool.
 
