@@ -41,8 +41,28 @@ def process_2d_kernel_size(kernel_size: int) -> int:
     kernel_size : int
         Length of the square kernel to use in ``torch.nn.Conv2d`` blocks.
 
+    Raises
+    ------
+    TypeError
+        If ``kernel_size`` is not an int.
+    ValueError
+        If ``kernel_size`` is less than one.
+    ValueError
+        If ``kernel_size`` is not odd.
+
     """
-    raise NotImplementedError()
+    if not isinstance(kernel_size, int):
+        msg = f"'kernel_size' should be int, not '{type(kernel_size)}'."
+        raise TypeError(msg)
+
+    if kernel_size < 1:
+        msg = f"'kernel_size' should be on or more, got '{kernel_size}'."
+        raise ValueError(msg)
+
+    if kernel_size % 2 == 0:
+        raise ValueError(f"'kernel_size' should be odd. Got '{kernel_size}'.")
+
+    return kernel_size
 
 
 def process_boolean_arg(bool_arg: bool) -> bool:
