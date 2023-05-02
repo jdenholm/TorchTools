@@ -54,6 +54,41 @@ def test_conv_block_out_chans_arg_values():
         _ = ConvBlock(in_chans=2, out_chans=-1)
 
 
+def test_conv_block_kernel_size_arg_type():
+    """Test the types accepted by the ``kernel_size`` argument."""
+    # Should work with positive, odd ints
+    _ = ConvBlock(in_chans=1, out_chans=1, kernel_size=1)
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = ConvBlock(in_chans=1, out_chans=1, kernel_size=1.0)
+
+    with pytest.raises(TypeError):
+        _ = ConvBlock(in_chans=1, out_chans=1, kernel_size=1j)
+
+
+def test_conv_block_kernel_size_arg_values():
+    """Test the values accepted by the ``kernel_size`` argument."""
+    # Should work with positive, odd ints
+    _ = ConvBlock(in_chans=1, out_chans=1, kernel_size=1)
+    _ = ConvBlock(in_chans=1, out_chans=1, kernel_size=3)
+    _ = ConvBlock(in_chans=1, out_chans=1, kernel_size=5)
+
+    # Should break with positive evens
+    with pytest.raises(ValueError):
+        _ = ConvBlock(in_chans=1, out_chans=1, kernel_size=2)
+
+    with pytest.raises(ValueError):
+        _ = ConvBlock(in_chans=1, out_chans=1, kernel_size=4)
+
+    # Should break with ints less than one
+    with pytest.raises(ValueError):
+        _ = ConvBlock(in_chans=1, out_chans=1, kernel_size=0)
+
+    with pytest.raises(ValueError):
+        _ = ConvBlock(in_chans=1, out_chans=1, kernel_size=-1)
+
+
 def test_conv_block_batch_norm_arg_types():
     """Test the `batch_norm` argument type."""
     # Should work with bool
