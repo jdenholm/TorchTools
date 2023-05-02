@@ -11,6 +11,7 @@ from torch.nn.functional import pad
 
 from torch_tools.models._argument_processing import (
     process_num_feats,
+    process_2d_kernel_size,
     process_negative_slope_arg,
     process_boolean_arg,
     process_str_arg,
@@ -28,6 +29,9 @@ class ConvBlock(Sequential):
         The number of input channels the block should take.
     out_chans : int
         The number of output channels the block should produce.
+    kernel_size : int, optional
+        The kernel size to use in the ``Conv2d`` layers. Should be odd and
+        positive.
     batch_norm : bool
         Should we include a ``BatchNorm2d`` layer?
     leaky_relu : bool
@@ -41,6 +45,7 @@ class ConvBlock(Sequential):
         self,
         in_chans: int,
         out_chans: int,
+        kernel_size: int = 3,
         batch_norm: bool = True,
         leaky_relu: bool = True,
         lr_slope: float = 0.1,
@@ -50,6 +55,7 @@ class ConvBlock(Sequential):
             *self._layers(
                 process_num_feats(in_chans),
                 process_num_feats(out_chans),
+                process_2d_kernel_size(kernel_size),
                 process_boolean_arg(batch_norm),
                 process_boolean_arg(leaky_relu),
                 process_negative_slope_arg(lr_slope),
@@ -60,6 +66,7 @@ class ConvBlock(Sequential):
     def _layers(
         in_chans: int,
         out_chans: int,
+        kernel_size: int,
         batch_norm: bool,
         leaky_relu: bool,
         lr_slope: float,
@@ -77,7 +84,15 @@ class ConvBlock(Sequential):
 
         """
         layers: List[Module]
-        layers = [Conv2d(in_chans, out_chans, kernel_size=3, padding=1)]
+        layers = [
+            Conv2d(
+                in_chans,
+                out_chans,
+                kernel_size=kernel_size,
+                padding=kernel_size // 2,
+                stride=1,
+            )
+        ]
 
         if batch_norm is True:
             layers.append(BatchNorm2d(out_chans))
