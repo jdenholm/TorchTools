@@ -110,6 +110,18 @@ def test_conv_block_contents_with_no_batchnorm_or_leaky_relu():
     assert isinstance(block[0], Conv2d), "1st layer should be conv 2d."
 
 
+def test_conv_block_contents_with_different_kernel_sizes():
+    """Test the contents of ``ConvBlock`` with different kernel sizes."""
+    block = ConvBlock(in_chans=3, out_chans=3, kernel_size=1)
+    assert block[0].kernel_size == (1, 1)
+
+    block = ConvBlock(in_chans=3, out_chans=3, kernel_size=3)
+    assert block[0].kernel_size == (3, 3)
+
+    block = ConvBlock(in_chans=3, out_chans=5, kernel_size=5)
+    assert block[0].kernel_size == (5, 5)
+
+
 def test_double_conv_block_in_conv_contents():
     """Test the contents of `DoubleConvBlock`'s `in_conv` are as expected."""
     block = DoubleConvBlock(in_chans=123, out_chans=321, lr_slope=0.123456)
