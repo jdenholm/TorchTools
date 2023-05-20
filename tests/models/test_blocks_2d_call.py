@@ -1,4 +1,6 @@
 """Tests for the call methods of blocks in `torch_tools.models._blocks_2d`."""
+from itertools import product
+
 
 from torch import rand  # pylint: disable=no-name-in-module
 
@@ -6,59 +8,35 @@ from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResidualBl
 from torch_tools.models._blocks_2d import DownBlock, UpBlock, UNetUpBlock
 
 
-def test_conv_block_call_return_shapes_with_batchnorm_and_leaky_relu():
-    """Test the return shapes produced by `ConvBlock` are correct.
+def test_conv_block_call_return_shapes():
+    """Test the return shapes with various combinations of all arguments."""
+    in_channels = [3, 123, 321]
+    out_channels = [3, 123, 321]
+    batch_norms = [True, False]
+    leaky_relus = [True, False]
+    negative_slopes = [0.0, 0.1]
+    kernels = [3, 5, 7]
 
-    Notes
-    -----
-    Test the block returns the correct shape when we include both a
-    batchnorm and leaky relu layer.
-
-
-    """
-    block = ConvBlock(
-        in_chans=123,
-        out_chans=321,
-        batch_norm=True,
-        leaky_relu=True,
+    arg_iter = product(
+        in_channels,
+        out_channels,
+        batch_norms,
+        leaky_relus,
+        negative_slopes,
+        kernels,
     )
-    assert block(rand(10, 123, 50, 100)).shape == (10, 321, 50, 100)
 
+    for in_chans, out_chans, bnorm, leaky, slope, kernel_size in arg_iter:
+        block = ConvBlock(
+            in_chans=in_chans,
+            out_chans=out_chans,
+            batch_norm=bnorm,
+            leaky_relu=leaky,
+            lr_slope=slope,
+            kernel_size=kernel_size,
+        )
 
-def test_conv_block_call_return_shapes_with_batchnorm_and_no_leaky_relu():
-    """Test the return shapes produced by `ConvBlock` are correct.
-
-    Notes
-    -----
-    Test the block returns the correct shape when we only include a batchnorm
-    and do not include a leaky relu.
-
-    """
-    block = ConvBlock(
-        in_chans=111,
-        out_chans=222,
-        batch_norm=True,
-        leaky_relu=False,
-    )
-    assert block(rand(10, 111, 12, 21)).shape == (10, 222, 12, 21)
-
-
-def test_conv_block_call_return_shapes_with_no_batchnorm_and_no_leaky_relu():
-    """Test the return shapes produced by `ConvBlock` are correct.
-
-    Notes
-    -----
-    Test the block returns the correct shape when we don't include a batchnorm
-    or a leaky relu.
-
-    """
-    block = ConvBlock(
-        in_chans=1,
-        out_chans=321,
-        batch_norm=False,
-        leaky_relu=False,
-    )
-    assert block(rand(10, 1, 50, 50)).shape == (10, 321, 50, 50)
+        assert block(rand(10, in_chans, 50, 100)).shape == (10, out_chans, 50, 100)
 
 
 def test_double_conv_block_call_return_shapes():
