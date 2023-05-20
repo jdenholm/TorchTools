@@ -41,11 +41,21 @@ def test_conv_block_call_return_shapes():
 
 def test_double_conv_block_call_return_shapes():
     """Test the return shapes produced by `DoubleConvBlock` are correct."""
-    block = DoubleConvBlock(in_chans=123, out_chans=321, lr_slope=0.1)
-    assert block(rand(10, 123, 50, 100)).shape == (10, 321, 50, 100)
+    in_channels = [3, 123, 321]
+    out_channels = [3, 123, 321]
+    lr_slopes = [0.0, 0.1, 0.2]
+    kernel_sizes = [1, 3, 5]
 
-    block = DoubleConvBlock(in_chans=111, out_chans=222, lr_slope=0.1)
-    assert block(rand(10, 111, 50, 100)).shape == (10, 222, 50, 100)
+    arg_iter = product(in_channels, out_channels, lr_slopes, kernel_sizes)
+
+    for in_chans, out_chans, slope, kernel_size in arg_iter:
+        block = DoubleConvBlock(
+            in_chans=in_chans,
+            out_chans=out_chans,
+            lr_slope=slope,
+            kernel_size=kernel_size,
+        )
+        assert block(rand(10, 123, 50, 100)).shape == (10, 321, 50, 100)
 
 
 def test_res_block_call_return_shapes():

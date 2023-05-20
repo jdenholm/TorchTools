@@ -158,6 +158,19 @@ def test_double_conv_block_out_conv_contents():
     assert isinstance(out_conv[2], LeakyReLU), "Should be LeakyReLU."
 
 
+def test_double_conv_block_contents_with_different_kernel_sizes():
+    """Test the contents of ``ConvBlock`` with different kernel sizes."""
+    for kernel_size in [1, 3, 5, 9, 11]:
+        block = DoubleConvBlock(
+            in_chans=3,
+            out_chans=3,
+            lr_slope=0.1,
+            kernel_size=1,
+        )
+        assert block[0][0].kernel_size == (kernel_size, kernel_size)
+        assert block[0][1].kernel_size == (kernel_size, kernel_size)
+
+
 def test_residual_block_first_conv_contents():
     """The the contents of the first conv block."""
     block = ResidualBlock(in_chans=123)

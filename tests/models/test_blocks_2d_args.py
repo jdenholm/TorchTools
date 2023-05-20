@@ -134,62 +134,224 @@ def test_conv_block_lr_slope_argument_types():
 def test_double_conv_block_in_chans_types():
     """Test the types accepted by the `in_chans` argument."""
     # Should work with ints of one or more
-    _ = DoubleConvBlock(in_chans=1, out_chans=5, lr_slope=0.1)
+    _ = DoubleConvBlock(in_chans=1, out_chans=5, lr_slope=0.1, kernel_size=3)
 
     # Should break with non-ints
     with pytest.raises(TypeError):
-        _ = DoubleConvBlock(in_chans=1.0, out_chans=5, lr_slope=0.1)
+        _ = DoubleConvBlock(
+            in_chans=1.0,
+            out_chans=5,
+            lr_slope=0.1,
+            kernel_size=3,
+        )
     with pytest.raises(TypeError):
-        _ = DoubleConvBlock(in_chans=1.0j, out_chans=5, lr_slope=0.1)
+        _ = DoubleConvBlock(
+            in_chans=1.0j,
+            out_chans=5,
+            lr_slope=0.1,
+            kernel_size=3,
+        )
 
 
 def test_double_conv_block_in_chans_values():
     """Test the values accepted by the `in_chans` arg."""
     # Should work with ints of one or more
-    _ = DoubleConvBlock(in_chans=1, out_chans=5, lr_slope=0.1)
+    _ = DoubleConvBlock(
+        in_chans=1,
+        out_chans=5,
+        lr_slope=0.1,
+        kernel_size=3,
+    )
 
     # Should break with ints less than one
     with pytest.raises(ValueError):
-        _ = DoubleConvBlock(in_chans=0, out_chans=10, lr_slope=0.1)
+        _ = DoubleConvBlock(
+            in_chans=0,
+            out_chans=10,
+            lr_slope=0.1,
+            kernel_size=3,
+        )
     with pytest.raises(ValueError):
-        _ = DoubleConvBlock(in_chans=-1, out_chans=10, lr_slope=0.1)
+        _ = DoubleConvBlock(
+            in_chans=-1,
+            out_chans=10,
+            lr_slope=0.1,
+            kernel_size=3,
+        )
 
 
 def test_double_conv_block_out_chans_types():
     """Test the types accepted by the `out_chans` argument."""
     # Should work with ints of one or more.
-    _ = DoubleConvBlock(in_chans=10, out_chans=1, lr_slope=0.1)
+    _ = DoubleConvBlock(
+        in_chans=10,
+        out_chans=1,
+        lr_slope=0.1,
+        kernel_size=3,
+    )
 
     # Should break with non-ints
     with pytest.raises(TypeError):
-        _ = DoubleConvBlock(in_chans=10, out_chans=1.0, lr_slope=0.1)
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=1.0,
+            lr_slope=0.1,
+            kernel_size=3,
+        )
     with pytest.raises(TypeError):
-        _ = DoubleConvBlock(in_chans=10, out_chans=1.0j, lr_slope=0.1)
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=1.0j,
+            lr_slope=0.1,
+            kernel_size=3,
+        )
 
 
 def test_double_conv_block_out_chans_arg_values():
     """Test the values accepted by the `out_chans` argument."""
     # Should work with ints of one or more
-    _ = DoubleConvBlock(in_chans=10, out_chans=1, lr_slope=0.1)
+    _ = DoubleConvBlock(
+        in_chans=10,
+        out_chans=1,
+        lr_slope=0.1,
+        kernel_size=3,
+    )
 
     # Should break with ints less than one
     with pytest.raises(ValueError):
-        _ = DoubleConvBlock(in_chans=10, out_chans=0, lr_slope=0.1)
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=0,
+            lr_slope=0.1,
+            kernel_size=3,
+        )
     with pytest.raises(ValueError):
-        _ = DoubleConvBlock(in_chans=10, out_chans=-1, lr_slope=0.1)
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=-1,
+            lr_slope=0.1,
+            kernel_size=3,
+        )
 
 
 def test_double_conv_lr_slope_argument_types():
     """Test the types accepted by the `lr_slope` arg."""
     # Should work with floats
-    _ = DoubleConvBlock(in_chans=10, out_chans=2, lr_slope=0.0)
-    _ = DoubleConvBlock(in_chans=10, out_chans=2, lr_slope=0.1)
+    _ = DoubleConvBlock(
+        in_chans=10,
+        out_chans=2,
+        lr_slope=0.0,
+        kernel_size=3,
+    )
+    _ = DoubleConvBlock(
+        in_chans=10,
+        out_chans=2,
+        lr_slope=0.1,
+        kernel_size=3,
+    )
 
     # Should break with non-float
     with pytest.raises(TypeError):
-        _ = DoubleConvBlock(in_chans=10, out_chans=2, lr_slope=1)
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=2,
+            lr_slope=1,
+            kernel_size=3,
+        )
     with pytest.raises(TypeError):
-        _ = DoubleConvBlock(in_chans=10, out_chans=2, lr_slope=1j)
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=2,
+            lr_slope=1j,
+            kernel_size=3,
+        )
+
+
+def test_double_conv_kernel_size_argument_type():
+    """Test the types accepted by the ``kernel_size`` argument."""
+    # Should work with odd ints
+    _ = DoubleConvBlock(
+        in_chans=10,
+        out_chans=2,
+        lr_slope=0.0,
+        kernel_size=1,
+    )
+
+    _ = DoubleConvBlock(
+        in_chans=10,
+        out_chans=2,
+        lr_slope=0.0,
+        kernel_size=3,
+    )
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=2,
+            lr_slope=0.0,
+            kernel_size=3.0,
+        )
+
+    with pytest.raises(TypeError):
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=2,
+            lr_slope=0.0,
+            kernel_size=3j,
+        )
+
+
+def test_double_conv_kernel_size_argument_values():
+    """Test the values accepted by the ``kernel_size`` argument."""
+    # Should work with odd ints
+    _ = DoubleConvBlock(
+        in_chans=10,
+        out_chans=2,
+        lr_slope=0.0,
+        kernel_size=1,
+    )
+
+    _ = DoubleConvBlock(
+        in_chans=10,
+        out_chans=2,
+        lr_slope=0.0,
+        kernel_size=3,
+    )
+
+    # Should break even positive ints
+    with pytest.raises(ValueError):
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=2,
+            lr_slope=0.0,
+            kernel_size=2,
+        )
+
+    with pytest.raises(ValueError):
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=2,
+            lr_slope=0.0,
+            kernel_size=4,
+        )
+
+    # Should break with numbers less than one
+    with pytest.raises(ValueError):
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=2,
+            lr_slope=0.0,
+            kernel_size=0,
+        )
+
+    with pytest.raises(ValueError):
+        _ = DoubleConvBlock(
+            in_chans=10,
+            out_chans=2,
+            lr_slope=0.0,
+            kernel_size=-1,
+        )
 
 
 def test_res_block_in_chans_arg_types():
