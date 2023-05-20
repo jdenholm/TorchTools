@@ -118,18 +118,7 @@ class DoubleConvBlock(Sequential):
     """
 
     def __init__(self, in_chans: int, out_chans: int, lr_slope: float):
-        """Build `DoubleConvBlock`.
-
-        Parameters
-        ----------
-        in_chans : int
-            The number of input channels the block should take.
-        out_chans : int
-            The number of output channels the block should take.
-        lr_slope : float, optional
-            The negative slope to use in the `LeakyReLU`.
-
-        """
+        """Build `DoubleConvBlock`."""
         super().__init__(
             ConvBlock(
                 process_num_feats(in_chans),
