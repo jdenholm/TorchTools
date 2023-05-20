@@ -115,11 +115,18 @@ class DoubleConvBlock(Sequential):
     lr_slope : float, optional
         The slope to use in the `LeakyReLU` layers.
     kernel_size : int
-        The size of the kernel to use in the ``ConvBlock``s.
+        The size of the kernel to use in the ``ConvBlock``s. Should be odd,
+        positive integers.
 
     """
 
-    def __init__(self, in_chans: int, out_chans: int, lr_slope: float):
+    def __init__(
+        self,
+        in_chans: int,
+        out_chans: int,
+        lr_slope: float,
+        kernel_size: int = 3,
+    ):
         """Build `DoubleConvBlock`."""
         super().__init__(
             ConvBlock(
@@ -128,6 +135,7 @@ class DoubleConvBlock(Sequential):
                 batch_norm=True,
                 leaky_relu=True,
                 lr_slope=process_negative_slope_arg(lr_slope),
+                kernel_size=process_2d_kernel_size(kernel_size),
             ),
             ConvBlock(
                 process_num_feats(out_chans),
@@ -135,6 +143,7 @@ class DoubleConvBlock(Sequential):
                 batch_norm=True,
                 leaky_relu=True,
                 lr_slope=process_negative_slope_arg(lr_slope),
+                kernel_size=process_2d_kernel_size(kernel_size),
             ),
         )
 
