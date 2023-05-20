@@ -35,7 +35,7 @@ class ConvBlock(Sequential):
     batch_norm : bool
         Should we include a ``BatchNorm2d`` layer?
     leaky_relu : bool
-        Should we include a `LeakyReLU` layer?
+        Should we include a ``LeakyReLU`` layer?
     lr_slope : float, optional
         The negative slope to use in the ``LeakyReLU`` (use 0.0 for ``ReLU``).
 
