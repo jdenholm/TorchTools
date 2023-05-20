@@ -114,6 +114,8 @@ class DoubleConvBlock(Sequential):
         The number of output channels the block should produce.
     lr_slope : float, optional
         The slope to use in the `LeakyReLU` layers.
+    kernel_size : int
+        The size of the kernel to use in the ``ConvBlock``s.
 
     """
 
