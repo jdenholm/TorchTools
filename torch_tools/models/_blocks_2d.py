@@ -155,15 +155,19 @@ class ResidualBlock(Module):
     ----------
     in_chans : int
         The number of input channels.
+    kernel_size : int
+        Size of the square convolutional kernel to use in the ``Conv2d``
+        layers.
 
     """
 
-    def __init__(self, in_chans: int):
+    def __init__(self, in_chans: int, kernel_size: int = 3):
         """Build `ResidualBlock`."""
         super().__init__()
         self.first_conv = ConvBlock(
             in_chans,
             in_chans,
+            kernel_size=kernel_size,
             batch_norm=True,
             leaky_relu=True,
             lr_slope=0.0,
@@ -171,6 +175,7 @@ class ResidualBlock(Module):
         self.second_conv = ConvBlock(
             in_chans,
             in_chans,
+            kernel_size=kernel_size,
             batch_norm=True,
             leaky_relu=False,
         )
