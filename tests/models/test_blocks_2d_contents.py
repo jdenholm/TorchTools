@@ -165,10 +165,10 @@ def test_double_conv_block_contents_with_different_kernel_sizes():
             in_chans=3,
             out_chans=3,
             lr_slope=0.1,
-            kernel_size=1,
+            kernel_size=kernel_size,
         )
         assert block[0][0].kernel_size == (kernel_size, kernel_size)
-        assert block[0][1].kernel_size == (kernel_size, kernel_size)
+        assert block[1][0].kernel_size == (kernel_size, kernel_size)
 
 
 def test_residual_block_first_conv_contents():
@@ -234,6 +234,15 @@ def test_residual_block_second_conv_contents():
 
     msg = "Batchnorm should have 123 features."
     assert second_conv[1].num_features == 123, msg
+
+
+def test_residual_block_contents_with_different_kernel_sizes():
+    """Test contents of the ``ResidualBlock`` with different kernel sizes."""
+    for kernel_size in [1, 3, 5, 7]:
+        block = ResidualBlock(in_chans=3, kernel_size=kernel_size)
+
+        assert block.first_conv[0].kernel_size == (kernel_size, kernel_size)
+        assert block.second_conv[0].kernel_size == (kernel_size, kernel_size)
 
 
 def test_down_block_contents_pool_assignment():
