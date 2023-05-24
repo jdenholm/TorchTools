@@ -167,7 +167,7 @@ class ResidualBlock(Module):
         self.first_conv = ConvBlock(
             in_chans,
             in_chans,
-            kernel_size=kernel_size,
+            kernel_size=process_2d_kernel_size(kernel_size),
             batch_norm=True,
             leaky_relu=True,
             lr_slope=0.0,
@@ -175,7 +175,7 @@ class ResidualBlock(Module):
         self.second_conv = ConvBlock(
             in_chans,
             in_chans,
-            kernel_size=kernel_size,
+            kernel_size=process_2d_kernel_size(kernel_size),
             batch_norm=True,
             leaky_relu=False,
         )

@@ -55,16 +55,18 @@ def test_double_conv_block_call_return_shapes():
             lr_slope=slope,
             kernel_size=kernel_size,
         )
-        assert block(rand(10, 123, 50, 100)).shape == (10, 321, 50, 100)
+        assert block(rand(10, in_chans, 50, 100)).shape == (10, out_chans, 50, 100)
 
 
 def test_res_block_call_return_shapes():
     """Test the return shapes produced by `ResBlock`."""
-    block = ResidualBlock(in_chans=123)
-    assert block(rand(10, 123, 50, 100)).shape == (10, 123, 50, 100)
+    in_channels = [3, 10, 50]
+    kernel_sizes = [3, 5, 7]
 
-    block = ResidualBlock(in_chans=111)
-    assert block(rand(10, 111, 50, 100)).shape == (10, 111, 50, 100)
+    for in_chans, kernel_size in product(in_channels, kernel_sizes):
+        block = ResidualBlock(in_chans=in_chans, kernel_size=kernel_size)
+        out = block(rand(10, in_chans, 50, 100))
+        assert out.shape == (10, in_chans, 50, 100)
 
 
 def test_down_block_call_return_shapes():

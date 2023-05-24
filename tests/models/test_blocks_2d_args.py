@@ -378,6 +378,46 @@ def test_res_block_in_chans_arg_values():
         _ = ResidualBlock(in_chans=-1)
 
 
+def test_res_block_kernel_size_arg_types():
+    """Test the types accepted by the ``kernel_size`` argument."""
+    # Should work with odd ints
+    _ = ResidualBlock(in_chans=3, kernel_size=1)
+    _ = ResidualBlock(in_chans=3, kernel_size=3)
+    _ = ResidualBlock(in_chans=3, kernel_size=5)
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = ResidualBlock(in_chans=3, kernel_size=1.0)
+
+    with pytest.raises(TypeError):
+        _ = ResidualBlock(in_chans=3, kernel_size=3.0j)
+
+    with pytest.raises(TypeError):
+        _ = ResidualBlock(in_chans=3, kernel_size="5.0")
+
+
+def test_res_block_kernel_size_arg_values():
+    """Test the values accepted the ``kernel_size`` argument."""
+    # Should work with odd ints of one or more
+    _ = ResidualBlock(in_chans=3, kernel_size=1)
+    _ = ResidualBlock(in_chans=3, kernel_size=3)
+    _ = ResidualBlock(in_chans=3, kernel_size=5)
+
+    # Should break with even ints
+    with pytest.raises(ValueError):
+        _ = ResidualBlock(in_chans=3, kernel_size=2)
+
+    with pytest.raises(ValueError):
+        _ = ResidualBlock(in_chans=3, kernel_size=2)
+
+    # Should break with ints less than one
+    with pytest.raises(ValueError):
+        _ = ResidualBlock(in_chans=3, kernel_size=0)
+
+    with pytest.raises(ValueError):
+        _ = ResidualBlock(in_chans=3, kernel_size=-1)
+
+
 def test_unet_up_block_in_chans_arg_types():
     """Test the types accepted by the `in_chans` argument."""
     # Should work with ints of two or more
