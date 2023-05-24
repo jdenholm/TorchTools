@@ -214,6 +214,11 @@ class DownBlock(Sequential):
         The number of output channels the block should take.
     pool : str
         The style of the pooling layer to use: can be `"avg"` or `"max"`.
+    lr_slope : float
+        The negative slope to use in the ``LeakyReLU`` arguments.
+    kernel_size : int
+        The size of the square convolutional kernel to use on the ``Conv2d``
+        layers.
 
     """
 
@@ -223,6 +228,7 @@ class DownBlock(Sequential):
         out_chans: int,
         pool: str,
         lr_slope: float,
+        kernel_size: int = 3,
     ):
         """Build `DownBlock`."""
         super().__init__(
@@ -235,6 +241,7 @@ class DownBlock(Sequential):
                 process_num_feats(in_chans),
                 process_num_feats(out_chans),
                 lr_slope=process_negative_slope_arg(lr_slope),
+                kernel_size=process_2d_kernel_size(kernel_size),
             ),
         )
 
