@@ -604,7 +604,7 @@ def test_down_block_lr_slope_arg_type():
         _ = DownBlock(in_chans=8, out_chans=1, pool="max", lr_slope=1j)
 
 
-def test_down_block_kernel_size_arg_type():
+def test_down_block_kernel_size_arg_types():
     """Test the types accepted by the ``kernel_size`` argument."""
     # Should work with odd, positive ints
     _ = DownBlock(
@@ -649,6 +649,41 @@ def test_down_block_kernel_size_arg_type():
             lr_slope=0.1,
             kernel_size=3j,
         )
+
+
+def test_down_block_kernel_size_arg_values():
+    """Test the values accepted by the ``kernel_size`` argument."""
+    # Should work with positive, odd ints.
+    for size in [1, 3, 5, 7]:
+        _ = DownBlock(
+            in_chans=8,
+            out_chans=1,
+            pool="max",
+            lr_slope=0.1,
+            kernel_size=size,
+        )
+
+    # Should break with even positive ints
+    for size in [2, 4, 6, 8]:
+        with pytest.raises(ValueError):
+            _ = DownBlock(
+                in_chans=8,
+                out_chans=1,
+                pool="max",
+                lr_slope=0.1,
+                kernel_size=size,
+            )
+
+    # Should break with ints less than 1
+    for size in [0, -1, -2, -3]:
+        with pytest.raises(ValueError):
+            _ = DownBlock(
+                in_chans=8,
+                out_chans=1,
+                pool="max",
+                lr_slope=0.1,
+                kernel_size=size,
+            )
 
 
 def test_up_block_in_chans_arg_type():
