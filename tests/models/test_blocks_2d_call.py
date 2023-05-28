@@ -71,15 +71,26 @@ def test_res_block_call_return_shapes():
 
 def test_down_block_call_return_shapes():
     """Test the return shapes of `DownBlock`."""
-    block = DownBlock(in_chans=3, out_chans=8, pool="max", lr_slope=0.1)
-    assert block(rand(10, 3, 50, 100)).shape == (10, 8, 25, 50)
+    in_channels = [2, 4, 5]
+    out_channels = [2, 4, 5]
+    pools = ["max", "avg"]
+    lr_slopes = [0.0, 0.1]
+    kernel_sizes = [1, 3, 5]
 
-    block = DownBlock(in_chans=3, out_chans=3, pool="avg", lr_slope=0.1)
-    assert block(rand(10, 3, 100, 50)).shape == (10, 3, 50, 25)
+    iterator = product(
+        in_channels,
+        out_channels,
+        pools,
+        lr_slopes,
+        kernel_sizes,
+    )
 
-    # Test with odd image sizes
-    block = DownBlock(in_chans=3, out_chans=3, pool="max", lr_slope=0.1)
-    assert block(rand(10, 3, 101, 51)).shape == (10, 3, 50, 25)
+    for ins, outs, pool, slope, size in iterator:
+        batch = rand(10, ins, 50, 100)
+
+        block = DownBlock(ins, outs, pool, slope, size)
+
+        assert block(batch).shape == (10, outs, 25, 50)
 
 
 def test_up_block_call_return_shapes():
