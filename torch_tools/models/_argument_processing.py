@@ -56,7 +56,7 @@ def process_2d_kernel_size(kernel_size: int) -> int:
         raise TypeError(msg)
 
     if kernel_size < 1:
-        msg = f"'kernel_size' should be on or more, got '{kernel_size}'."
+        msg = f"'kernel_size' should be one or more, got '{kernel_size}'."
         raise ValueError(msg)
 
     if kernel_size % 2 == 0:
