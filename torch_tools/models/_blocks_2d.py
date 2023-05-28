@@ -157,7 +157,7 @@ class ResidualBlock(Module):
         The number of input channels.
     kernel_size : int
         Size of the square convolutional kernel to use in the ``Conv2d``
-        layers.
+        layers. Must be an odd, positive, int.
 
     """
 
@@ -218,7 +218,7 @@ class DownBlock(Sequential):
         The negative slope to use in the ``LeakyReLU`` arguments.
     kernel_size : int
         The size of the square convolutional kernel to use on the ``Conv2d``
-        layers.
+        layers. Must be an odd, positive, int.
 
     """
 
@@ -262,6 +262,8 @@ class UpBlock(Sequential):
         ``ConvTranspose2d`` (``False``).
     lr_slope : float
         Negative slope to use in the ``LeakyReLU`` layers.
+    kernel_size : int
+        Size of the covolutional kernel. Must be an odd, positive, int.
 
     """
 
@@ -271,6 +273,7 @@ class UpBlock(Sequential):
         out_chans: int,
         bilinear: bool,
         lr_slope: float,
+        kernel_size: int = 3,
     ):
         """Build `UpBlock`."""
         super().__init__(
@@ -282,6 +285,7 @@ class UpBlock(Sequential):
                 process_num_feats(in_chans),
                 process_num_feats(out_chans),
                 lr_slope=process_negative_slope_arg(lr_slope),
+                kernel_size=process_2d_kernel_size(kernel_size),
             ),
         )
 
