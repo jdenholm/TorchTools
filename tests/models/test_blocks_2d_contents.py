@@ -285,6 +285,26 @@ def test_down_block_double_conv_contents():
     assert out_conv[2].negative_slope == 0.1234
 
 
+def test_down_block_contents_with_different_kernel_sizes():
+    """Test the contents of the ``DownBlock`` with different kernel sizes."""
+    for size in [1, 3, 5, 7, 9]:
+        block = DownBlock(
+            in_chans=3,
+            out_chans=3,
+            pool="max",
+            lr_slope=0.1,
+            kernel_size=size,
+        )
+
+        # The pool's strid and kernel size should remain unchanged
+        assert block[0].kernel_size == 2
+        assert block[0].stride == 2
+
+        # The convolutional layers' kernel sizes should change
+        assert block[1][0][0].kernel_size == (size, size)
+        assert block[1][1][0].kernel_size == (size, size)
+
+
 def test_up_block_upsample_contents_with_bilinear_false():
     """Test the contents of upsampling block in `UpBlock`."""
     block = UpBlock(
