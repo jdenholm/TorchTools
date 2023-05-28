@@ -762,3 +762,57 @@ def test_up_block_lr_slope_arg_types():
         _ = UpBlock(in_chans=1, out_chans=1, bilinear=True, lr_slope=1)
     with pytest.raises(TypeError):
         _ = UpBlock(in_chans=1, out_chans=1, bilinear=True, lr_slope=1.0j)
+
+
+def test_up_block_kernel_size_argument_types():
+    """Test the types accepted by the ``kernel_size`` argument."""
+    # Should work with positive, odd, ints
+    _ = UpBlock(
+        in_chans=1,
+        out_chans=1,
+        bilinear=True,
+        lr_slope=0.1,
+        kernel_size=1,
+    )
+
+    # Should break with non-float
+    with pytest.raises(TypeError):
+        _ = UpBlock(
+            in_chans=1,
+            out_chans=1,
+            bilinear=True,
+            lr_slope=0.1,
+            kernel_size=1.0,
+        )
+
+    with pytest.raises(TypeError):
+        _ = UpBlock(
+            in_chans=1,
+            out_chans=1,
+            bilinear=True,
+            lr_slope=0.1,
+            kernel_size=1j,
+        )
+
+
+def test_up_block_kernel_size_argument_values():
+    """Test the values accepted by the ``kernel_size`` argument."""
+    # Should work with positive, odd, ints
+    _ = UpBlock(
+        in_chans=1,
+        out_chans=1,
+        bilinear=True,
+        lr_slope=0.1,
+        kernel_size=1,
+    )
+
+    # Should break with even ints and ints less than 1
+    for bad_size in [2, 4, 6, 0, -1, -2, -3]:
+        with pytest.raises(ValueError):
+            _ = UpBlock(
+                in_chans=1,
+                out_chans=1,
+                bilinear=True,
+                lr_slope=0.1,
+                kernel_size=bad_size,
+            )
