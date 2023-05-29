@@ -392,6 +392,23 @@ def test_up_block_double_conv_second_conv_block_contents():
     assert block[1][1][2].negative_slope == 0.54321
 
 
+def test_up_block_contents_with_different_kernel_sizes():
+    """Test the contnents of the ``UpBlock`` with different kernel sizes."""
+    sizes = [1, 3, 5, 7]
+
+    for size in sizes:
+        block = UpBlock(
+            in_chans=123,
+            out_chans=321,
+            bilinear=False,
+            lr_slope=0.54321,
+            kernel_size=size,
+        )
+
+        assert block[1][0][0].kernel_size == (size, size)
+        assert block[1][1][0].kernel_size == (size, size)
+
+
 def test_unet_up_block_upsample_contents_with_bilinear_false():
     """Test the contents of the upsample block with bilinear set to false."""
     up_block = UNetUpBlock(
