@@ -349,7 +349,7 @@ class UNetUpBlock(Module):
         out_chans: int,
         bilinear: bool,
         lr_slope: float,
-        kernel_size: int,
+        kernel_size: int = 3,
     ):
         """Build `UNetUpBlock`."""
         super().__init__()
