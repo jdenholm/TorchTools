@@ -485,3 +485,18 @@ def test_unet_up_block_double_conv_second_conv_block_contents():
     assert double_conv[1][0].out_channels == 128
     assert double_conv[1][1].num_features == 128
     assert double_conv[1][2].negative_slope == 0.12345
+
+
+def test_unet_up_block_contents_with_different_kernel_sizes():
+    """Test the contents of ``UNetUpBlock`` with different kernel sizes."""
+    for size in [1, 3, 5, 7, 9]:
+        up_block = UNetUpBlock(
+            in_chans=64,
+            out_chans=128,
+            bilinear=False,
+            lr_slope=0.12345,
+            kernel_size=size,
+        )
+
+        assert up_block.double_conv[0][0].kernel_size == (size, size)
+        assert up_block.double_conv[1][0].kernel_size == (size, size)
