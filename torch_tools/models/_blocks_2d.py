@@ -333,10 +333,13 @@ class UNetUpBlock(Module):
     out_chans : int
         The number of output channels.
     bilinear : bool
-        If `True`, the upsample is done using bilinear interpolation using
-        `torch.nn.Upsample`. Otherwise we use a `ConvTranspose2d`
+        If ``True``, the upsample is done using bilinear interpolation using
+        ``torch.nn.Upsample``. Otherwise we use a ``ConvTranspose2d``.
     lr_slope : float
-        The negative slope to use in the `LeakyReLU`.
+        The negative slope to use in the ``LeakyReLU``.
+    kernel_size : int
+        The size of the square convolutional kernel to use in the convolutional
+        layers, Should be an odd, poitive, int.
 
     """
 
@@ -346,6 +349,7 @@ class UNetUpBlock(Module):
         out_chans: int,
         bilinear: bool,
         lr_slope: float,
+        kernel_size: int,
     ):
         """Build `UNetUpBlock`."""
         super().__init__()
@@ -357,6 +361,7 @@ class UNetUpBlock(Module):
             self._in_chans,
             self._out_chans,
             lr_slope=lr_slope,
+            kernel_size=process_2d_kernel_size(kernel_size),
         )
 
     @staticmethod
