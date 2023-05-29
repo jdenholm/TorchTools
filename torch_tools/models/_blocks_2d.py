@@ -339,7 +339,7 @@ class UNetUpBlock(Module):
         The negative slope to use in the ``LeakyReLU``.
     kernel_size : int
         The size of the square convolutional kernel to use in the convolutional
-        layers, Should be an odd, poitive, int.
+        layers, Should be an odd, positive, int.
 
     """
 
