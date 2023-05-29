@@ -816,3 +816,59 @@ def test_up_block_kernel_size_argument_values():
                 lr_slope=0.1,
                 kernel_size=bad_size,
             )
+
+
+def test_unet_up_block_kernel_size_argument_types():
+    """Test the types accepted by the ``kernel_size`` argument."""
+    # Should work with positive, odd int.
+    for size in [1, 3, 5, 7]:
+        _ = UNetUpBlock(
+            in_chans=4,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.0,
+            kernel_size=size,
+        )
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = UNetUpBlock(
+            in_chans=4,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.0,
+            kernel_size=1.0,
+        )
+
+    with pytest.raises(TypeError):
+        _ = UNetUpBlock(
+            in_chans=4,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.0,
+            kernel_size=3j,
+        )
+
+
+def test_unet_up_block_kernel_size_argument_values():
+    """Test the values accepted by the ``kernel_size`` argument."""
+    # Should work with positive, odd int.
+    for size in [1, 3, 5, 7]:
+        _ = UNetUpBlock(
+            in_chans=4,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.0,
+            kernel_size=size,
+        )
+
+    # Should break with even positive ints, or ints less than one
+    for size in [-2, -1, 0, 2, 4, 6]:
+        with pytest.raises(ValueError):
+            _ = UNetUpBlock(
+                in_chans=4,
+                out_chans=2,
+                bilinear=False,
+                lr_slope=0.0,
+                kernel_size=size,
+            )
