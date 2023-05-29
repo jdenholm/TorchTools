@@ -10,6 +10,7 @@ from torch_tools.models._argument_processing import (
     process_str_arg,
     process_negative_slope_arg,
     process_u_architecture_layers,
+    process_2d_kernel_size,
 )
 
 # pylint: disable=too-many-arguments
@@ -35,6 +36,9 @@ class Encoder2d(Sequential):
         The type of pooling to use when downsampling (``"avg"`` or ``"max"``).
     lr_slope : float
         The negative slope argument to use in the ``LeakyReLU`` layers.
+    kernel_size : int
+        Size of the square convolutional kernel to use in the ``Conv2d``
+        layers. Should be a positive, odd, int.
 
 
     Examples
@@ -46,6 +50,7 @@ class Encoder2d(Sequential):
                     num_blocks=4,
                     pool_style="max",
                     lr_slope=0.123,
+                    kernel_size=3,
                 )
 
     """
@@ -57,6 +62,7 @@ class Encoder2d(Sequential):
         num_blocks: int,
         pool_style: str,
         lr_slope: float,
+        kernel_size: int,
     ):
         """Build `Encoder`."""
         super().__init__(
@@ -64,12 +70,14 @@ class Encoder2d(Sequential):
                 process_num_feats(in_chans),
                 process_num_feats(start_features),
                 process_negative_slope_arg(lr_slope),
+                kernel_size=process_2d_kernel_size(kernel_size),
             ),
             *self._get_blocks(
                 process_num_feats(start_features),
                 process_u_architecture_layers(num_blocks),
                 process_str_arg(pool_style),
                 process_negative_slope_arg(lr_slope),
+                process_2d_kernel_size(kernel_size),
             )
         )
 
@@ -79,6 +87,7 @@ class Encoder2d(Sequential):
         num_blocks,
         pool_style: str,
         lr_slope: float,
+        kernel_size: int,
     ) -> List[DownBlock]:
         """Get the encoding layers in a sequential.
 
@@ -92,6 +101,9 @@ class Encoder2d(Sequential):
             The pool style to use when downsampling (``"avg"`` or ``"max"``).
         lr_slope : float
             The negative slope to use in the ``LeakyReLU`` layers.
+        kernel_size : int
+            Size of the square convolutional kernel to use in the ``Conv2d``
+            layers. Should be a positive, odd, int.
 
         Returns
         -------
@@ -102,6 +114,14 @@ class Encoder2d(Sequential):
         chans = in_chans
         blocks = []
         for _ in range(num_blocks - 1):
-            blocks.append(DownBlock(chans, chans * 2, pool_style, lr_slope))
+            blocks.append(
+                DownBlock(
+                    chans,
+                    chans * 2,
+                    pool_style,
+                    lr_slope,
+                    kernel_size=kernel_size,
+                )
+            )
             chans *= 2
         return blocks
