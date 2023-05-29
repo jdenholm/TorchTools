@@ -103,11 +103,11 @@ def test_up_block_call_return_shapes():
 
     iterator = product(in_channels, out_channels, bilinears, slopes, kernels)
 
-    for in_chans, out_chans, biliner, lr_slope, kernel_size in iterator:
+    for in_chans, out_chans, bilinear, lr_slope, kernel_size in iterator:
         block = UpBlock(
             in_chans=in_chans,
             out_chans=out_chans,
-            bilinear=biliner,
+            bilinear=bilinear,
             lr_slope=lr_slope,
             kernel_size=kernel_size,
         )
@@ -116,12 +116,25 @@ def test_up_block_call_return_shapes():
 
 def test_unet_upblock_call_return_shapes():
     """Test the return shapes produced by `UNetUpBlock`."""
-    block = UNetUpBlock(in_chans=4, out_chans=5, bilinear=False, lr_slope=0.1)
-    to_upsample = rand(10, 4, 25, 50)
-    down_features = rand(10, 2, 50, 100)
-    assert block(to_upsample, down_features).shape == (10, 5, 50, 100)
+    in_channels = [2, 4, 8]
+    out_channels = [2, 4, 8]
+    bilinears = [True, False]
+    slopes = [0.0, 0.1]
+    kernels = [1, 3, 5]
 
-    block = UNetUpBlock(in_chans=2, out_chans=12, bilinear=False, lr_slope=0.1)
-    to_upsample = rand(10, 2, 30, 30)
-    down_features = rand(10, 1, 50, 50)
-    assert block(to_upsample, down_features).shape == (10, 12, 50, 50)
+    iterator = product(in_channels, out_channels, bilinears, slopes, kernels)
+
+    for in_chans, out_chans, bilinear, lr_slope, kernel_size in iterator:
+        block = UNetUpBlock(
+            in_chans,
+            out_chans,
+            bilinear,
+            lr_slope,
+            kernel_size=kernel_size,
+        )
+
+        to_upsample = rand(10, in_chans, 25, 50)
+        down_features = rand(10, in_chans // 2, 50, 100)
+
+        out = block(to_upsample, down_features)
+        assert out.shape == (10, out_channels, 50, 100)
