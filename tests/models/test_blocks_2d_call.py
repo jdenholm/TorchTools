@@ -95,11 +95,23 @@ def test_down_block_call_return_shapes():
 
 def test_up_block_call_return_shapes():
     """Test the return shapes produced by `UpBlock`."""
-    block = UpBlock(in_chans=3, out_chans=8, bilinear=True, lr_slope=0.1)
-    assert block(rand(10, 3, 16, 32)).shape == (10, 8, 32, 64)
+    in_channels = [3, 5, 7]
+    out_channels = [3, 5, 7]
+    bilinears = [True, False]
+    slopes = [0.0, 0.1]
+    kernels = [1, 3, 5]
 
-    block = UpBlock(in_chans=3, out_chans=3, bilinear=False, lr_slope=0.1)
-    assert block(rand(10, 3, 128, 256)).shape == (10, 3, 256, 512)
+    iterator = product(in_channels, out_channels, bilinears, slopes, kernels)
+
+    for in_chans, out_chans, biliner, lr_slope, kernel_size in iterator:
+        block = UpBlock(
+            in_chans=in_chans,
+            out_chans=out_chans,
+            bilinear=biliner,
+            lr_slope=lr_slope,
+            kernel_size=kernel_size,
+        )
+        assert block(rand(10, in_chans, 16, 32)).shape == (10, out_chans, 32, 64)
 
 
 def test_unet_upblock_call_return_shapes():
