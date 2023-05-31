@@ -325,3 +325,29 @@ def test_kernel_size_argument_types():
             lr_slope=0.666,
             kernel_size=3j,
         )
+
+
+def test_kernel_size_argument_values():
+    """Test the values accepted by the ``kernel_size`` arg."""
+    # Should work with odd, positive ints
+    for size in [1, 3, 5, 7]:
+        _ = Decoder2d(
+            in_chans=8,
+            out_chans=3,
+            num_blocks=3,
+            bilinear=True,
+            lr_slope=0.666,
+            kernel_size=size,
+        )
+
+    # Should break with positive evens and ints less than one
+    for size in [-1, -2, 0, 2, 4, 6]:
+        with pytest.raises(ValueError):
+            _ = Decoder2d(
+                in_chans=8,
+                out_chans=3,
+                num_blocks=3,
+                bilinear=True,
+                lr_slope=0.666,
+                kernel_size=size,
+            )
