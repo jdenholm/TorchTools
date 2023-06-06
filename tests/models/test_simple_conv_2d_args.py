@@ -170,3 +170,16 @@ def test_lr_slope_argument_types():
         _ = SimpleConvNet2d(in_chans=64, out_feats=8, lr_slope=1)
     with pytest.raises(TypeError):
         _ = SimpleConvNet2d(in_chans=64, out_feats=8, lr_slope=1.0j)
+
+
+def test_kernel_size_argument_types():
+    """Test the types accepted by the ``kernel_size`` argument."""
+    # Should work with int
+    _ = SimpleConvNet2d(in_chans=123, out_feats=321, kernel_size=1)
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = SimpleConvNet2d(in_chans=123, out_feats=321, kernel_size=1.0)
+
+    with pytest.raises(TypeError):
+        _ = SimpleConvNet2d(in_chans=123, out_feats=321, kernel_size=1j)
