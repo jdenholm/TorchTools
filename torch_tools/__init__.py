@@ -2,13 +2,13 @@
 from importlib.metadata import version as _version
 
 
-from .datasets import DataSet
-from .models import FCNet
-from .models import ConvNet2d
-from .models import UNet
-from .models import Encoder2d
-from .models import Decoder2d
-from .models import AutoEncoder2d
-from .models import SimpleConvNet2d
+from torch_tools.datasets import DataSet
+from torch_tools.models import FCNet
+from torch_tools.models import ConvNet2d
+from torch_tools.models import UNet
+from torch_tools.models import Encoder2d
+from torch_tools.models import Decoder2d
+from torch_tools.models import AutoEncoder2d
+from torch_tools.models import SimpleConvNet2d
 
 __version__ = _version("torch_tools")
