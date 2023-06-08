@@ -47,4 +47,4 @@ jobs:
 
     - name: Test with Pytest
       run: |
-        pytest .
+        pytest tests/
