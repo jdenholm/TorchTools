@@ -7,6 +7,7 @@ from torch.nn import Module, Conv2d, ModuleList
 from torch_tools.models._argument_processing import (
     process_num_feats,
     process_u_architecture_layers,
+    process_2d_kernel_size,
 )
 
 from torch_tools.models._blocks_2d import DoubleConvBlock, DownBlock, UNetUpBlock
@@ -37,6 +38,9 @@ class UNet(Module):
         ``False``, we use ``ConvTranspose2d``.
     lr_slope : float, optional
         The negative slope argument for ``LeakyReLU`` layers.
+    kernel_size : int, optional
+        Linear size of the square convolutional kernel to use in the ``Conv2d``
+        layers. Should be a positive, odd, int.
 
 
     Examples
@@ -50,6 +54,7 @@ class UNet(Module):
                     pool_style="max",
                     bilinear=False,
                     lr_slope=0.2,
+                    kernel_size=3,
                     )
 
     """
@@ -63,6 +68,7 @@ class UNet(Module):
         pool_style: str = "max",
         bilinear: bool = False,
         lr_slope: float = 0.1,
+        kernel_size: int = 3,
     ):
         """Build `UNet`."""
         super().__init__()
@@ -71,6 +77,7 @@ class UNet(Module):
             in_chans,
             process_num_feats(features_start),
             lr_slope,
+            process_2d_kernel_size(kernel_size),
         )
 
         self.down_blocks = self._get_down_blocks(
@@ -78,6 +85,7 @@ class UNet(Module):
             features_start,
             pool_style,
             lr_slope,
+            process_2d_kernel_size(kernel_size),
         )
 
         self.up_blocks = self._get_up_blocks(
@@ -85,6 +93,7 @@ class UNet(Module):
             features_start,
             bilinear,
             lr_slope,
+            process_2d_kernel_size(kernel_size),
         )
 
         self.out_conv = Conv2d(
@@ -100,6 +109,7 @@ class UNet(Module):
         features_start,
         pool_style: str,
         lr_slope: float,
+        kernel_size: int,
     ) -> ModuleList:
         """Stack the downsampling blocks in a `ModuleList`.
 
@@ -114,6 +124,10 @@ class UNet(Module):
         lr_slope : float
             The negative slope are for ``DownBlock`` (negative slope in
             ``LeakyReLU`` layers.)
+        kernel_size : int, optional
+            Linear size of the square convolutional kernel to use in the
+            ``Conv2d`` layers. Should be a positive, odd, int.
+
 
         Returns
         -------
@@ -124,7 +138,15 @@ class UNet(Module):
         chans = features_start
         blocks = []
         for _ in range(num_layers - 1):
-            blocks.append(DownBlock(chans, chans * 2, pool_style, lr_slope))
+            blocks.append(
+                DownBlock(
+                    chans,
+                    chans * 2,
+                    pool_style,
+                    lr_slope,
+                    kernel_size,
+                )
+            )
             chans *= 2
 
         return ModuleList(blocks)
@@ -135,6 +157,7 @@ class UNet(Module):
         features_start: int,
         bilinear: bool,
         lr_slope: float,
+        kernel_size: int,
     ) -> ModuleList:
         """Stack the upsampling blocks in a ``ModuleList``.
 
@@ -149,6 +172,9 @@ class UNet(Module):
             or conv transpose.
         lr_slope : float
             The negative slope to use in the ``LeakReLU``s.
+        kernel_size : int, optional
+            Linear size of the square convolutional kernel to use in the
+            ``Conv2d`` layers. Should be a positive, odd, int.
 
         Returns
         -------
@@ -159,7 +185,15 @@ class UNet(Module):
         chans = features_start * (2 ** (num_layers - 1))
         blocks = []
         for _ in range(num_layers - 1):
-            blocks.append(UNetUpBlock(chans, chans // 2, bilinear, lr_slope))
+            blocks.append(
+                UNetUpBlock(
+                    chans,
+                    chans // 2,
+                    bilinear,
+                    lr_slope,
+                    kernel_size=kernel_size,
+                )
+            )
             chans //= 2
         return ModuleList(blocks)
 
