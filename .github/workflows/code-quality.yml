@@ -1,4 +1,4 @@
-name: Python Package using Conda
+name: Code-quality checks
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        conda env update --file requirements.conda.yaml --name base
+        conda env update --file requirements-dev.conda.yaml --name base
 
     - name: Print python version
       run: |
@@ -47,4 +47,4 @@ jobs:
 
     - name: Test with Pytest
       run: |
-        pytest .
+        pytest tests/
