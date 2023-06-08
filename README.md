@@ -32,20 +32,18 @@ Distributed under the MIT License. See LICENSE.md for more information.
 
 
 ### Installation
-
-To clone the repository:
+To install the most up-to-date version, use
 ```bash
-git clone https://github.com/jdenholm/TorchTools.git
+pip install https://github.com/jdenholm/TorchTools.git
+```
+To install a specific version, say ``v0.1.0``, use
+```bash
+pip install https://github.com/jdenholm/TorchTools.git@v0.1.0
 ```
 
-To create the necessary conda environment:
-```bash
-cd /path/to/TorchTools/
-conda env create -f requirements.conda.yaml
-```
 
 ### Run tests
-To run the tests:
+To run the tests (with the dev env):
 ```bash
 pytest tests/
 ```
@@ -56,6 +54,6 @@ pytest tests/
 There are demos for each of the models in the ``demos/`` directory. Note: the demos require a different python environment, which is specified in ``demo-requirements.conda.yaml``. To build it, use:
 
 ```bash
-cd /path/to/TorchTools
-conda env create -f demo-requirements.conda.yaml
+cd /path/to/TorchTools/
+conda env create -f requirements.conda.yaml
 ```

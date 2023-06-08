@@ -8,3 +8,4 @@
 ### Python package
 - The repo has moved from the old ``setup.py`` to use a ``pyproject.toml`` — hopefully correctly. The version imports and python dependencies have been updated accordingly.
 - The demos now use the ``requirements-dev.conda.yaml``.
+- You can now install the package with pip from Github.
