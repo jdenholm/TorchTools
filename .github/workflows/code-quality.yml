@@ -47,4 +47,4 @@ jobs:
 
     - name: Test with Pytest
       run: |
-        pytest tests/
+        conda activate base & pytest tests/
