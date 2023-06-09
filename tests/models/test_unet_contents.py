@@ -1,9 +1,10 @@
 """Test the contents of the ``UNet``."""
 from itertools import product
 
-from torch.nn import Module, LeakyReLU, Conv2d
+from torch.nn import Module, LeakyReLU, Conv2d, AvgPool2d, MaxPool2d
 
 from torch_tools import UNet
+from torch_tools.models._blocks_2d import DownBlock
 
 
 # pylint: disable=cell-var-from-loop
@@ -82,3 +83,20 @@ def test_kernel_sizes_of_relevant_components():
         model.in_conv.apply(lambda x: kernel_size_check(x, kernel_size))
         model.down_blocks.apply(lambda x: kernel_size_check(x, kernel_size))
         model.up_blocks.apply(lambda x: kernel_size_check(x, kernel_size))
+
+
+def test_down_block_pool_type():
+    """Test the pool type of the ``DownBlock`` layers."""
+    model = UNet(in_chans=1, out_chans=1, pool_style="avg")
+    for block in model.down_blocks.children():
+        if isinstance(block, DownBlock):
+            assert isinstance(block[0], AvgPool2d)
+            assert block[0].kernel_size == 2
+            assert block[0].stride == 2
+
+    model = UNet(in_chans=1, out_chans=1, pool_style="max")
+    for block in model.down_blocks.children():
+        if isinstance(block, DownBlock):
+            assert isinstance(block[0], MaxPool2d)
+            assert block[0].kernel_size == 2
+            assert block[0].stride == 2
