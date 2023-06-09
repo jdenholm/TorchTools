@@ -1,7 +1,16 @@
 # TorchTools
+<p align="left">
+  <a href="https://github.com/jdenholm/TorchTools/releases/"><img alt="" src="https://img.shields.io/github/v/release/jdenholm/TorchTools" /></a>
+  <a href="https://github.com/jdenholm/TorchTools/blob/dev/LICENSE.md"><img alt="" src="https://img.shields.io/github/license/jdenholm/TorchTools" /></a>
+  <a href=""><img alt="" src="" /></a>
+</p>
+
 Handy PyTorch models and utilities which should save you time—and heartache.
 
-Please see [**the documentation**](https://jdenholm.github.io/TorchTools/).
+## Please **read the** [**documentation**](https://jdenholm.github.io/TorchTools/).
+
+
+
 
 
 ## Description
@@ -51,9 +60,9 @@ pytest tests/
 
 ### Demonstrations
 
-There are demos for each of the models in the ``demos/`` directory. Note: the demos require a different python environment, which is specified in ``demo-requirements.conda.yaml``. To build it, use:
+There are demos for each of the models in the ``demos/`` directory. Note: the demos require a different python environment, which is specified in [``requirements-dev.conda.yaml``](requirements-dev.conda.yaml). To build it, use:
 
 ```bash
 cd /path/to/TorchTools/
-conda env create -f requirements.conda.yaml
+conda env create -f requirements-dev.conda.yaml
 ```
