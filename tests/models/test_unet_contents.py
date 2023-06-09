@@ -36,3 +36,15 @@ def test_in_conv_contents_with_all_relevant_args():
         # Test the kernel sizes of the conv layers
         assert model.in_conv[0][0].kernel_size == (kernel_size, kernel_size)
         assert model.in_conv[1][0].kernel_size == (kernel_size, kernel_size)
+
+
+def test_out_conv_contents():
+    """Test the conents of the ``out_conv``."""
+    features_start = [16, 32]
+    out_channels = [1, 4, 10]
+
+    for feats, out_chans in product(features_start, out_channels):
+        model = UNet(in_chans=1, out_chans=out_chans, features_start=feats)
+
+        assert model.out_conv.in_channels == feats
+        assert model.out_conv.out_channels == out_chans
