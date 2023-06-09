@@ -2,6 +2,7 @@
 from itertools import product
 
 from torch.nn import Module, LeakyReLU, Conv2d, AvgPool2d, MaxPool2d
+from torch.nn import ConvTranspose2d, Sequential, Upsample
 
 from torch_tools import UNet
 from torch_tools.models._blocks_2d import DownBlock
@@ -100,3 +101,18 @@ def test_down_block_pool_type():
             assert isinstance(block[0], MaxPool2d)
             assert block[0].kernel_size == 2
             assert block[0].stride == 2
+
+
+def test_upsample_contents():
+    """Test the upsampling methods in the ``UpBlocks``."""
+    model = UNet(in_chans=1, out_chans=1, bilinear=False)
+    for block in model.up_blocks:
+        assert isinstance(block.upsample, ConvTranspose2d)
+        assert block.upsample.kernel_size == (2, 2)
+        assert block.upsample.stride == (2, 2)
+
+    model = UNet(in_chans=1, out_chans=1, bilinear=True)
+    for block in model.up_blocks:
+        assert isinstance(block.upsample, Sequential)
+        assert isinstance(block.upsample[0], Upsample)
+        assert isinstance(block.upsample[1], Conv2d)
