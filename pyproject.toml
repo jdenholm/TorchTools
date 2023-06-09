@@ -22,10 +22,5 @@ dependencies = ["torch", "torchvision"]
 
 [tool.setuptools]
 
-#[tool.setuptools.packages]
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["torch_tools", "torch_tools/*"]
-exclude = ["tests/"]
-namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
+[tool.setuptools.packages]
+find = {where = ["torch_tools"], exclude=["tests*"]}
