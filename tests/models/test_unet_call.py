@@ -5,6 +5,8 @@ from torch import rand  # pylint:disable=no-name-in-module
 
 from torch_tools import UNet
 
+# pylint: disable=too-many-locals
+
 
 def test_unet_call():
     """Test the call method of the ``UNet``."""
