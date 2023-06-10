@@ -21,6 +21,4 @@ dependencies = ["torch", "torchvision"]
 "Bug Tracker" = "https://github.com/jdenholm/TorchTools/Issues"
 
 [tool.setuptools]
-
-[tool.setuptools.packages]
-find = {where = ["torch_tools"], exclude=["tests*"]}
+package-dir = {"" = "torch_tools"}
