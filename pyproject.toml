@@ -21,4 +21,4 @@ dependencies = ["torch", "torchvision"]
 "Bug Tracker" = "https://github.com/jdenholm/TorchTools/Issues"
 
 [tool.setuptools]
-package-dir = {"torch_tools" = "torch_tools"}
+package-dir = {"" = "torch_tools"}
