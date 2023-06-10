@@ -116,3 +116,21 @@ def test_upsample_contents():
         assert isinstance(block.upsample, Sequential)
         assert isinstance(block.upsample[0], Upsample)
         assert isinstance(block.upsample[1], Conv2d)
+
+
+def test_down_blocks_channels():
+    """Test the number of channels at each point in the down blocks."""
+    for feats in [8, 16, 32]:
+        model = UNet(in_chans=1, out_chans=1, features_start=feats)
+        down_blocks = model.down_blocks
+
+        for block in down_blocks:
+            # Test the first conv block of the double conv block
+            assert block[1][0][0].in_channels == feats
+            assert block[1][0][0].out_channels == feats * 2
+
+            # Test the second conv block of the double conv block
+            assert block[1][0][0].in_channels == feats
+            assert block[1][1][0].out_channels == feats * 2
+
+            feats *= 2
