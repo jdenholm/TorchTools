@@ -278,7 +278,6 @@ def test_patchify_img_batch_return_values(create_fake_image_batch):
 
     patches = patchify_img_batch(batch, 4)
     for idx, patch in enumerate(patches):
-
         assert (patch[0, :, :] == idx).all()
         assert (patch[1, :, :] == idx + 0.1).all()
         assert (patch[2, :, :] == idx + 0.2).all()

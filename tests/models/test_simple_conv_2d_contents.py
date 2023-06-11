@@ -1,11 +1,14 @@
 """Test the contents of ``torch_tools.SimpleConvNet2d``."""
 
-from torch.nn import AdaptiveAvgPool2d, AdaptiveMaxPool2d, Flatten, Linear
+import pytest
+
+from torch.nn import AdaptiveAvgPool2d, AdaptiveMaxPool2d, Flatten
 from torch.nn import AvgPool2d, MaxPool2d, Conv2d, BatchNorm2d, LeakyReLU
 from torch.nn import Module
 
 from torch_tools import SimpleConvNet2d, Encoder2d
 from torch_tools.models._adaptive_pools_2d import _ConcatMaxAvgPool2d
+from torch_tools.models._fc_net import FCNet
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
 from torch_tools.models._blocks_2d import DownBlock
 
@@ -24,7 +27,7 @@ def test_simple_conv_net_contents():
     assert isinstance(model[0], Encoder2d)
     assert isinstance(model[1], AdaptiveAvgPool2d)
     assert isinstance(model[2], Flatten)
-    assert isinstance(model[3], Linear)
+    assert isinstance(model[3], FCNet)
 
 
 def test_adaptive_pools():
@@ -76,9 +79,9 @@ def test_linear_layer_input_feats_with_max_pool():
         features_start=64,
     )
 
-    linear_layer = model[3]
+    fc_net = model[3]
 
-    assert linear_layer.in_features == (2**2) * 64
+    assert fc_net[0][0].in_features == (2**2) * 64
 
 
 def test_linear_layer_input_feats_with_avg_pool():
@@ -98,9 +101,9 @@ def test_linear_layer_input_feats_with_avg_pool():
         features_start=64,
     )
 
-    linear_layer = model[3]
+    fc_net = model[3]
 
-    assert linear_layer.in_features == (2**2) * 64
+    assert fc_net[0][0].in_features == (2**2) * 64
 
 
 def test_linear_layer_input_feats_with_avg_max_concat_pool():
@@ -121,21 +124,21 @@ def test_linear_layer_input_feats_with_avg_max_concat_pool():
         features_start=64,
     )
 
-    linear_layer = model[3]
+    fc_net = model[3]
 
-    assert linear_layer.in_features == 2 * (2**2) * 64
+    assert fc_net[0][0].in_features == 2 * (2**2) * 64
 
 
 def test_linear_layer_output_features():
     """Test the number of output features produced by the linear layer."""
     model = SimpleConvNet2d(in_chans=3, out_feats=8)
-    assert model[3].out_features == 8
+    assert model[3][-1][-1].out_features == 8
 
     model = SimpleConvNet2d(in_chans=3, out_feats=123)
-    assert model[3].out_features == 123
+    assert model[3][-1][-1].out_features == 123
 
     model = SimpleConvNet2d(in_chans=3, out_feats=321)
-    assert model[3].out_features == 321
+    assert model[3][-1][-1].out_features == 321
 
 
 def test_encoder_double_conv_contents():
@@ -219,3 +222,33 @@ def test_simple_conv_net_2d_contents_with_variable_kernel_sizes():
     for size in [1, 3, 5]:
         model = SimpleConvNet2d(in_chans=3, out_feats=10, kernel_size=size)
         model[0].apply(lambda x: kernel_size_check(x, size))
+
+
+def test_fc_net_kwarg_dict_type():
+    """Test the types accepted by the `fc_net_kwargs` arg."""
+    # Should work with dictionary
+    _ = (SimpleConvNet2d(in_chans=1, out_feats=1, fc_net_kwargs={}),)
+
+    # Should break with non-dict
+    with pytest.raises(TypeError):
+        _ = (SimpleConvNet2d(in_chans=1, out_feats=1, fc_net_kwargs=[1]),)
+
+
+def test_in_feats_not_in_dn_kwargs():
+    """Test the user cannot supply ``in_feats`` in ``fc_net_kwargs``."""
+    with pytest.raises(RuntimeError):
+        _ = SimpleConvNet2d(
+            in_chans=1,
+            out_feats=1,
+            fc_net_kwargs={"in_feats": 10},
+        )
+
+
+def test_out_feats_not_in_dn_kwargs():
+    """Test the user cannot supply ``out_feats`` in ``fc_net_kwargs``."""
+    with pytest.raises(RuntimeError):
+        _ = SimpleConvNet2d(
+            in_chans=1,
+            out_feats=1,
+            fc_net_kwargs={"out_feats": 10},
+        )
