@@ -1,10 +1,14 @@
 """A simple two-dimensional convolutional neural network."""
+from typing import Optional, Dict, Any
 
-from torch.nn import Sequential, Linear, Flatten
+from torch.nn import Sequential, Flatten
 
 from torch_tools.models._encoder_2d import Encoder2d
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
+from torch_tools.models._fc_net import FCNet
+from torch_tools.models._conv_net_2d import _forbidden_args_in_dn_kwargs
 from torch_tools.models._argument_processing import process_num_feats
+from torch_tools.models._argument_processing import process_2d_kernel_size
 
 # pylint: disable=too-many-arguments
 
@@ -30,6 +34,12 @@ class SimpleConvNet2d(Sequential):
         ``"max"`` or ``"avg-max-concat"``.)
     lr_slope : float
         The negative slope to use in the ``LeakyReLU`` layers.
+    kernel_size : int
+        The size of the square convolutional kernel to use in the ``Conv2d``
+        layers. Must be an odd, positive, int.
+    fc_net_kwargs : Dict[str, Any], optional
+        Keyword arguments for ``torch_tools.models.fc_net.FCNet`` which serves
+        as the classification/regression part of the model.
 
     Examples
     --------
@@ -42,6 +52,7 @@ class SimpleConvNet2d(Sequential):
             downsample_pool="max",
             adaptive_pool="avg-max-concat",
             lr_slope=0.123,
+            fc_net_kwards={"hidden_sizes": (256, 256,)},
         )
 
     """
@@ -55,8 +66,20 @@ class SimpleConvNet2d(Sequential):
         downsample_pool: str = "max",
         adaptive_pool: str = "avg",
         lr_slope: float = 0.1,
+        kernel_size: int = 3,
+        fc_net_kwargs: Optional[Dict[str, Any]] = None,
     ):
         """Build ``SimpleConvNet2d``."""
+        encoder_feats = self._num_output_features(
+            num_blocks,
+            process_num_feats(features_start),
+            adaptive_pool,
+        )
+
+        if fc_net_kwargs is not None:
+            _forbidden_args_in_dn_kwargs(fc_net_kwargs)
+            self._dn_args.update(fc_net_kwargs)
+
         super().__init__(
             Encoder2d(
                 process_num_feats(in_chans),
@@ -64,21 +87,28 @@ class SimpleConvNet2d(Sequential):
                 num_blocks,
                 downsample_pool,
                 lr_slope,
+                process_2d_kernel_size(kernel_size),
             ),
             get_adaptive_pool(
                 option=adaptive_pool,
                 output_size=(1, 1),
             ),
             Flatten(),
-            Linear(
-                self._num_output_features(
-                    num_blocks,
-                    process_num_feats(features_start),
-                    adaptive_pool,
-                ),
-                process_num_feats(out_feats),
+            FCNet(
+                in_feats=encoder_feats,
+                out_feats=out_feats,
+                **self._dn_args,
             ),
         )
+
+    _dn_args: Dict[str, Any] = {
+        "hidden_sizes": None,
+        "input_bnorm": False,
+        "hidden_bnorm": False,
+        "input_dropout": 0.0,
+        "hidden_dropout": 0.0,
+        "negative_slope": 0.2,
+    }
 
     def _num_output_features(
         self,

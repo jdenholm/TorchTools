@@ -6,40 +6,38 @@ from torch import rand  # pylint: disable=no-name-in-module
 from torch_tools import SimpleConvNet2d
 
 
-def test_accepted_input_channels():
-    """Test the number of inputs channels accepted."""
-    model = SimpleConvNet2d(in_chans=123, out_feats=8)
-    _ = model(rand(10, 123, 50, 50))
+def test_simple_conv_net_2d_call():
+    """Test the model's forward call method."""
+    ins = [1, 3]
+    outs = [2, 4, 6]
+    features_start = [16, 32]
+    blocks = [2, 3]
+    down_pools = ["avg", "max"]
+    adaptive_pool = ["avg", "max", "avg-max-concat"]
+    lr_slopes = [0.0, 0.1]
+    sizes = [1, 3, 5]
 
-    model = SimpleConvNet2d(in_chans=321, out_feats=8)
-    _ = model(rand(10, 321, 50, 50))
+    iterator = product(
+        ins,
+        outs,
+        features_start,
+        blocks,
+        down_pools,
+        adaptive_pool,
+        lr_slopes,
+        sizes,
+    )
 
-    model = SimpleConvNet2d(in_chans=666, out_feats=8)
-    _ = model(rand(10, 666, 50, 50))
-
-
-def test_number_of_output_features():
-    """Test the number of output features."""
-    model = SimpleConvNet2d(in_chans=3, out_feats=123)
-    assert model(rand(10, 3, 50, 50)).shape == (10, 123)
-
-    model = SimpleConvNet2d(in_chans=3, out_feats=321)
-    assert model(rand(10, 3, 50, 50)).shape == (10, 321)
-
-    model = SimpleConvNet2d(in_chans=3, out_feats=521)
-    assert model(rand(10, 3, 50, 50)).shape == (10, 521)
-
-
-def test_call_with_different_pool_types():
-    """Test with every pool type."""
-    down_pools = ["max", "avg"]
-    adaptive_pools = ["max", "avg", "avg-max-concat"]
-
-    for down, adaptive in product(down_pools, adaptive_pools):
+    for in_chans, out_feats, feats, num_blocks, d_pool, a_pool, slope, size in iterator:
         model = SimpleConvNet2d(
-            in_chans=3,
-            out_feats=123,
-            adaptive_pool=adaptive,
-            downsample_pool=down,
+            in_chans,
+            out_feats,
+            features_start=feats,
+            num_blocks=num_blocks,
+            downsample_pool=d_pool,
+            adaptive_pool=a_pool,
+            lr_slope=slope,
+            kernel_size=size,
         )
-        _ = model(rand(10, 3, 50, 50))
+
+        assert model(rand(10, in_chans, 100, 100)).shape == (10, out_feats)

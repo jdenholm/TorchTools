@@ -12,7 +12,7 @@
 #
 import os
 import sys
-from pathlib import Path as _path
+from importlib.metadata import version as _version
 
 sys.path.insert(0, os.path.abspath("../torch_tools"))
 
@@ -25,9 +25,7 @@ author = "J. Denholm"
 root_doc = "index"
 
 # The full version, including alpha/beta/rc tags
-# pylint: disable=unspecified-encoding
-with open(_path(__file__).parent.parent / "VERSION.txt", "r") as ver:
-    release = ver.read().strip()
+release = _version("torch_tools")
 
 
 # -- General configuration ---------------------------------------------------
@@ -35,7 +33,11 @@ with open(_path(__file__).parent.parent / "VERSION.txt", "r") as ver:
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autodoc", "sphinx.ext.napoleon"]
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.viewcode",
+]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

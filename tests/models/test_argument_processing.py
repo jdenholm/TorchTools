@@ -32,6 +32,49 @@ def test_process_num_feats_values():
         _ = ap.process_num_feats(-1)
 
 
+def test_process_2d_kernel_size_arg_types():
+    """Test the types accepted by the ``kernel_size`` argument."""
+    # Should work with odd, popsitive ints.
+    _ = ap.process_2d_kernel_size(1)
+    _ = ap.process_2d_kernel_size(3)
+    _ = ap.process_2d_kernel_size(5)
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = ap.process_2d_kernel_size(1.0)
+
+    with pytest.raises(TypeError):
+        _ = ap.process_2d_kernel_size(1j)
+
+
+def test_process_2d_kernel_size_arg_values():
+    """Test the values accepted by the ``kernel_size`` argument."""
+    # Should work with odd, popsitive ints.
+    _ = ap.process_2d_kernel_size(1)
+    _ = ap.process_2d_kernel_size(3)
+    _ = ap.process_2d_kernel_size(5)
+
+    # Should break with ints less than on
+    with pytest.raises(ValueError):
+        _ = ap.process_2d_kernel_size(0)
+
+    with pytest.raises(ValueError):
+        _ = ap.process_2d_kernel_size(-1)
+
+    with pytest.raises(ValueError):
+        _ = ap.process_2d_kernel_size(-2)
+
+    # Should break with even positive ints
+    with pytest.raises(ValueError):
+        _ = ap.process_2d_kernel_size(2)
+
+    with pytest.raises(ValueError):
+        _ = ap.process_2d_kernel_size(4)
+
+    with pytest.raises(ValueError):
+        _ = ap.process_2d_kernel_size(6)
+
+
 def test_process_boolean_arg_types():
     """Test `ap.process_boolean_arg`'s type checking."""
     # Should work with bool

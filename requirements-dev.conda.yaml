@@ -1,0 +1,22 @@
+name: torch-tools
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python>=3.10.9
+  - sphinx
+  - sphinx_rtd_theme
+  - mypy
+  - black
+  - black-jupyter
+  - pytest
+  - pydocstyle
+  - pylint
+  - ipykernel
+  - scikit-learn
+  - pandas
+  - matplotlib
+  - scikit-image
+  - pip
+  - pip:
+    - "."

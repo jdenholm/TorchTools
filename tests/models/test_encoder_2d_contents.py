@@ -1,11 +1,18 @@
 """Test the contents of `torch_tools.models._encoder_2d.Encoder2d`."""
 
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU, MaxPool2d, AvgPool2d
+from torch.nn import Module
 
 from torch_tools import Encoder2d
 
 from torch_tools.models._blocks_2d import DoubleConvBlock, ConvBlock
 from torch_tools.models._blocks_2d import DownBlock
+
+
+def kernel_size_check(layer: Module, kernel_size: int):
+    """If ``layer`` is a ``Conv2d``, check its ``kernel_size``."""
+    if isinstance(layer, Conv2d):
+        assert layer.kernel_size == (kernel_size, kernel_size)
 
 
 def test_encoder_2d_total_number_of_blocks():
@@ -16,6 +23,7 @@ def test_encoder_2d_total_number_of_blocks():
         num_blocks=4,
         pool_style="avg",
         lr_slope=0.123,
+        kernel_size=3,
     )
     assert len(encoder) == 4, "Wrong number of blocks in the encoder."
 
@@ -25,6 +33,7 @@ def test_encoder_2d_total_number_of_blocks():
         num_blocks=7,
         pool_style="avg",
         lr_slope=0.123,
+        kernel_size=3,
     )
     assert len(encoder) == 7, "Wrong number of blocks in the encoder."
 
@@ -37,6 +46,7 @@ def test_encoder_2d_double_conv_contents():
         num_blocks=4,
         pool_style="avg",
         lr_slope=0.123,
+        kernel_size=3,
     )
 
     double_conv = encoder[0]
@@ -74,6 +84,7 @@ def test_encoder_2d_pool_type_with_avg_pool():
         num_blocks=3,
         pool_style="avg",
         lr_slope=0.123,
+        kernel_size=3,
     )
 
     # No pool in the first block, but there should be one in the others
@@ -89,6 +100,7 @@ def test_encoder_2d_pool_type_with_max_pool():
         num_blocks=3,
         pool_style="max",
         lr_slope=0.123,
+        kernel_size=3,
     )
 
     # No pool in the first block, but there should be one in the others
@@ -104,6 +116,7 @@ def test_encoder_2d_first_down_block_contents():
         num_blocks=3,
         pool_style="max",
         lr_slope=0.123,
+        kernel_size=3,
     )
 
     # Test the first `DownBlock` contents
@@ -142,6 +155,7 @@ def test_encoder_2d_second_down_block_contents():
         num_blocks=3,
         pool_style="max",
         lr_slope=0.666,
+        kernel_size=3,
     )
 
     # Test the second down block contents
@@ -172,3 +186,19 @@ def test_encoder_2d_second_down_block_contents():
     assert encoder[2][1][1][0].out_channels == 4 * 111
     assert encoder[2][1][1][1].num_features == 4 * 111
     assert encoder[2][1][1][2].negative_slope == 0.666
+
+
+def test_encoder_2d_contents_with_different_kernel_sizes():
+    """Test contents of the ``Conv2d`` layers with differnet kerne; sizes."""
+    for kernel_size in [1, 3, 5, 7]:
+        encoder = Encoder2d(
+            in_chans=123,
+            start_features=111,
+            num_blocks=3,
+            pool_style="max",
+            lr_slope=0.666,
+            kernel_size=kernel_size,
+        )
+
+        # pylint: disable=cell-var-from-loop
+        encoder.apply(lambda x: kernel_size_check(x, kernel_size))

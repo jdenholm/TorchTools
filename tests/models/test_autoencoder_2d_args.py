@@ -159,3 +159,37 @@ def test_bilinear_argument_type():
 
     with pytest.raises(TypeError):
         _ = AutoEncoder2d(in_chans=3, out_chans=3, bilinear=1j)
+
+
+def test_kernel_size_argument_type():
+    """Test the types accepted by the ``kernel_size`` argument."""
+    # Should work with int
+    _ = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=1)
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=1.0)
+
+    with pytest.raises(TypeError):
+        _ = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=1j)
+
+
+def test_kernel_size_argument_values():
+    """Test the values accepted by the ``kernel_size`` argument."""
+    # Should work with positive, odd, int
+    _ = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=1)
+    _ = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=3)
+    _ = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=5)
+
+    # Should break with ints less than one, or positive evens
+    with pytest.raises(ValueError):
+        _ = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=-1)
+
+    with pytest.raises(ValueError):
+        _ = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=0)
+
+    with pytest.raises(ValueError):
+        _ = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=2)
+
+    with pytest.raises(ValueError):
+        _ = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=4)
