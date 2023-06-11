@@ -78,7 +78,7 @@ class Encoder2d(Sequential):
                 process_str_arg(pool_style),
                 process_negative_slope_arg(lr_slope),
                 process_2d_kernel_size(kernel_size),
-            )
+            ),
         )
 
     def _get_blocks(
