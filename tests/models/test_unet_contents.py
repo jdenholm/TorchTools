@@ -134,3 +134,62 @@ def test_down_blocks_channels():
             assert block[1][1][0].out_channels == feats * 2
 
             feats *= 2
+
+
+def test_up_blocks_channels_without_blinear_interp():
+    """Test the number of channels in the up blocks with no bilinear interp."""
+    for feats in [8, 16, 32]:
+        model = UNet(
+            in_chans=1,
+            out_chans=1,
+            features_start=feats,
+            bilinear=False,
+            num_layers=3,
+        )
+        up_blocks = model.up_blocks
+
+        feats = feats * 2 ** (2)
+
+        for block in up_blocks:
+            # Test the first block in the double conv block
+            assert block.double_conv[0][0].in_channels == feats
+            assert block.double_conv[0][0].out_channels == feats // 2
+
+            # Test the second block in the double conv block
+            assert block.double_conv[1][0].in_channels == feats // 2
+            assert block.double_conv[1][0].out_channels == feats // 2
+
+            feats //= 2
+
+
+def test_up_blocks_channels_with_blinear_interp():
+    """Test the number of channels in the up blocks with bilinear interp."""
+    for feats in [8, 16, 32]:
+        model = UNet(
+            in_chans=1,
+            out_chans=1,
+            features_start=feats,
+            bilinear=True,
+            num_layers=3,
+        )
+        up_blocks = model.up_blocks
+
+        feats = feats * 2 ** (2)
+
+        for block in up_blocks:
+            # Test the output conv of the upsample layer
+            # If you are confused why the output channels are halved,
+            # remember this bit acts on a Tensor that will be concatenated
+            # with down features
+            assert block.upsample[1].in_channels == feats
+            assert block.upsample[1].out_channels == feats // 2
+
+            # Test the first block in the double conv block
+            assert block.double_conv[0][0].in_channels == feats
+            assert block.double_conv[0][0].out_channels == feats // 2
+
+            # Test the second block in the double conv block
+            assert block.double_conv[1][0].in_channels == feats // 2
+            assert block.double_conv[1][0].out_channels == feats // 2
+
+            feats //= 2
