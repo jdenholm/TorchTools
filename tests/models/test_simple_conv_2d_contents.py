@@ -2,7 +2,7 @@
 
 import pytest
 
-from torch.nn import AdaptiveAvgPool2d, AdaptiveMaxPool2d, Flatten, Linear
+from torch.nn import AdaptiveAvgPool2d, AdaptiveMaxPool2d, Flatten
 from torch.nn import AvgPool2d, MaxPool2d, Conv2d, BatchNorm2d, LeakyReLU
 from torch.nn import Module
 
