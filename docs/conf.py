@@ -14,7 +14,8 @@ import os
 import sys
 from importlib.metadata import version as _version
 
-sys.path.insert(0, os.path.abspath("../src/torch_tools"))
+sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../src'))
 
 
 # -- Project information -----------------------------------------------------
