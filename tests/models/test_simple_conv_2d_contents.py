@@ -227,20 +227,28 @@ def test_simple_conv_net_2d_contents_with_variable_kernel_sizes():
 def test_fc_net_kwarg_dict_type():
     """Test the types accepted by the `fc_net_kwargs` arg."""
     # Should work with dictionary
-    _ = SimpleConvNet2d(out_feats=1, fc_net_kwargs={})
+    _ = (SimpleConvNet2d(in_chans=1, out_feats=1, fc_net_kwargs={}),)
 
     # Should break with non-dict
     with pytest.raises(TypeError):
-        _ = SimpleConvNet2d(out_feats=1, fc_net_kwargs=[1])
+        _ = (SimpleConvNet2d(in_chans=1, out_feats=1, fc_net_kwargs=[1]),)
 
 
 def test_in_feats_not_in_dn_kwargs():
     """Test the user cannot supply ``in_feats`` in ``fc_net_kwargs``."""
     with pytest.raises(RuntimeError):
-        _ = SimpleConvNet2d(out_feats=1, fc_net_kwargs={"in_feats": 10})
+        _ = SimpleConvNet2d(
+            in_chans=1,
+            out_feats=1,
+            fc_net_kwargs={"in_feats": 10},
+        )
 
 
 def test_out_feats_not_in_dn_kwargs():
     """Test the user cannot supply ``out_feats`` in ``fc_net_kwargs``."""
     with pytest.raises(RuntimeError):
-        _ = SimpleConvNet2d(out_feats=1, fc_net_kwargs={"out_feats": 10})
+        _ = SimpleConvNet2d(
+            in_chans=1,
+            out_feats=1,
+            fc_net_kwargs={"out_feats": 10},
+        )
