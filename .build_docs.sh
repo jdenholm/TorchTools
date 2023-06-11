@@ -8,7 +8,7 @@ git checkout -b gh-pages
 cd docs
 make clean
 make html
-cp -r _build/html/*.html .
+cp -r _build/html/* .
 cd ..
 
 
