@@ -12,7 +12,7 @@
 #
 import os
 import sys
-from pathlib import Path as _path
+from importlib.metadata import version as _version
 
 sys.path.insert(0, os.path.abspath("../torch_tools"))
 
@@ -26,8 +26,7 @@ root_doc = "index"
 
 # The full version, including alpha/beta/rc tags
 # pylint: disable=unspecified-encoding
-with open(_path(__file__).parent.parent / "VERSION.txt", "r") as ver:
-    release = ver.read().strip()
+release = _version("torch_tools")
 
 
 # -- General configuration ---------------------------------------------------

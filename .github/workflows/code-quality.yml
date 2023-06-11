@@ -1,4 +1,4 @@
-name: Python Package using Conda
+name: Code-quality checks
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        conda env update --file requirements.conda.yaml --name base
+        conda env update --file requirements-dev.conda.yaml --name base
 
     - name: Print python version
       run: |
@@ -35,16 +35,16 @@ jobs:
 
     - name: Lint with Pylint
       run: |
-        pylint $(git ls-files torch_tools)
+        pylint $(git ls-files src/)
 
     - name: Lint with Mypy
       run: |
-        mypy $(git ls-files torch_tools)
+        mypy $(git ls-files src/)
 
     - name: Lint with Pydocstyle
       run: |
-        pydocstyle --convention=numpy $(git ls-files torch_tools)
+        pydocstyle --convention=numpy $(git ls-files src/)
 
     - name: Test with Pytest
       run: |
-        pytest .
+        pytest tests/

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "torch_tools"
+version = "0.2.0"
+description = "PyTorch and other tools"
+authors = [
+  { name="Jim Denholm", email="j.denholm.2017@gmail.com" },
+]
+readme = "README.md"
+license = {file = "LICENSE.md"}
+requires-python = ">=3.9.10"
+
+dependencies = ["torch", "torchvision"]
+
+
+[project.urls]
+"Homepage" = "https://github.com/jdenholm/TorchTools"
+"Bug Tracker" = "https://github.com/jdenholm/TorchTools/Issues"
+
+[tool.setuptools]
+package-dir = {}

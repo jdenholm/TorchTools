@@ -96,7 +96,7 @@ def process_dropout_prob(prob: float) -> float:
     Parameters
     ----------
     prob : float
-        Dropout probability.
+        Dropout probability. Should be on [0.0, 1.0).
 
     Returns
     -------
@@ -108,7 +108,7 @@ def process_dropout_prob(prob: float) -> float:
     TypeError
         If `prob` is not a float.
     ValueError
-        If `prob` is not (0.0, 1.0].
+        If `prob` is not [0.0, 1.0).
 
     """
     if not isinstance(prob, float):
