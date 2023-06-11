@@ -25,7 +25,6 @@ author = "J. Denholm"
 root_doc = "index"
 
 # The full version, including alpha/beta/rc tags
-# pylint: disable=unspecified-encoding
 release = _version("torch_tools")
 
 
