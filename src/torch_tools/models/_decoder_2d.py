@@ -8,6 +8,7 @@ from torch_tools.models._blocks_2d import UpBlock
 from torch_tools.models._argument_processing import process_num_feats
 from torch_tools.models._argument_processing import process_boolean_arg
 from torch_tools.models._argument_processing import process_negative_slope_arg
+from torch_tools.models._argument_processing import process_2d_kernel_size
 
 # pylint: disable=too-many-arguments
 
@@ -28,6 +29,9 @@ class Decoder2d(Sequential):
         ``ConvTranspose2d`` to do the upsampling.
     lr_slope : float
         The negative slope to use in the ``LeakyReLU`` layers.
+    kernel_size : int
+        The size of the square convolutional kernel in the ``Conv2d`` layers.
+        Should be an odd, positive, int.
 
     Examples
     --------
@@ -38,6 +42,7 @@ class Decoder2d(Sequential):
                     num_blocks=4,
                     bilinear=False,
                     lr_slope=0.123,
+                    kernel_size=3,
                 )
 
     """
@@ -49,6 +54,7 @@ class Decoder2d(Sequential):
         num_blocks: int,
         bilinear: bool,
         lr_slope: float,
+        kernel_size: int,
     ):
         """Build `Decoder`."""
         super().__init__(
@@ -57,6 +63,7 @@ class Decoder2d(Sequential):
                 process_num_feats(num_blocks),
                 process_boolean_arg(bilinear),
                 process_negative_slope_arg(lr_slope),
+                process_2d_kernel_size(kernel_size),
             ),
             Conv2d(
                 in_channels=in_chans // (2 ** (process_num_feats(num_blocks) - 1)),
@@ -97,6 +104,7 @@ class Decoder2d(Sequential):
         num_blocks: int,
         bilinear: bool,
         lr_slope: float,
+        kernel_size: int,
     ) -> List[UpBlock]:
         """Get the upsampling blocks in a ``Sequential``.
 
@@ -111,6 +119,9 @@ class Decoder2d(Sequential):
             ``ConvTranspose2d`` to upsample.
         lr_slope : float
             Negative slope to use in the ``LeakReLU`` layers.
+        kernel_size : int
+            The size of the square convolutional kernel in the ``Conv2d``
+            layers. Should be an odd, positive, int.
 
         Returns
         -------
@@ -128,6 +139,7 @@ class Decoder2d(Sequential):
                     process_num_feats(chans // 2),
                     bilinear,
                     lr_slope,
+                    kernel_size,
                 )
             )
             chans //= 2

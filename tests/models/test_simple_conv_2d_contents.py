@@ -2,11 +2,18 @@
 
 from torch.nn import AdaptiveAvgPool2d, AdaptiveMaxPool2d, Flatten, Linear
 from torch.nn import AvgPool2d, MaxPool2d, Conv2d, BatchNorm2d, LeakyReLU
+from torch.nn import Module
 
 from torch_tools import SimpleConvNet2d, Encoder2d
 from torch_tools.models._adaptive_pools_2d import _ConcatMaxAvgPool2d
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
 from torch_tools.models._blocks_2d import DownBlock
+
+
+def kernel_size_check(block: Module, kernel_size: int):
+    """Make sure any kernel sizes are correct."""
+    if isinstance(block, Conv2d):
+        assert block.kernel_size == (kernel_size, kernel_size)
 
 
 def test_simple_conv_net_contents():
@@ -178,7 +185,6 @@ def test_encoder_down_block_contents_with_avg_pool():
     in_chans = 64
 
     for down_block in list(encoder.children())[1:]:
-
         assert isinstance(down_block, DownBlock)
         assert isinstance(down_block[0], AvgPool2d)
         assert isinstance(down_block[1], DoubleConvBlock)
@@ -206,3 +212,10 @@ def test_encoder_down_block_contents_with_avg_pool():
         assert down_block[1][1][2].negative_slope == 0.654321
 
         in_chans *= 2
+
+
+def test_simple_conv_net_2d_contents_with_variable_kernel_sizes():
+    """Test the contents with different kernel sizes."""
+    for size in [1, 3, 5]:
+        model = SimpleConvNet2d(in_chans=3, out_feats=10, kernel_size=size)
+        model[0].apply(lambda x: kernel_size_check(x, size))

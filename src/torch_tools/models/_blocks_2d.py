@@ -11,6 +11,7 @@ from torch.nn.functional import pad
 
 from torch_tools.models._argument_processing import (
     process_num_feats,
+    process_2d_kernel_size,
     process_negative_slope_arg,
     process_boolean_arg,
     process_str_arg,
@@ -28,10 +29,13 @@ class ConvBlock(Sequential):
         The number of input channels the block should take.
     out_chans : int
         The number of output channels the block should produce.
+    kernel_size : int, optional
+        The kernel size to use in the ``Conv2d`` layers. Should be odd and
+        positive.
     batch_norm : bool
         Should we include a ``BatchNorm2d`` layer?
     leaky_relu : bool
-        Should we include a `LeakyReLU` layer?
+        Should we include a ``LeakyReLU`` layer?
     lr_slope : float, optional
         The negative slope to use in the ``LeakyReLU`` (use 0.0 for ``ReLU``).
 
@@ -41,6 +45,7 @@ class ConvBlock(Sequential):
         self,
         in_chans: int,
         out_chans: int,
+        kernel_size: int = 3,
         batch_norm: bool = True,
         leaky_relu: bool = True,
         lr_slope: float = 0.1,
@@ -50,6 +55,7 @@ class ConvBlock(Sequential):
             *self._layers(
                 process_num_feats(in_chans),
                 process_num_feats(out_chans),
+                process_2d_kernel_size(kernel_size),
                 process_boolean_arg(batch_norm),
                 process_boolean_arg(leaky_relu),
                 process_negative_slope_arg(lr_slope),
@@ -60,6 +66,7 @@ class ConvBlock(Sequential):
     def _layers(
         in_chans: int,
         out_chans: int,
+        kernel_size: int,
         batch_norm: bool,
         leaky_relu: bool,
         lr_slope: float,
@@ -77,7 +84,15 @@ class ConvBlock(Sequential):
 
         """
         layers: List[Module]
-        layers = [Conv2d(in_chans, out_chans, kernel_size=3, padding=1)]
+        layers = [
+            Conv2d(
+                in_chans,
+                out_chans,
+                kernel_size=kernel_size,
+                padding=kernel_size // 2,
+                stride=1,
+            )
+        ]
 
         if batch_norm is True:
             layers.append(BatchNorm2d(out_chans))
@@ -99,22 +114,20 @@ class DoubleConvBlock(Sequential):
         The number of output channels the block should produce.
     lr_slope : float, optional
         The slope to use in the `LeakyReLU` layers.
+    kernel_size : int
+        The size of the kernel to use in the ``ConvBlock``s. Should be odd,
+        positive integers.
 
     """
 
-    def __init__(self, in_chans: int, out_chans: int, lr_slope: float):
-        """Build `DoubleConvBlock`.
-
-        Parameters
-        ----------
-        in_chans : int
-            The number of input channels the block should take.
-        out_chans : int
-            The number of output channels the block should take.
-        lr_slope : float, optional
-            The negative slope to use in the `LeakyReLU`.
-
-        """
+    def __init__(
+        self,
+        in_chans: int,
+        out_chans: int,
+        lr_slope: float,
+        kernel_size: int = 3,
+    ):
+        """Build `DoubleConvBlock`."""
         super().__init__(
             ConvBlock(
                 process_num_feats(in_chans),
@@ -122,6 +135,7 @@ class DoubleConvBlock(Sequential):
                 batch_norm=True,
                 leaky_relu=True,
                 lr_slope=process_negative_slope_arg(lr_slope),
+                kernel_size=process_2d_kernel_size(kernel_size),
             ),
             ConvBlock(
                 process_num_feats(out_chans),
@@ -129,6 +143,7 @@ class DoubleConvBlock(Sequential):
                 batch_norm=True,
                 leaky_relu=True,
                 lr_slope=process_negative_slope_arg(lr_slope),
+                kernel_size=process_2d_kernel_size(kernel_size),
             ),
         )
 
@@ -140,15 +155,19 @@ class ResidualBlock(Module):
     ----------
     in_chans : int
         The number of input channels.
+    kernel_size : int
+        Size of the square convolutional kernel to use in the ``Conv2d``
+        layers. Must be an odd, positive, int.
 
     """
 
-    def __init__(self, in_chans: int):
+    def __init__(self, in_chans: int, kernel_size: int = 3):
         """Build `ResidualBlock`."""
         super().__init__()
         self.first_conv = ConvBlock(
             in_chans,
             in_chans,
+            kernel_size=process_2d_kernel_size(kernel_size),
             batch_norm=True,
             leaky_relu=True,
             lr_slope=0.0,
@@ -156,6 +175,7 @@ class ResidualBlock(Module):
         self.second_conv = ConvBlock(
             in_chans,
             in_chans,
+            kernel_size=process_2d_kernel_size(kernel_size),
             batch_norm=True,
             leaky_relu=False,
         )
@@ -194,6 +214,11 @@ class DownBlock(Sequential):
         The number of output channels the block should take.
     pool : str
         The style of the pooling layer to use: can be `"avg"` or `"max"`.
+    lr_slope : float
+        The negative slope to use in the ``LeakyReLU`` arguments.
+    kernel_size : int
+        The size of the square convolutional kernel to use on the ``Conv2d``
+        layers. Must be an odd, positive, int.
 
     """
 
@@ -203,6 +228,7 @@ class DownBlock(Sequential):
         out_chans: int,
         pool: str,
         lr_slope: float,
+        kernel_size: int = 3,
     ):
         """Build `DownBlock`."""
         super().__init__(
@@ -215,6 +241,7 @@ class DownBlock(Sequential):
                 process_num_feats(in_chans),
                 process_num_feats(out_chans),
                 lr_slope=process_negative_slope_arg(lr_slope),
+                kernel_size=process_2d_kernel_size(kernel_size),
             ),
         )
 
@@ -235,6 +262,8 @@ class UpBlock(Sequential):
         ``ConvTranspose2d`` (``False``).
     lr_slope : float
         Negative slope to use in the ``LeakyReLU`` layers.
+    kernel_size : int
+        Size of the covolutional kernel. Must be an odd, positive, int.
 
     """
 
@@ -244,6 +273,7 @@ class UpBlock(Sequential):
         out_chans: int,
         bilinear: bool,
         lr_slope: float,
+        kernel_size: int = 3,
     ):
         """Build `UpBlock`."""
         super().__init__(
@@ -255,6 +285,7 @@ class UpBlock(Sequential):
                 process_num_feats(in_chans),
                 process_num_feats(out_chans),
                 lr_slope=process_negative_slope_arg(lr_slope),
+                kernel_size=process_2d_kernel_size(kernel_size),
             ),
         )
 
@@ -302,10 +333,13 @@ class UNetUpBlock(Module):
     out_chans : int
         The number of output channels.
     bilinear : bool
-        If `True`, the upsample is done using bilinear interpolation using
-        `torch.nn.Upsample`. Otherwise we use a `ConvTranspose2d`
+        If ``True``, the upsample is done using bilinear interpolation using
+        ``torch.nn.Upsample``. Otherwise we use a ``ConvTranspose2d``.
     lr_slope : float
-        The negative slope to use in the `LeakyReLU`.
+        The negative slope to use in the ``LeakyReLU``.
+    kernel_size : int
+        The size of the square convolutional kernel to use in the convolutional
+        layers, Should be an odd, positive, int.
 
     """
 
@@ -315,6 +349,7 @@ class UNetUpBlock(Module):
         out_chans: int,
         bilinear: bool,
         lr_slope: float,
+        kernel_size: int = 3,
     ):
         """Build `UNetUpBlock`."""
         super().__init__()
@@ -326,6 +361,7 @@ class UNetUpBlock(Module):
             self._in_chans,
             self._out_chans,
             lr_slope=lr_slope,
+            kernel_size=process_2d_kernel_size(kernel_size),
         )
 
     @staticmethod

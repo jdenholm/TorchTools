@@ -16,6 +16,7 @@ def test_decoder_2d_number_of_blocks():
         num_blocks=5,
         bilinear=False,
         lr_slope=0.123456,
+        kernel_size=3,
     )
 
     assert len(decoder) == 5
@@ -27,6 +28,7 @@ def test_decoder_2d_number_of_blocks():
         num_blocks=3,
         bilinear=False,
         lr_slope=0.123456,
+        kernel_size=3,
     )
 
     assert len(decoder) == 3
@@ -40,6 +42,7 @@ def test_decoder_2d_block_types():
         num_blocks=5,
         bilinear=False,
         lr_slope=0.123456,
+        kernel_size=3,
     )
 
     # All but the last block should be down blocks
@@ -59,6 +62,7 @@ def test_decoder_2d_final_layer():
         num_blocks=5,
         bilinear=False,
         lr_slope=0.123456,
+        kernel_size=3,
     )
 
     # The last layer should be a conv 2d
@@ -78,10 +82,10 @@ def test_decoder_2d_up_layer_types_with_bilinear_false():
         num_blocks=5,
         bilinear=False,
         lr_slope=0.123456,
+        kernel_size=3,
     )
 
     for block in list(decoder.children())[:-1]:
-
         assert isinstance(block[0], ConvTranspose2d)
 
 
@@ -93,10 +97,10 @@ def test_decoder_2d_up_layer_types_with_bilinear_true():
         num_blocks=5,
         bilinear=True,
         lr_slope=0.123456,
+        kernel_size=3,
     )
 
     for block in list(decoder.children())[:-1]:
-
         assert isinstance(block[0], Sequential)
         assert isinstance(block[0][0], Upsample)
         assert isinstance(block[0][1], Conv2d)
@@ -110,6 +114,7 @@ def test_first_up_block_contents_with_bilinear_false():
         num_blocks=5,
         bilinear=False,
         lr_slope=0.123456,
+        kernel_size=3,
     )
 
     first_block = decoder[0]
@@ -154,6 +159,7 @@ def test_second_up_block_contents_with_bilinear_false():
         num_blocks=5,
         bilinear=False,
         lr_slope=0.123456,
+        kernel_size=3,
     )
 
     second_block = decoder[1]
@@ -198,6 +204,7 @@ def test_first_up_block_contents_with_bilinear_true():
         num_blocks=5,
         bilinear=True,
         lr_slope=0.123456,
+        kernel_size=3,
     )
 
     first_block = decoder[0]
@@ -247,6 +254,7 @@ def test_second_up_block_contents_with_bilinear_true():
         num_blocks=5,
         bilinear=True,
         lr_slope=0.123456,
+        kernel_size=3,
     )
 
     second_block = decoder[1]
@@ -294,6 +302,7 @@ def test_final_block_contents():
         num_blocks=5,
         bilinear=True,
         lr_slope=0.123456,
+        kernel_size=3,
     )
 
     assert isinstance(decoder[-1], Conv2d)
@@ -301,3 +310,23 @@ def test_final_block_contents():
     assert decoder[-1].out_channels == 123
     assert decoder[-1].kernel_size == (1, 1)
     assert decoder[-1].stride == (1, 1)
+
+
+def test_contents_with_different_kernel_sizes():
+    """Test the contents with different kenerel sizes."""
+    for size in [1, 3, 5, 7]:
+        decoder = Decoder2d(
+            in_chans=512,
+            out_chans=123,
+            num_blocks=5,
+            bilinear=True,
+            lr_slope=0.123456,
+            kernel_size=size,
+        )
+
+        # We only want to test the conv layers in the double conv blocks
+        # of the up blocks
+        for block in decoder.children():
+            if isinstance(block, UpBlock):
+                assert block[1][0][0].kernel_size == (size, size)
+                assert block[1][1][0].kernel_size == (size, size)

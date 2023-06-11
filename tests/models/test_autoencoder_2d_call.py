@@ -1,6 +1,5 @@
 """Test the call behaviour of ``torch_tools.AutoEncoder2d``."""
 from itertools import product
-import pytest
 
 from torch import rand  # pylint: disable=no-name-in-module
 
@@ -8,57 +7,38 @@ from torch import rand  # pylint: disable=no-name-in-module
 from torch_tools import AutoEncoder2d
 
 
-def test_autoencoder_2d_return_channels():
-    """Test the correct number of channels are returned.
+def test_autoencoder_2d_return_shapes():
+    """Test the shapes of the output of ``AutoEncoder2d``."""
+    in_channels = [1, 123]
+    out_channels = [1, 3]
+    num_layers = [2, 3]
+    features_start = [16, 32]
+    slopes = [0.0, 0.1]
+    pools = ["avg", "max"]
+    bilinear = [True, False]
+    kernel_size = [1, 3, 5]
 
-    Sweeps through all of the upsampling and pooling combinations and tests.
+    iterator = product(
+        in_channels,
+        out_channels,
+        num_layers,
+        features_start,
+        slopes,
+        pools,
+        bilinear,
+        kernel_size,
+    )
 
-    """
-    for bilinear, pool in product([True, False], ["max", "avg"]):
+    for ins, outs, layers, feats, slope, pool, bilin, size in iterator:
         model = AutoEncoder2d(
-            in_chans=3,
-            out_chans=123,
-            bilinear=bilinear,
+            in_chans=ins,
+            out_chans=outs,
+            num_layers=layers,
+            features_start=feats,
+            lr_slope=slope,
             pool_style=pool,
+            bilinear=bilin,
+            kernel_size=size,
         )
-        assert model(rand(10, 3, 64, 64)).shape[1] == 123
 
-        model = AutoEncoder2d(
-            in_chans=123,
-            out_chans=222,
-            bilinear=bilinear,
-            pool_style=pool,
-        )
-        assert model(rand(10, 123, 64, 64)).shape[1] == 222
-
-
-def test_autoencoder_2d_return_sizes():
-    """Test the size of the output batch is correct.
-
-    Sweeps through all of the pool--upsampling combinations and tests.
-
-    """
-    for bilinear, pool in product([True, False], ["max", "avg"]):
-        model = AutoEncoder2d(
-            in_chans=3,
-            out_chans=3,
-            bilinear=bilinear,
-            pool_style=pool,
-        )
-        assert model(rand(10, 3, 64, 128)).shape == (10, 3, 64, 128)
-
-        model = AutoEncoder2d(
-            in_chans=9,
-            out_chans=3,
-            bilinear=bilinear,
-            pool_style=pool,
-        )
-        assert model(rand(10, 9, 128, 64)).shape == (10, 3, 128, 64)
-
-        model = AutoEncoder2d(
-            in_chans=15,
-            out_chans=3,
-            bilinear=bilinear,
-            pool_style=pool,
-        )
-        assert model(rand(10, 15, 32, 32)).shape == (10, 3, 32, 32)
+        assert model(rand(10, ins, 16, 32)).shape == (10, outs, 16, 32)

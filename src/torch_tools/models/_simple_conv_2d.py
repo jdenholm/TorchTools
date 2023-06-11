@@ -5,6 +5,7 @@ from torch.nn import Sequential, Linear, Flatten
 from torch_tools.models._encoder_2d import Encoder2d
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
 from torch_tools.models._argument_processing import process_num_feats
+from torch_tools.models._argument_processing import process_2d_kernel_size
 
 # pylint: disable=too-many-arguments
 
@@ -30,6 +31,9 @@ class SimpleConvNet2d(Sequential):
         ``"max"`` or ``"avg-max-concat"``.)
     lr_slope : float
         The negative slope to use in the ``LeakyReLU`` layers.
+    kernel_size : int
+        The size of the square convolutional kernel to use in the ``Conv2d``
+        layers. Must be an odd, positive, int.
 
     Examples
     --------
@@ -55,6 +59,7 @@ class SimpleConvNet2d(Sequential):
         downsample_pool: str = "max",
         adaptive_pool: str = "avg",
         lr_slope: float = 0.1,
+        kernel_size: int = 3,
     ):
         """Build ``SimpleConvNet2d``."""
         super().__init__(
@@ -64,6 +69,7 @@ class SimpleConvNet2d(Sequential):
                 num_blocks,
                 downsample_pool,
                 lr_slope,
+                process_2d_kernel_size(kernel_size),
             ),
             get_adaptive_pool(
                 option=adaptive_pool,

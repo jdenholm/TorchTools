@@ -1,10 +1,16 @@
 """Test the contents of ``torch_tools.AutoEncoder2d``."""
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU, AvgPool2d, MaxPool2d
-from torch.nn import ConvTranspose2d, Sequential, Upsample
+from torch.nn import ConvTranspose2d, Sequential, Upsample, Module
 
 from torch_tools import AutoEncoder2d
 from torch_tools.models._blocks_2d import DoubleConvBlock, ConvBlock, DownBlock
 from torch_tools.models._blocks_2d import UpBlock
+
+
+def kernel_size_check(block: Module, kernel_size: int):
+    """Make sure any kernel sizes are correct."""
+    if isinstance(block, Conv2d):
+        assert block.kernel_size == (kernel_size, kernel_size)
 
 
 def test_number_of_blocks():
@@ -227,3 +233,25 @@ def test_decoder_up_block_contents_with_bilinear_interpolation():
         assert second_conv[1].num_features == in_chans // 2
 
         in_chans //= 2
+
+
+def test_autoencoder_encoder_contents_with_different_kernel_sizes():
+    """Test the ``AutoEncoder2d``s encoder's contents."""
+    for size in [1, 3, 5]:
+        auto_encoder = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=size)
+
+        encoder = auto_encoder.encoder
+        encoder.apply(lambda x: kernel_size_check(x, size))
+
+
+def test_autoencoder_decoder_contents_with_different_kernel_sizes():
+    """Test the ``AutoEncoder2d``'s decoder's contents."""
+    for size in [1, 3, 5]:
+        auto_encoder = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=size)
+        decoder = auto_encoder.decoder
+
+        for block in decoder.children():
+            # The only conv blocks whose kernel size should change
+            # are in the UpBlocks
+            if isinstance(block, UpBlock):
+                block[1].apply(lambda x: kernel_size_check(x, size))

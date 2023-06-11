@@ -14,6 +14,7 @@ def test_in_chans_arg_types():
         num_blocks=4,
         bilinear=False,
         lr_slope=0.666,
+        kernel_size=3,
     )
 
     # Should break with non-int
@@ -24,6 +25,7 @@ def test_in_chans_arg_types():
             num_blocks=4,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
     # Should break with non-int
     with pytest.raises(TypeError):
@@ -33,6 +35,7 @@ def test_in_chans_arg_types():
             num_blocks=4,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
 
 
@@ -45,6 +48,7 @@ def test_in_chans_arg_values():
         num_blocks=4,
         bilinear=False,
         lr_slope=0.666,
+        kernel_size=3,
     )
 
     # Should break if 2 doesn't divide in_chans (num_blocks - 1) times.
@@ -55,6 +59,7 @@ def test_in_chans_arg_values():
             num_blocks=2,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
 
     with pytest.raises(ValueError):
@@ -64,6 +69,7 @@ def test_in_chans_arg_values():
             num_blocks=3,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
 
     # Should break if less than 1
@@ -74,6 +80,7 @@ def test_in_chans_arg_values():
             num_blocks=3,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
     with pytest.raises(ValueError):
         _ = Decoder2d(
@@ -82,6 +89,7 @@ def test_in_chans_arg_values():
             num_blocks=3,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
 
 
@@ -94,6 +102,7 @@ def test_out_chans_arg_types():
         num_blocks=4,
         bilinear=False,
         lr_slope=0.666,
+        kernel_size=3,
     )
 
     # Should break with non-ints
@@ -104,6 +113,7 @@ def test_out_chans_arg_types():
             num_blocks=4,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
     with pytest.raises(TypeError):
         _ = Decoder2d(
@@ -112,6 +122,7 @@ def test_out_chans_arg_types():
             num_blocks=4,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
 
 
@@ -124,6 +135,7 @@ def test_out_chans_arg_values():
         num_blocks=4,
         bilinear=False,
         lr_slope=0.666,
+        kernel_size=3,
     )
 
     # Should break with ints less than 1
@@ -134,6 +146,7 @@ def test_out_chans_arg_values():
             num_blocks=4,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
     # Should break with ints less than 1
     with pytest.raises(ValueError):
@@ -143,6 +156,7 @@ def test_out_chans_arg_values():
             num_blocks=4,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
 
 
@@ -155,6 +169,7 @@ def test_num_blocks_arg_types():
         num_blocks=1,
         bilinear=False,
         lr_slope=0.666,
+        kernel_size=3,
     )
 
     # Should break with non-int
@@ -165,6 +180,7 @@ def test_num_blocks_arg_types():
             num_blocks=1.0,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
 
 
@@ -177,6 +193,7 @@ def test_num_blocks_arg_values():
         num_blocks=1,
         bilinear=False,
         lr_slope=0.666,
+        kernel_size=3,
     )
 
     # Should break with ints less than one
@@ -187,6 +204,7 @@ def test_num_blocks_arg_values():
             num_blocks=0,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
     with pytest.raises(ValueError):
         _ = Decoder2d(
@@ -195,6 +213,7 @@ def test_num_blocks_arg_values():
             num_blocks=-1,
             bilinear=False,
             lr_slope=0.666,
+            kernel_size=3,
         )
 
 
@@ -207,6 +226,7 @@ def test_bilinear_arg_types():
         num_blocks=1,
         bilinear=True,
         lr_slope=0.666,
+        kernel_size=3,
     )
     _ = Decoder2d(
         in_chans=8,
@@ -214,6 +234,7 @@ def test_bilinear_arg_types():
         num_blocks=1,
         bilinear=False,
         lr_slope=0.666,
+        kernel_size=3,
     )
 
     # Should break with non-bool
@@ -224,6 +245,7 @@ def test_bilinear_arg_types():
             num_blocks=1,
             bilinear=1,
             lr_slope=0.666,
+            kernel_size=3,
         )
 
     with pytest.raises(TypeError):
@@ -233,6 +255,7 @@ def test_bilinear_arg_types():
             num_blocks=1,
             bilinear="Barliman Butterbur",
             lr_slope=0.666,
+            kernel_size=3,
         )
 
 
@@ -245,6 +268,7 @@ def test_lr_slope_arg_types():
         num_blocks=3,
         bilinear=True,
         lr_slope=0.666,
+        kernel_size=3,
     )
 
     # Should break with non-float
@@ -255,6 +279,7 @@ def test_lr_slope_arg_types():
             num_blocks=1,
             bilinear=True,
             lr_slope=1,
+            kernel_size=3,
         )
 
     with pytest.raises(TypeError):
@@ -264,4 +289,65 @@ def test_lr_slope_arg_types():
             num_blocks=1,
             bilinear=True,
             lr_slope=1,
+            kernel_size=3,
         )
+
+
+def test_kernel_size_argument_types():
+    """Test the types accepted by the ``kernel_size`` argument."""
+    # Should work with ints
+    _ = Decoder2d(
+        in_chans=8,
+        out_chans=3,
+        num_blocks=3,
+        bilinear=True,
+        lr_slope=0.666,
+        kernel_size=3,
+    )
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = Decoder2d(
+            in_chans=8,
+            out_chans=3,
+            num_blocks=3,
+            bilinear=True,
+            lr_slope=0.666,
+            kernel_size=3.0,
+        )
+
+    with pytest.raises(TypeError):
+        _ = Decoder2d(
+            in_chans=8,
+            out_chans=3,
+            num_blocks=3,
+            bilinear=True,
+            lr_slope=0.666,
+            kernel_size=3j,
+        )
+
+
+def test_kernel_size_argument_values():
+    """Test the values accepted by the ``kernel_size`` arg."""
+    # Should work with odd, positive ints
+    for size in [1, 3, 5, 7]:
+        _ = Decoder2d(
+            in_chans=8,
+            out_chans=3,
+            num_blocks=3,
+            bilinear=True,
+            lr_slope=0.666,
+            kernel_size=size,
+        )
+
+    # Should break with positive evens and ints less than one
+    for size in [-1, -2, 0, 2, 4, 6]:
+        with pytest.raises(ValueError):
+            _ = Decoder2d(
+                in_chans=8,
+                out_chans=3,
+                num_blocks=3,
+                bilinear=True,
+                lr_slope=0.666,
+                kernel_size=size,
+            )

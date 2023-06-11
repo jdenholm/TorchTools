@@ -1,4 +1,6 @@
 """Tests for the call methods of blocks in `torch_tools.models._blocks_2d`."""
+from itertools import product
+
 
 from torch import rand  # pylint: disable=no-name-in-module
 
@@ -6,109 +8,133 @@ from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResidualBl
 from torch_tools.models._blocks_2d import DownBlock, UpBlock, UNetUpBlock
 
 
-def test_conv_block_call_return_shapes_with_batchnorm_and_leaky_relu():
-    """Test the return shapes produced by `ConvBlock` are correct.
+def test_conv_block_call_return_shapes():
+    """Test the return shapes with various combinations of all arguments."""
+    in_channels = [3, 123, 321]
+    out_channels = [3, 123, 321]
+    batch_norms = [True, False]
+    leaky_relus = [True, False]
+    negative_slopes = [0.0, 0.1]
+    kernels = [3, 5, 7]
 
-    Notes
-    -----
-    Test the block returns the correct shape when we include both a
-    batchnorm and leaky relu layer.
-
-
-    """
-    block = ConvBlock(
-        in_chans=123,
-        out_chans=321,
-        batch_norm=True,
-        leaky_relu=True,
+    arg_iter = product(
+        in_channels,
+        out_channels,
+        batch_norms,
+        leaky_relus,
+        negative_slopes,
+        kernels,
     )
-    assert block(rand(10, 123, 50, 100)).shape == (10, 321, 50, 100)
 
+    for in_chans, out_chans, bnorm, leaky, slope, kernel_size in arg_iter:
+        block = ConvBlock(
+            in_chans=in_chans,
+            out_chans=out_chans,
+            batch_norm=bnorm,
+            leaky_relu=leaky,
+            lr_slope=slope,
+            kernel_size=kernel_size,
+        )
 
-def test_conv_block_call_return_shapes_with_batchnorm_and_no_leaky_relu():
-    """Test the return shapes produced by `ConvBlock` are correct.
-
-    Notes
-    -----
-    Test the block returns the correct shape when we only include a batchnorm
-    and do not include a leaky relu.
-
-    """
-    block = ConvBlock(
-        in_chans=111,
-        out_chans=222,
-        batch_norm=True,
-        leaky_relu=False,
-    )
-    assert block(rand(10, 111, 12, 21)).shape == (10, 222, 12, 21)
-
-
-def test_conv_block_call_return_shapes_with_no_batchnorm_and_no_leaky_relu():
-    """Test the return shapes produced by `ConvBlock` are correct.
-
-    Notes
-    -----
-    Test the block returns the correct shape when we don't include a batchnorm
-    or a leaky relu.
-
-    """
-    block = ConvBlock(
-        in_chans=1,
-        out_chans=321,
-        batch_norm=False,
-        leaky_relu=False,
-    )
-    assert block(rand(10, 1, 50, 50)).shape == (10, 321, 50, 50)
+        assert block(rand(10, in_chans, 50, 100)).shape == (10, out_chans, 50, 100)
 
 
 def test_double_conv_block_call_return_shapes():
     """Test the return shapes produced by `DoubleConvBlock` are correct."""
-    block = DoubleConvBlock(in_chans=123, out_chans=321, lr_slope=0.1)
-    assert block(rand(10, 123, 50, 100)).shape == (10, 321, 50, 100)
+    in_channels = [3, 123, 321]
+    out_channels = [3, 123, 321]
+    lr_slopes = [0.0, 0.1, 0.2]
+    kernel_sizes = [1, 3, 5]
 
-    block = DoubleConvBlock(in_chans=111, out_chans=222, lr_slope=0.1)
-    assert block(rand(10, 111, 50, 100)).shape == (10, 222, 50, 100)
+    arg_iter = product(in_channels, out_channels, lr_slopes, kernel_sizes)
+
+    for in_chans, out_chans, slope, kernel_size in arg_iter:
+        block = DoubleConvBlock(
+            in_chans=in_chans,
+            out_chans=out_chans,
+            lr_slope=slope,
+            kernel_size=kernel_size,
+        )
+        assert block(rand(10, in_chans, 50, 100)).shape == (10, out_chans, 50, 100)
 
 
 def test_res_block_call_return_shapes():
     """Test the return shapes produced by `ResBlock`."""
-    block = ResidualBlock(in_chans=123)
-    assert block(rand(10, 123, 50, 100)).shape == (10, 123, 50, 100)
+    in_channels = [3, 10, 50]
+    kernel_sizes = [3, 5, 7]
 
-    block = ResidualBlock(in_chans=111)
-    assert block(rand(10, 111, 50, 100)).shape == (10, 111, 50, 100)
+    for in_chans, kernel_size in product(in_channels, kernel_sizes):
+        block = ResidualBlock(in_chans=in_chans, kernel_size=kernel_size)
+        out = block(rand(10, in_chans, 50, 100))
+        assert out.shape == (10, in_chans, 50, 100)
 
 
 def test_down_block_call_return_shapes():
     """Test the return shapes of `DownBlock`."""
-    block = DownBlock(in_chans=3, out_chans=8, pool="max", lr_slope=0.1)
-    assert block(rand(10, 3, 50, 100)).shape == (10, 8, 25, 50)
+    in_channels = [2, 4, 5]
+    out_channels = [2, 4, 5]
+    pools = ["max", "avg"]
+    lr_slopes = [0.0, 0.1]
+    kernel_sizes = [1, 3, 5]
 
-    block = DownBlock(in_chans=3, out_chans=3, pool="avg", lr_slope=0.1)
-    assert block(rand(10, 3, 100, 50)).shape == (10, 3, 50, 25)
+    iterator = product(
+        in_channels,
+        out_channels,
+        pools,
+        lr_slopes,
+        kernel_sizes,
+    )
 
-    # Test with odd image sizes
-    block = DownBlock(in_chans=3, out_chans=3, pool="max", lr_slope=0.1)
-    assert block(rand(10, 3, 101, 51)).shape == (10, 3, 50, 25)
+    for ins, outs, pool, slope, size in iterator:
+        batch = rand(10, ins, 50, 100)
+
+        block = DownBlock(ins, outs, pool, slope, size)
+
+        assert block(batch).shape == (10, outs, 25, 50)
 
 
 def test_up_block_call_return_shapes():
     """Test the return shapes produced by `UpBlock`."""
-    block = UpBlock(in_chans=3, out_chans=8, bilinear=True, lr_slope=0.1)
-    assert block(rand(10, 3, 16, 32)).shape == (10, 8, 32, 64)
+    in_channels = [3, 5, 7]
+    out_channels = [3, 5, 7]
+    bilinears = [True, False]
+    slopes = [0.0, 0.1]
+    kernels = [1, 3, 5]
 
-    block = UpBlock(in_chans=3, out_chans=3, bilinear=False, lr_slope=0.1)
-    assert block(rand(10, 3, 128, 256)).shape == (10, 3, 256, 512)
+    iterator = product(in_channels, out_channels, bilinears, slopes, kernels)
+
+    for in_chans, out_chans, bilinear, lr_slope, kernel_size in iterator:
+        block = UpBlock(
+            in_chans=in_chans,
+            out_chans=out_chans,
+            bilinear=bilinear,
+            lr_slope=lr_slope,
+            kernel_size=kernel_size,
+        )
+        assert block(rand(10, in_chans, 16, 32)).shape == (10, out_chans, 32, 64)
 
 
 def test_unet_upblock_call_return_shapes():
     """Test the return shapes produced by `UNetUpBlock`."""
-    block = UNetUpBlock(in_chans=4, out_chans=5, bilinear=False, lr_slope=0.1)
-    to_upsample = rand(10, 4, 25, 50)
-    down_features = rand(10, 2, 50, 100)
-    assert block(to_upsample, down_features).shape == (10, 5, 50, 100)
+    in_channels = [2, 4, 8]
+    out_channels = [2, 4, 8]
+    bilinears = [True, False]
+    slopes = [0.0, 0.1]
+    kernels = [1, 3, 5]
 
-    block = UNetUpBlock(in_chans=2, out_chans=12, bilinear=False, lr_slope=0.1)
-    to_upsample = rand(10, 2, 30, 30)
-    down_features = rand(10, 1, 50, 50)
-    assert block(to_upsample, down_features).shape == (10, 12, 50, 50)
+    iterator = product(in_channels, out_channels, bilinears, slopes, kernels)
+
+    for in_chans, out_chans, bilinear, lr_slope, kernel_size in iterator:
+        block = UNetUpBlock(
+            in_chans,
+            out_chans,
+            bilinear,
+            lr_slope,
+            kernel_size=kernel_size,
+        )
+
+        to_upsample = rand(10, in_chans, 25, 50)
+        down_features = rand(10, in_chans // 2, 50, 100)
+
+        out = block(to_upsample, down_features)
+        assert out.shape == (10, out_chans, 50, 100)

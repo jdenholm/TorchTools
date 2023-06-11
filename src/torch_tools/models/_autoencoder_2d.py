@@ -13,6 +13,7 @@ from torch_tools.models._argument_processing import (
     process_str_arg,
     process_negative_slope_arg,
     process_boolean_arg,
+    process_2d_kernel_size,
 )
 
 # pylint:disable=too-many-arguments
@@ -39,6 +40,10 @@ class AutoEncoder2d(Module):
     bilinear : bool, optional
         Whether or not to upsample with bilinear interpolation ( ``True`` ) or
         ``ConvTranspose2d`` ( ``False`` ).
+    kernel_size : int, optional
+        Size of the square convolutional kernel to use on the ``Conv2d``
+        layers. Must be a positive, odd, int.
+
 
     Notes
     -----
@@ -86,6 +91,7 @@ class AutoEncoder2d(Module):
         lr_slope: float = 0.1,
         pool_style: str = "max",
         bilinear: bool = False,
+        kernel_size: int = 3,
     ):
         """Build ``EncoderDecoder2d``."""
         super().__init__()
@@ -96,6 +102,7 @@ class AutoEncoder2d(Module):
             process_u_architecture_layers(num_layers),
             process_str_arg(pool_style),
             process_negative_slope_arg(lr_slope),
+            process_2d_kernel_size(kernel_size),
         )
 
         self.decoder = Decoder2d(
@@ -104,6 +111,7 @@ class AutoEncoder2d(Module):
             process_u_architecture_layers(num_layers),
             process_boolean_arg(bilinear),
             process_negative_slope_arg(lr_slope),
+            process_2d_kernel_size(kernel_size),
         )
 
     def forward(

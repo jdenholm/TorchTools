@@ -110,6 +110,18 @@ def test_conv_block_contents_with_no_batchnorm_or_leaky_relu():
     assert isinstance(block[0], Conv2d), "1st layer should be conv 2d."
 
 
+def test_conv_block_contents_with_different_kernel_sizes():
+    """Test the contents of ``ConvBlock`` with different kernel sizes."""
+    block = ConvBlock(in_chans=3, out_chans=3, kernel_size=1)
+    assert block[0].kernel_size == (1, 1)
+
+    block = ConvBlock(in_chans=3, out_chans=3, kernel_size=3)
+    assert block[0].kernel_size == (3, 3)
+
+    block = ConvBlock(in_chans=3, out_chans=5, kernel_size=5)
+    assert block[0].kernel_size == (5, 5)
+
+
 def test_double_conv_block_in_conv_contents():
     """Test the contents of `DoubleConvBlock`'s `in_conv` are as expected."""
     block = DoubleConvBlock(in_chans=123, out_chans=321, lr_slope=0.123456)
@@ -144,6 +156,19 @@ def test_double_conv_block_out_conv_contents():
     assert isinstance(out_conv[0], Conv2d), "Should be Conv2d."
     assert isinstance(out_conv[1], BatchNorm2d), "Should be BatchNorm2d."
     assert isinstance(out_conv[2], LeakyReLU), "Should be LeakyReLU."
+
+
+def test_double_conv_block_contents_with_different_kernel_sizes():
+    """Test the contents of ``ConvBlock`` with different kernel sizes."""
+    for kernel_size in [1, 3, 5, 9, 11]:
+        block = DoubleConvBlock(
+            in_chans=3,
+            out_chans=3,
+            lr_slope=0.1,
+            kernel_size=kernel_size,
+        )
+        assert block[0][0].kernel_size == (kernel_size, kernel_size)
+        assert block[1][0].kernel_size == (kernel_size, kernel_size)
 
 
 def test_residual_block_first_conv_contents():
@@ -211,6 +236,15 @@ def test_residual_block_second_conv_contents():
     assert second_conv[1].num_features == 123, msg
 
 
+def test_residual_block_contents_with_different_kernel_sizes():
+    """Test contents of the ``ResidualBlock`` with different kernel sizes."""
+    for kernel_size in [1, 3, 5, 7]:
+        block = ResidualBlock(in_chans=3, kernel_size=kernel_size)
+
+        assert block.first_conv[0].kernel_size == (kernel_size, kernel_size)
+        assert block.second_conv[0].kernel_size == (kernel_size, kernel_size)
+
+
 def test_down_block_contents_pool_assignment():
     """Test pool assignment in `DownBlock`."""
     # Test with max pool
@@ -249,6 +283,26 @@ def test_down_block_double_conv_contents():
     assert out_conv[0].out_channels == 321
     assert out_conv[1].num_features == 321
     assert out_conv[2].negative_slope == 0.1234
+
+
+def test_down_block_contents_with_different_kernel_sizes():
+    """Test the contents of the ``DownBlock`` with different kernel sizes."""
+    for size in [1, 3, 5, 7, 9]:
+        block = DownBlock(
+            in_chans=3,
+            out_chans=3,
+            pool="max",
+            lr_slope=0.1,
+            kernel_size=size,
+        )
+
+        # The pool's strid and kernel size should remain unchanged
+        assert block[0].kernel_size == 2
+        assert block[0].stride == 2
+
+        # The convolutional layers' kernel sizes should change
+        assert block[1][0][0].kernel_size == (size, size)
+        assert block[1][1][0].kernel_size == (size, size)
 
 
 def test_up_block_upsample_contents_with_bilinear_false():
@@ -338,6 +392,23 @@ def test_up_block_double_conv_second_conv_block_contents():
     assert block[1][1][2].negative_slope == 0.54321
 
 
+def test_up_block_contents_with_different_kernel_sizes():
+    """Test the contnents of the ``UpBlock`` with different kernel sizes."""
+    sizes = [1, 3, 5, 7]
+
+    for size in sizes:
+        block = UpBlock(
+            in_chans=123,
+            out_chans=321,
+            bilinear=False,
+            lr_slope=0.54321,
+            kernel_size=size,
+        )
+
+        assert block[1][0][0].kernel_size == (size, size)
+        assert block[1][1][0].kernel_size == (size, size)
+
+
 def test_unet_up_block_upsample_contents_with_bilinear_false():
     """Test the contents of the upsample block with bilinear set to false."""
     up_block = UNetUpBlock(
@@ -414,3 +485,18 @@ def test_unet_up_block_double_conv_second_conv_block_contents():
     assert double_conv[1][0].out_channels == 128
     assert double_conv[1][1].num_features == 128
     assert double_conv[1][2].negative_slope == 0.12345
+
+
+def test_unet_up_block_contents_with_different_kernel_sizes():
+    """Test the contents of ``UNetUpBlock`` with different kernel sizes."""
+    for size in [1, 3, 5, 7, 9]:
+        up_block = UNetUpBlock(
+            in_chans=64,
+            out_chans=128,
+            bilinear=False,
+            lr_slope=0.12345,
+            kernel_size=size,
+        )
+
+        assert up_block.double_conv[0][0].kernel_size == (size, size)
+        assert up_block.double_conv[1][0].kernel_size == (size, size)
