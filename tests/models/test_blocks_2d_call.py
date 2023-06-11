@@ -137,4 +137,4 @@ def test_unet_upblock_call_return_shapes():
         down_features = rand(10, in_chans // 2, 50, 100)
 
         out = block(to_upsample, down_features)
-        assert out.shape == (10, out_channels, 50, 100)
+        assert out.shape == (10, out_chans, 50, 100)
