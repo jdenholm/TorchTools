@@ -7,7 +7,7 @@ from torch.nn import Module
 from torch_tools.models._encoder_2d import Encoder2d
 
 # from torch_tools.models._decoder_2d import Decoder2d
-# from torch_tools.models._fc_net import FCNet
+from torch_tools.models._fc_net import FCNet
 
 from torch_tools.models._argument_processing import (
     process_num_feats,
@@ -29,7 +29,7 @@ class VAE2d(Module):
         down_pool: str,
         lr_slope: float,
         kernel_size: int,
-        # image_size: Tuple[int, int],
+        input_dims: Tuple[int, int],
     ):
         """Build ``VAE2d``."""
         super().__init__()
@@ -42,6 +42,24 @@ class VAE2d(Module):
             kernel_size=process_2d_kernel_size(kernel_size),
         )
 
+        self._num_feats = _features_size(
+            start_features,
+            num_blocks,
+            input_dims,
+        )
+
+        self._mean_net = FCNet(
+            in_feats=self._num_feats,
+            out_feats=self._num_feats,
+            hidden_sizes=(self._num_feats,),
+        )
+
+        self._std_net = FCNet(
+            in_feats=self._num_feats,
+            out_feats=self._num_feats,
+            hidden_sizes=(self._num_feats,),
+        )
+
     def forward(self, batch: Tensor) -> Tuple[Tensor, Tensor]:
         """Pass ``batch`` through the model.
 
@@ -51,3 +69,28 @@ class VAE2d(Module):
             A mini-batch of image-like inputs.
 
         """
+        features = self._encoder(batch)
+
+
+def _features_size(start_features: int, num_blocks: int, input_dims) -> int:
+    """Get the size of the features produced by the encoder.
+
+    Parameters
+    ----------
+    start_features : int
+        The number features produced by the first block in the encoder.
+    num_blocks : int
+        The number of blocks in one half of the U-like architecture.
+    input_dims : int
+        The spatial dimensions of the model's inputs.
+
+    """
+    in_height, in_width = input_dims
+
+    factor = 2 ** (num_blocks - 1)
+
+    out_feats = factor * start_features
+    out_height = in_height // factor
+    out_width = in_width // factor
+
+    return out_feats * out_height * out_width
