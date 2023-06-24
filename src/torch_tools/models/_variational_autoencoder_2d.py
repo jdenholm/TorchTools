@@ -1,8 +1,10 @@
 """"2D convolutional variational autoencoder."""
 from typing import Tuple
 
-from torch import Tensor
+from torch import Tensor, flatten, unflatten, randn
+
 from torch.nn import Module
+from torch.nn.functional import kl_div
 
 from torch_tools.models._encoder_2d import Encoder2d
 
@@ -70,6 +72,18 @@ class VAE2d(Module):
 
         """
         features = self._encoder(batch)
+
+        flat_feats = flatten(features)
+
+        mean = self._mean_net(flat_feats)
+        std_dev = self._std_net(flat_feats)
+
+        mean = unflatten(mean, dim=1, sizes=features.shape[1:])
+        std_dev = unflatten(std_dev, dim=1, sizes=features.shape[1:])
+
+        features = mean + (features * std_dev)
+
+        _ = kl_div(features, randn(features.shape))
 
 
 def _features_size(start_features: int, num_blocks: int, input_dims) -> int:
