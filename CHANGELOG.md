@@ -1,7 +1,8 @@
+## Version 0.2.2
+The only difference in this minor version update is a tiny patch to the README: the instructions for the ``pip install ...`` commands were missing the ``"git+"`` prefixes before the URL. They have now been added.
+
 ## Version 0.2.1
 The source-code links in docs weren't working. This ha now been fixed.
-
-
 
 
 ## Version 0.2.0

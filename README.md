@@ -43,11 +43,11 @@ Distributed under the MIT License. See LICENSE.md for more information.
 ### Installation
 To install the most up-to-date version, use
 ```bash
-pip install https://github.com/jdenholm/TorchTools.git
+pip install git+https://github.com/jdenholm/TorchTools.git
 ```
 To install a specific version, say ``v0.1.0``, use
 ```bash
-pip install https://github.com/jdenholm/TorchTools.git@v0.1.0
+pip install git+https://github.com/jdenholm/TorchTools.git@v0.1.0
 ```
 
 
