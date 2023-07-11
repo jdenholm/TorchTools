@@ -1,3 +1,9 @@
+## Version 0.3.0
+This release introduces:
+
+- Mobilenet v3 as an encoder style for ``ConvNet2d``.
+- Fixing a docstring typo in ``ConvNet2d``.
+
 ## Version 0.2.2
 The only difference in this minor version update is a tiny patch to the README: the instructions for the ``pip install ...`` commands were missing the ``"git+"`` prefixes before the URL. They have now been added.
 
