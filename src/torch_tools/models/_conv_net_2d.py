@@ -31,7 +31,7 @@ class ConvNet2d(Module):
         Number of input channels the model should take. Warning: if you don't
         use three input channels, the first conv layer is overwritten, which
         renders freezing the encoder pointless.
-    encoder_option : str, optional
+    encoder_style : str, optional
         The encoder option to use. The encoders are loaded from torchvision's
         models. Options include all of torchvision's VGG and ResNET options
         (i.e. ``"vgg11"``, ``"vgg11_bn"``, ``"resnet18"``, etc.).
