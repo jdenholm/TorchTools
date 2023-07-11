@@ -21,6 +21,8 @@ _encoder_options = {
     "resnet50": models.resnet50,
     "resnet101": models.resnet101,
     "resnet152": models.resnet152,
+    "mobilenet_v3_small": models.mobilenet_v3_small,
+    "mobilenet_v3_large": models.mobilenet_v3_large,
 }
 
 
@@ -65,6 +67,14 @@ def get_backbone(
         encoder = Sequential(*list(full_resnet.children()))[:-2]
         num_feats = full_resnet.fc.in_features
         pool_size = full_resnet.avgpool.output_size
+        print(pool_size)
+    if "mobile" in option:
+        full_mobilenet = _encoder_options[option](weights=weights)
+        encoder = Sequential(*list(full_mobilenet.features.children()))
+        num_feats = full_mobilenet.classifier[0].in_features
+        pool_size = 2 * (full_mobilenet.avgpool.output_size,)
+        print(pool_size)
+
     return encoder, num_feats, pool_size
 
 
