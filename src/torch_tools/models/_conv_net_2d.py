@@ -33,8 +33,9 @@ class ConvNet2d(Module):
         renders freezing the encoder pointless.
     encoder_style : str, optional
         The encoder option to use. The encoders are loaded from torchvision's
-        models. Options include all of torchvision's VGG and ResNET options
-        (i.e. ``"vgg11"``, ``"vgg11_bn"``, ``"resnet18"``, etc.).
+        models. Options include all of torchvision's VGG, ResNET and MOBILENET
+        v3 options (i.e. ``"vgg11"``, ``"vgg11_bn"``, ``"resnet18"``,
+        ``mobilenet_v3_small`` etc.).
     pretrained : bool, optional
         Determines whether the encoder is initialised with Torchvision's
         pretrained weights. If ``True``, the model will load Torchvision's most
