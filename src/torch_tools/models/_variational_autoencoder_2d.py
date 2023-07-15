@@ -1,12 +1,17 @@
-""""2D convolutional variational autoencoder."""
-from typing import Tuple
+"""2D convolutional variational autoencoder."""
+from typing import Tuple, Union
 
-from torch import Tensor, flatten, unflatten, randn
+from torch import (  # pylint: disable=no-name-in-module
+    Tensor,
+    flatten,
+    unflatten,
+    randn_like,
+)
 
 from torch.nn import Module
-from torch.nn.functional import kl_div
 
 from torch_tools.models._encoder_2d import Encoder2d
+from torch_tools.models._decoder_2d import Decoder2d
 
 # from torch_tools.models._decoder_2d import Decoder2d
 from torch_tools.models._fc_net import FCNet
@@ -26,19 +31,20 @@ class VAE2d(Module):
     def __init__(  # pylint: disable=too-many-arguments
         self,
         in_chans: int,
-        start_features: int,
-        num_blocks: int,
-        down_pool: str,
-        lr_slope: float,
-        kernel_size: int,
         input_dims: Tuple[int, int],
+        start_features: int = 64,
+        num_layers: int = 4,
+        down_pool: str = "max",
+        bilinear: bool = False,
+        lr_slope: float = 0.1,
+        kernel_size: int = 3,
     ):
         """Build ``VAE2d``."""
         super().__init__()
-        self._encoder = Encoder2d(
+        self.encoder = Encoder2d(
             in_chans=process_num_feats(in_chans),
             start_features=process_num_feats(start_features),
-            num_blocks=process_u_architecture_layers(num_blocks),
+            num_blocks=process_u_architecture_layers(num_layers),
             pool_style=process_str_arg(down_pool),
             lr_slope=process_negative_slope_arg(lr_slope),
             kernel_size=process_2d_kernel_size(kernel_size),
@@ -46,23 +52,77 @@ class VAE2d(Module):
 
         self._num_feats = _features_size(
             start_features,
-            num_blocks,
+            num_layers,
             input_dims,
         )
 
         self._mean_net = FCNet(
             in_feats=self._num_feats,
             out_feats=self._num_feats,
-            hidden_sizes=(self._num_feats,),
         )
 
         self._std_net = FCNet(
             in_feats=self._num_feats,
             out_feats=self._num_feats,
-            hidden_sizes=(self._num_feats,),
         )
 
-    def forward(self, batch: Tensor) -> Tuple[Tensor, Tensor]:
+        self._decoder = Decoder2d(
+            in_chans=process_num_feats((2 ** (num_layers - 1)) * start_features),
+            out_chans=in_chans,
+            num_blocks=num_layers,
+            bilinear=bilinear,
+            lr_slope=lr_slope,
+            kernel_size=kernel_size,
+        )
+
+    def _get_means_and_devs(self, features: Tensor) -> Tuple[Tensor, Tensor]:
+        """Estimate the means anmd standard deviations.
+
+        Parameters
+        ----------
+        features : Tensor
+            Raw features from the encoders.
+
+        Returns
+        -------
+        mean : Tensor
+            The means.
+        std : Tensor
+            The variances.
+
+        """
+        flat_feats = flatten(features, start_dim=1)
+
+        mean, var = self._mean_net(flat_feats), self._std_net(flat_feats)
+
+        mean = unflatten(mean, dim=1, sizes=features.shape[1:])
+        log_std = unflatten(var, dim=1, sizes=features.shape[1:])
+
+        std = log_std.exp()
+
+        return mean, std
+
+    def get_features(self, means: Tensor, devs: Tensor, feats: Tensor) -> Tensor:
+        """Get the features using the reparam trick.
+
+        Parameters
+        ----------
+        means : Tensor
+            The feature means.
+        devs : Tensor
+            The feature std devs.
+        feats : Tensor
+            The encoder features.
+
+        Returns
+        -------
+        Tensor
+            The feature dist.
+
+        """
+        return means + (randn_like(feats) * devs)
+
+    def forward(self, batch: Tensor) -> Union[Tensor, Tuple[Tensor, Tensor]]:
         """Pass ``batch`` through the model.
 
         Parameters
@@ -70,20 +130,29 @@ class VAE2d(Module):
         batch : Tensor
             A mini-batch of image-like inputs.
 
+
+        Returns
+        -------
+        Union[Tensor, Tuple[Tensor, Tensor]]
+            Either the decoded "image-like" object, if the model is in
+            eval mode, or both the decoded image and the kl divergence
+            between the latent vector and N(0, 1) if the model is in training
+            mode.
+
         """
-        features = self._encoder(batch)
+        encoder_feats = self.encoder(batch)
 
-        flat_feats = flatten(features)
+        means, devs = self._get_means_and_devs(encoder_feats)
 
-        mean = self._mean_net(flat_feats)
-        std_dev = self._std_net(flat_feats)
+        feats = self.get_features(means, devs, encoder_feats)
 
-        mean = unflatten(mean, dim=1, sizes=features.shape[1:])
-        std_dev = unflatten(std_dev, dim=1, sizes=features.shape[1:])
+        if self.training is True:
+            return (
+                self._decoder(feats),
+                (devs**2.0 + means**2.0 - devs.log() - 0.5).mean(),
+            )
 
-        features = mean + (features * std_dev)
-
-        _ = kl_div(features, randn(features.shape))
+        return self._decoder(feats)
 
 
 def _features_size(start_features: int, num_blocks: int, input_dims) -> int:
