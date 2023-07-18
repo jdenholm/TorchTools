@@ -147,7 +147,7 @@ class VAE2d(Module):
         if self.training is True:
             return (
                 self._decoder(feats),
-                (std**2.0 + means**2.0 - std.log() - 0.5).mean(),
+                (std**2.0 + means**2.0 - std - 0.5).mean(),
             )
 
         return self._decoder(feats)
