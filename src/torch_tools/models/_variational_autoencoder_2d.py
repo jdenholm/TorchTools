@@ -93,12 +93,10 @@ class VAE2d(Module):
         """
         flat_feats = flatten(features, start_dim=1)
 
-        mean, var = self._mean_net(flat_feats), self._std_net(flat_feats)
+        mean, std = self._mean_net(flat_feats), self._std_net(flat_feats)
 
         mean = unflatten(mean, dim=1, sizes=features.shape[1:])
-        log_std = unflatten(var, dim=1, sizes=features.shape[1:])
-
-        std = log_std.exp()
+        std = unflatten(std, dim=1, sizes=features.shape[1:])
 
         return mean, std
 
@@ -142,14 +140,14 @@ class VAE2d(Module):
         """
         encoder_feats = self.encoder(batch)
 
-        means, devs = self._get_means_and_devs(encoder_feats)
+        means, std = self._get_means_and_devs(encoder_feats)
 
-        feats = self.get_features(means, devs, encoder_feats)
+        feats = self.get_features(means, std, encoder_feats)
 
         if self.training is True:
             return (
                 self._decoder(feats),
-                (devs**2.0 + means**2.0 - devs.log() - 0.5).mean(),
+                (std**2.0 + means**2.0 - std.log() - 0.5).mean(),
             )
 
         return self._decoder(feats)
