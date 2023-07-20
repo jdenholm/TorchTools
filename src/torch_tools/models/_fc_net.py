@@ -39,7 +39,7 @@ class FCNet(Sequential):
 
     Examples
     --------
-    >>> from torch_tools import DenseNetwork
+    >>> from torch_tools import FCNet
     >>> FCNet(in_feats=256,
               out_feats=2,
               hidden_sizes=(128, 64, 32),
