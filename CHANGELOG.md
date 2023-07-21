@@ -1,3 +1,6 @@
+## Version 0.3.2
+Fixed typo in ``FCNet`` docstring: ``DenseNetwork`` -> ``FCNet``
+
 ## Version 0.3.1
 Updated the docstring in ``ConvNet2d`` to include the mobilenet options.
 
