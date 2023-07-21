@@ -2,7 +2,7 @@
 import pytest
 
 
-from torch import zeros, ones  # pylint: disable=no-name-in-module
+from torch import zeros, ones, eye, rand  # pylint: disable=no-name-in-module
 from torchvision.transforms import Compose  # type: ignore
 
 from torch_tools.datasets import DataSet
@@ -114,3 +114,57 @@ def test_len_method(inputs_and_targets):
 
     msg = "Wrong length value."
     assert len(DataSet(inputs=inputs, targets=targets)) == len(inputs), msg
+
+
+def test_iteration_with_no_mixup_and_inputs_only():
+    """Test the dataset's iteration with no mixup."""
+    inputs = list(ones(10, 2))
+
+    dataset = DataSet(inputs=inputs)
+
+    for x_item, input_item in zip(dataset, inputs):
+        assert (x_item == input_item).all()
+
+
+def test_iteration_with_no_mixup_and_inputs_and_targets():
+    """Test the dataset's iteration with no mixup."""
+    inputs = list(ones(10, 2))
+    targets = [eye(2)[0] for _ in range(len(inputs))]
+
+    dataset = DataSet(inputs=inputs, targets=targets)
+
+    for (x_item, y_item), inpt_item, tgt_item in zip(dataset, inputs, targets):
+        print(y_item, inpt_item)
+
+        assert (x_item == inpt_item).all()
+        assert (y_item == tgt_item).all()
+
+
+def test_iteration_with_mixup_and_inputs_only():
+    """Test the dataset's iteration with no mixup."""
+    inputs = list(rand(100, 2))
+
+    dataset = DataSet(inputs=inputs, mixup=True)
+
+    equal = []
+    for x_item, input_item in zip(dataset, inputs):
+        equal.append((x_item == input_item).all())
+
+    assert not all(equal)
+
+
+def test_iteration_with_mixup_and_inputs_and_targets():
+    """Test the dataset's iteration with no mixup."""
+    inputs = list(rand(100, 2))
+    targets = [rand(2) for _ in range(len(inputs))]
+
+    dataset = DataSet(inputs=inputs, targets=targets, mixup=True)
+
+    equal = []
+    for (x_item, y_item), inpt_item, tgt_item in zip(dataset, inputs, targets):
+        x_equal = (x_item == inpt_item).all()
+        y_equal = (y_item == tgt_item).all()
+
+        equal.append(x_equal and y_equal)
+
+        print(y_item, tgt_item)
