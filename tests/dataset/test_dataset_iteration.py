@@ -118,7 +118,7 @@ def test_len_method(inputs_and_targets):
 
 def test_iteration_with_no_mixup_and_inputs_only():
     """Test the dataset's iteration with no mixup."""
-    inputs = list(ones(10, 2))
+    inputs = list(rand(20, 2))
 
     dataset = DataSet(inputs=inputs)
 
@@ -128,8 +128,8 @@ def test_iteration_with_no_mixup_and_inputs_only():
 
 def test_iteration_with_no_mixup_and_inputs_and_targets():
     """Test the dataset's iteration with no mixup."""
-    inputs = list(ones(10, 2))
-    targets = [eye(2)[0] for _ in range(len(inputs))]
+    inputs = list(rand(20, 2))
+    targets = list(rand(20, 2))
 
     dataset = DataSet(inputs=inputs, targets=targets)
 
