@@ -1,14 +1,13 @@
 name: torch-tools
 channels:
   - anaconda
-  - conda-forge
 dependencies:
-  - python>=3.11
+  - python>=3.10.9
   - sphinx
   - sphinx_rtd_theme
   - mypy
   - black
-  - black-jupyter
+  - conda-forge::black-jupyter
   - pytest
   - pydocstyle
   - pylint
