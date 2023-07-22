@@ -2,7 +2,7 @@
 import pytest
 
 
-from torch import zeros, ones, eye, rand  # pylint: disable=no-name-in-module
+from torch import zeros, ones, eye, rand, isclose  # pylint: disable=no-name-in-module
 from torchvision.transforms import Compose  # type: ignore
 
 from torch_tools.datasets import DataSet
@@ -168,3 +168,21 @@ def test_iteration_with_mixup_and_inputs_and_targets():
         equal.append(x_equal and y_equal)
 
         print(y_item, tgt_item)
+
+
+def test_iteration_with_identical_inputs_and_mixup():
+    """Test the dataset's iteration with identical inputs and mixup."""
+    inputs = list(rand(1, 1).repeat(100, 1).float())
+    targets = list(rand(1, 1).repeat(100, 1).float())
+
+    data_set = DataSet(inputs=inputs, targets=targets, mixup=True)
+
+    x_equal, y_equal = [], []
+
+    for (x_item, y_item), inpt_itm, tgt_itm in zip(data_set, inputs, targets):
+        x_equal.append(isclose(x_item, inpt_itm))
+
+        y_equal.append(isclose(y_item, tgt_itm))
+
+    assert all(x_equal)
+    assert all(y_equal)
