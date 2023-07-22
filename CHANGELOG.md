@@ -1,3 +1,7 @@
+## Version 0.4.0
+Changes:
+  - Added mixup augmentation option to ```DataSet``.
+
 ## Version 0.3.2
 Changes:
   - Fixed typo in ``FCNet`` docstring: ``DenseNetwork`` -> ``FCNet``
