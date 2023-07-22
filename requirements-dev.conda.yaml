@@ -1,6 +1,6 @@
 name: torch-tools
 channels:
-  - anaconda
+  - defaults
 dependencies:
   - python>=3.10.9
   - sphinx
