@@ -1,6 +1,5 @@
 name: torch-tools
 channels:
-  - defaults
   - anaconda
   - conda-forge
 dependencies:
