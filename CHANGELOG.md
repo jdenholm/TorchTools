@@ -1,3 +1,10 @@
+## Version 0.3.2
+Changes:
+  - Fixed typo in ``FCNet`` docstring: ``DenseNetwork`` -> ``FCNet``
+  - Minor refactoring of GitHub workflows.
+  - Move some of the dev requirements into the pip section.
+
+
 ## Version 0.3.1
 Updated the docstring in ``ConvNet2d`` to include the mobilenet options.
 
