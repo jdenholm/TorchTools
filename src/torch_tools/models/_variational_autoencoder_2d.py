@@ -22,6 +22,7 @@ from torch_tools.models._argument_processing import (
     process_str_arg,
     process_negative_slope_arg,
     process_2d_kernel_size,
+    process_input_dims,
 )
 
 
@@ -41,6 +42,8 @@ class VAE2d(Module):
     ):
         """Build ``VAE2d``."""
         super().__init__()
+        _ = process_input_dims(input_dims)
+
         self.encoder = Encoder2d(
             in_chans=process_num_feats(in_chans),
             start_features=process_num_feats(start_features),
@@ -53,7 +56,7 @@ class VAE2d(Module):
         self._num_feats = _features_size(
             start_features,
             num_layers,
-            input_dims,
+            process_input_dims(input_dims),
         )
 
         self._mean_net = FCNet(
@@ -165,6 +168,13 @@ def _features_size(start_features: int, num_blocks: int, input_dims) -> int:
     input_dims : int
         The spatial dimensions of the model's inputs.
 
+    Raises
+    ------
+    ValueError
+        If the number of features would be reduced to zero because
+        ``input_dims`` is too small for the number of layers.
+
+
     """
     in_height, in_width = input_dims
 
@@ -174,4 +184,9 @@ def _features_size(start_features: int, num_blocks: int, input_dims) -> int:
     out_height = in_height // factor
     out_width = in_width // factor
 
-    return out_feats * out_height * out_width
+    features_size = out_feats * out_height * out_width
+
+    if features_size == 0:
+        raise ValueError(f"{input_dims} too small for number of layers.")
+
+    return features_size
