@@ -160,3 +160,14 @@ def test_down_pool_argument_values():
     # Should break with any other string
     with pytest.raises(KeyError):
         _ = VAE2d(in_chans=1, input_dims=(32, 32), down_pool="Galadriel")
+
+
+def test_the_bilinear_argument_types():
+    """test the types accepted by the ``bilinear`` argument type."""
+    # Should work with bool
+    _ = VAE2d(in_chans=1, input_dims=(32, 32), bilinear=True)
+    _ = VAE2d(in_chans=1, input_dims=(32, 32), bilinear=False)
+
+    # Should work with non-bool
+    with pytest.raises(TypeError):
+        _ = VAE2d(in_chans=1, input_dims=(32, 32), bilinear=123)
