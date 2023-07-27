@@ -171,3 +171,17 @@ def test_the_bilinear_argument_types():
     # Should work with non-bool
     with pytest.raises(TypeError):
         _ = VAE2d(in_chans=1, input_dims=(32, 32), bilinear=123)
+
+
+def test_lr_slope_argument_types():
+    """Test the types accepted by the ``lr_slope`` argument."""
+    # Should work with floats
+    _ = VAE2d(in_chans=1, input_dims=(32, 32), lr_slope=0.0)
+    _ = VAE2d(in_chans=1, input_dims=(32, 32), lr_slope=0.1)
+
+    # Should break with non-float
+    with pytest.raises(TypeError):
+        _ = VAE2d(in_chans=1, input_dims=(32, 32), lr_slope=0)
+
+    with pytest.raises(TypeError):
+        _ = VAE2d(in_chans=1, input_dims=(32, 32), lr_slope=1.0j)
