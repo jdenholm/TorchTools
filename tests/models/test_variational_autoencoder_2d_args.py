@@ -185,3 +185,34 @@ def test_lr_slope_argument_types():
 
     with pytest.raises(TypeError):
         _ = VAE2d(in_chans=1, input_dims=(32, 32), lr_slope=1.0j)
+
+
+def test_kernel_size_argument_type():
+    """Test the types accepted by the ``kernel_size`` argument."""
+    # Should work with odd, positive ints
+    _ = VAE2d(in_chans=1, input_dims=(32, 32), kernel_size=1)
+    _ = VAE2d(in_chans=1, input_dims=(32, 32), kernel_size=2)
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = VAE2d(in_chans=1, input_dims=(32, 32), kernel_size=1j)
+
+    with pytest.raises(TypeError):
+        _ = VAE2d(in_chans=1, input_dims=(32, 32), kernel_size=3.0)
+
+
+def test_kernel_size_argument_values():
+    """Test the values accepted by the ``kernel_size`` argument."""
+    # Should work with odd, positive ints.
+    _ = VAE2d(in_chans=1, input_dims=(32, 32), kernel_size=1)
+    _ = VAE2d(in_chans=1, input_dims=(32, 32), kernel_size=3)
+
+    # Should break with any non-odd non-positive ints
+    with pytest.raises(ValueError):
+        _ = VAE2d(in_chans=1, input_dims=(32, 32), kernel_size=-1)
+
+    with pytest.raises(ValueError):
+        _ = VAE2d(in_chans=1, input_dims=(32, 32), kernel_size=0)
+
+    with pytest.raises(ValueError):
+        _ = VAE2d(in_chans=1, input_dims=(32, 32), kernel_size=2)
