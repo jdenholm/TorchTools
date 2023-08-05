@@ -27,11 +27,38 @@ from torch_tools.models._argument_processing import (
 
 
 class VAE2d(Module):
-    """2D convolutional variational autoencoder."""
+    """2D convolutional variational autoencoder.
+
+    Parameters
+    ----------
+    in_chans : int
+        The number of input channels the model should take.
+    out_chans : int
+        The number of output channels the model should produce.
+    input_dims : Tuple[int, int]
+        The ``(height, width)`` of the input images.
+    start_features : int, optional
+        The number of features the first double conv block should produce.
+    num_layers : int, optional
+        The number of layers in the U-like architecture.
+    down_pool : str, optional
+        The type of pooling to use in the down-sampling layers: ``"avg"`` or
+        ``"max"``.
+    bilinear : bool, optional
+        If ``True``, we use bilinear interpolation in the upsampling. If
+        ``False``, we use ``ConvTranspose2d``.
+    lr_slope : float, optional
+        Negative slope to use in the leaky relu layers.
+    kernel_size : int, optional
+        Linear size of the square convolutional kernels to use.
+
+
+    """
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
         in_chans: int,
+        out_chans: int,
         input_dims: Tuple[int, int],
         start_features: int = 64,
         num_layers: int = 4,
@@ -71,7 +98,7 @@ class VAE2d(Module):
 
         self._decoder = Decoder2d(
             in_chans=process_num_feats((2 ** (num_layers - 1)) * start_features),
-            out_chans=in_chans,
+            out_chans=process_num_feats(out_chans),
             num_blocks=num_layers,
             bilinear=bilinear,
             lr_slope=lr_slope,
