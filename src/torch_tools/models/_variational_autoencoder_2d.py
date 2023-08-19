@@ -96,7 +96,7 @@ class VAE2d(Module):
             out_feats=self._num_feats,
         )
 
-        self._decoder = Decoder2d(
+        self.decoder = Decoder2d(
             in_chans=process_num_feats((2 ** (num_layers - 1)) * start_features),
             out_chans=process_num_feats(out_chans),
             num_blocks=num_layers,
@@ -176,11 +176,11 @@ class VAE2d(Module):
 
         if self.training is True:
             return (
-                self._decoder(feats),
+                self.decoder(feats),
                 (std**2.0 + means**2.0 - std - 0.5).mean(),
             )
 
-        return self._decoder(feats)
+        return self.decoder(feats)
 
 
 def _features_size(start_features: int, num_blocks: int, input_dims) -> int:
