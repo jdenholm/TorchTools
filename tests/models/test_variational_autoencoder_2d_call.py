@@ -10,7 +10,7 @@ def test_vae_call_return_shapes():
     """Test the return types in the call method of ``VAE2d``."""
     in_channels = [1, 12]
     out_channels = [1, 3]
-    num_layers = [2, 3]
+    num_layers = [4, 5]
     features_start = [16, 32]
     slopes = [0.0, 0.1]
     pools = ["avg", "max"]
