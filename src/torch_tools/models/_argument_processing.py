@@ -1,5 +1,5 @@
 """Functions for processing arguments to models and blocks."""
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
 
 def process_num_feats(num_feats: int) -> int:
@@ -336,3 +336,23 @@ def process_input_dims(input_dims: Tuple[int, int]):
         raise ValueError(msg)
 
     return input_dims
+
+
+def process_max_feats_arg(max_feats: Optional[int] = None) -> Union[None, int]:
+    """Process the ``max_feats`` argument.
+
+    Parameters
+    ----------
+    max_feats : int
+        Maximum number of features allowed in a model.
+
+    Returns
+    -------
+    max_feats : int
+        See Parameters.
+
+    """
+    if max_feats is None:
+        return None
+
+    return process_num_feats(max_feats)
