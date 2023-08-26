@@ -1,5 +1,5 @@
 """2D convolutional variational autoencoder."""
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
 from torch import (  # pylint: disable=no-name-in-module
     Tensor,
@@ -51,6 +51,9 @@ class VAE2d(Module):
         Negative slope to use in the leaky relu layers.
     kernel_size : int, optional
         Linear size of the square convolutional kernels to use.
+    max_down_feats : int, optional
+        Upper limit on the number of features that can be produced by the
+        down-sampling blocks.
 
 
     """
@@ -66,6 +69,7 @@ class VAE2d(Module):
         bilinear: bool = False,
         lr_slope: float = 0.1,
         kernel_size: int = 3,
+        max_down_feats: Optional[int] = None,
     ):
         """Build ``VAE2d``."""
         super().__init__()
