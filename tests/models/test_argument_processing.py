@@ -336,3 +336,31 @@ def test_process_input_dims_element_values():
 
     with pytest.raises(ValueError):
         _ = ap.process_input_dims((-1, -1))
+
+
+def test_process_max_features_arg_types():
+    """Test the types accepted by the ``max_feats`` argument."""
+    # Should work with ints or None
+    _ = ap.process_max_feats_arg(max_feats=1)
+    _ = ap.process_max_feats_arg(max_feats=None)
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = ap.process_max_feats_arg(max_feats=1.0)
+
+    with pytest.raises(TypeError):
+        _ = ap.process_max_feats_arg(max_feats=1.0j)
+
+
+def test_process_max_features_arg_values():
+    """Test the values accepted by the ``max_feats`` argument."""
+    # Should work with ints of one or more, or None
+    _ = ap.process_max_feats_arg(max_feats=1)
+    _ = ap.process_max_feats_arg(max_feats=None)
+
+    # Should break with ints less than 1
+    with pytest.raises(ValueError):
+        _ = ap.process_max_feats_arg(max_feats=0)
+
+    with pytest.raises(ValueError):
+        _ = ap.process_max_feats_arg(max_feats=-1)
