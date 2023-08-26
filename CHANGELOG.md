@@ -1,3 +1,6 @@
+## Version 0.4.1
+  - Added a demo for the ``patchify_img_batch`` function.
+
 ## Version 0.4.0
 Changes:
   - Added mixup augmentation option to ```DataSet``.
