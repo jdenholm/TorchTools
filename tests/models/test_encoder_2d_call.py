@@ -14,7 +14,7 @@ def test_encoder_2d_return_shapes_with_brute_force_arg_combos():
     pool_style = ["avg", "max"]
     lr_slope = [0.0, 0.1]
     kernel_sizes = [1, 3, 5]
-    max_features = [None, 256, 1024]
+    max_features = [None, 64, 128]
 
     iterator = product(
         in_chans,
