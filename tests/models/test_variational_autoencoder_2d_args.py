@@ -264,3 +264,54 @@ def test_kernel_size_argument_values():
 
     with pytest.raises(ValueError):
         _ = VAE2d(in_chans=1, out_chans=3, input_dims=(32, 32), kernel_size=2)
+
+
+def test_max_down_size_argument_types():
+    """Test the types accepted by the ``max_down_feats`` argument."""
+    # Should work with positive ints or None
+    _ = VAE2d(in_chans=1, out_chans=3, input_dims=(32, 32), max_down_feats=32)
+    _ = VAE2d(
+        in_chans=1,
+        out_chans=3,
+        input_dims=(32, 32),
+        max_down_feats=None,
+    )
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = VAE2d(
+            in_chans=1,
+            out_chans=3,
+            input_dims=(32, 32),
+            max_down_feats=1.0,
+        )
+
+    with pytest.raises(TypeError):
+        _ = VAE2d(
+            in_chans=1,
+            out_chans=3,
+            input_dims=(32, 32),
+            max_down_feats=True,
+        )
+
+
+def test_max_down_size_argument_values():
+    """Test the values accepted by the ``max_down_feats`` argument."""
+    # Should work with positive ints or None
+    _ = VAE2d(in_chans=1, out_chans=3, input_dims=(32, 32), max_down_feats=32)
+    _ = VAE2d(
+        in_chans=1,
+        out_chans=3,
+        input_dims=(32, 32),
+        max_down_feats=None,
+    )
+
+    # Should break with non-positive ints
+    for size in [-2, -1, 0]:
+        with pytest.raises(ValueError):
+            _ = VAE2d(
+                in_chans=1,
+                out_chans=3,
+                input_dims=(32, 32),
+                max_down_feats=size,
+            )
