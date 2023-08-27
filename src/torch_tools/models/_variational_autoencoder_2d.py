@@ -23,6 +23,7 @@ from torch_tools.models._argument_processing import (
     process_negative_slope_arg,
     process_2d_kernel_size,
     process_input_dims,
+    process_optional_feats_arg,
 )
 
 
@@ -82,12 +83,14 @@ class VAE2d(Module):
             pool_style=process_str_arg(down_pool),
             lr_slope=process_negative_slope_arg(lr_slope),
             kernel_size=process_2d_kernel_size(kernel_size),
+            max_feats=process_optional_feats_arg(max_down_feats),
         )
 
-        self._num_feats = _features_size(
+        self._num_feats, self._num_chans = _features_size(
             start_features,
             num_layers,
             process_input_dims(input_dims),
+            max_down_feats,
         )
 
         self._mean_net = FCNet(
@@ -101,7 +104,7 @@ class VAE2d(Module):
         )
 
         self.decoder = Decoder2d(
-            in_chans=process_num_feats((2 ** (num_layers - 1)) * start_features),
+            in_chans=self._num_chans,
             out_chans=process_num_feats(out_chans),
             num_blocks=num_layers,
             bilinear=bilinear,
@@ -187,7 +190,12 @@ class VAE2d(Module):
         return self.decoder(feats)
 
 
-def _features_size(start_features: int, num_blocks: int, input_dims) -> int:
+def _features_size(
+    start_features: int,
+    num_blocks: int,
+    input_dims,
+    max_feats: Optional[int] = None,
+) -> Tuple[int, int]:
     """Get the size of the features produced by the encoder.
 
     Parameters
@@ -198,6 +206,16 @@ def _features_size(start_features: int, num_blocks: int, input_dims) -> int:
         The number of blocks in one half of the U-like architecture.
     input_dims : int
         The spatial dimensions of the model's inputs.
+    max_feats : int, optional
+        The maximum number of features allowed.
+
+    Returns
+    -------
+    features_size : int
+        The total number of output features for the mean and std nets.
+    out_chans : int
+        The number of output channels.
+
 
     Raises
     ------
@@ -211,13 +229,19 @@ def _features_size(start_features: int, num_blocks: int, input_dims) -> int:
 
     factor = 2 ** (num_blocks - 1)
 
-    out_feats = factor * start_features
+    out_chans = start_features
+    for _ in range(num_blocks - 1):
+        if max_feats is None:
+            out_chans *= 2
+        else:
+            out_chans = min(max_feats, out_chans * 2)
+
     out_height = in_height // factor
     out_width = in_width // factor
 
-    features_size = out_feats * out_height * out_width
+    features_size = out_chans * out_height * out_width
 
     if features_size == 0:
         raise ValueError(f"{input_dims} too small for number of layers.")
 
-    return features_size
+    return features_size, out_chans
