@@ -338,7 +338,7 @@ def process_input_dims(input_dims: Tuple[int, int]):
     return input_dims
 
 
-def process_max_feats_arg(max_feats: Optional[int] = None) -> Union[None, int]:
+def process_optional_feats_arg(max_feats: Optional[int] = None) -> Union[None, int]:
     """Process the ``max_feats`` argument.
 
     Parameters
