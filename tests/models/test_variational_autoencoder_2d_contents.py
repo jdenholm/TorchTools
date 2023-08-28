@@ -53,7 +53,7 @@ def test_std_net_in_feats():
         start_features=8,
     )
 
-    assert model._std_net[0][0].in_features == 8192
+    assert model._var_net[0][0].in_features == 8192
 
 
 def test_mean_net_out_feats():
@@ -96,7 +96,7 @@ def test_std_net_out_feats():
         start_features=8,
     )
 
-    assert model._std_net[0][0].out_features == 8192
+    assert model._var_net[0][0].out_features == 8192
 
 
 def test_std_net_out_feats_with_max_down_feats():
@@ -111,7 +111,7 @@ def test_std_net_out_feats_with_max_down_feats():
         max_down_feats=128,
     )
 
-    assert model._std_net[0][0].out_features == 128
+    assert model._var_net[0][0].out_features == 128
 
 
 def test_vae_2d_contents_with_different_max_feats():
