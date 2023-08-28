@@ -55,7 +55,8 @@ class VAE2d(Module):
     max_down_feats : int, optional
         Upper limit on the number of features that can be produced by the
         down-sampling blocks.
-
+    min_up_feats : int, optional
+        Minimum number of features the up-sampling blocks can produce.
 
     """
 
@@ -71,6 +72,7 @@ class VAE2d(Module):
         lr_slope: float = 0.1,
         kernel_size: int = 3,
         max_down_feats: Optional[int] = None,
+        min_up_feats: Optional[int] = None,
     ):
         """Build ``VAE2d``."""
         super().__init__()
@@ -110,6 +112,7 @@ class VAE2d(Module):
             bilinear=bilinear,
             lr_slope=lr_slope,
             kernel_size=kernel_size,
+            min_up_feats=min_up_feats,
         )
 
     def _get_means_and_devs(self, features: Tensor) -> Tuple[Tensor, Tensor]:
