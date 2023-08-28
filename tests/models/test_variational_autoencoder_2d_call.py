@@ -18,6 +18,7 @@ def test_vae_call_return_shapes():
     kernel_size = [1, 3, 5]
     image_dims = [(16, 32), (32, 16)]
     max_features = [64, 128, None]
+    min_features = [None, 16, 32]
 
     iterator = product(
         in_channels,
@@ -30,6 +31,7 @@ def test_vae_call_return_shapes():
         kernel_size,
         image_dims,
         max_features,
+        min_features,
     )
 
     for (
@@ -43,6 +45,7 @@ def test_vae_call_return_shapes():
         k_size,
         in_dims,
         max_feats,
+        min_feats,
     ) in iterator:
         model = VAE2d(
             in_chans=in_chans,
@@ -55,6 +58,7 @@ def test_vae_call_return_shapes():
             lr_slope=slope,
             kernel_size=k_size,
             max_down_feats=max_feats,
+            min_up_feats=min_feats,
         )
 
         batch = rand(10, in_chans, *in_dims)
