@@ -101,7 +101,7 @@ class VAE2d(Module):
             out_feats=self._num_feats,
         )
 
-        self._std_net = FCNet(
+        self._var_net = FCNet(
             in_feats=self._num_feats,
             out_feats=self._num_feats,
         )
@@ -116,8 +116,8 @@ class VAE2d(Module):
             min_up_feats=min_up_feats,
         )
 
-    def _get_means_and_devs(self, features: Tensor) -> Tuple[Tensor, Tensor]:
-        """Estimate the means anmd standard deviations.
+    def _get_mean_and_logvar(self, features: Tensor) -> Tuple[Tensor, Tensor]:
+        """Estimate the mean and logvar vector.
 
         Parameters
         ----------
@@ -128,28 +128,28 @@ class VAE2d(Module):
         -------
         mean : Tensor
             The means.
-        std : Tensor
-            The variances.
+        logvar : Tensor
+            The logarithm of the variance.
 
         """
         flat_feats = flatten(features, start_dim=1)
 
-        mean, std = self._mean_net(flat_feats), self._std_net(flat_feats)
+        mean, logvar = self._mean_net(flat_feats), self._var_net(flat_feats)
 
         mean = unflatten(mean, dim=1, sizes=features.shape[1:])
-        std = unflatten(std, dim=1, sizes=features.shape[1:])
+        logvar = unflatten(logvar, dim=1, sizes=features.shape[1:])
 
-        return mean, std
+        return mean, logvar
 
-    def get_features(self, means: Tensor, devs: Tensor, feats: Tensor) -> Tensor:
+    def get_features(self, means: Tensor, logvar: Tensor, feats: Tensor) -> Tensor:
         """Get the features using the reparam trick.
 
         Parameters
         ----------
         means : Tensor
             The feature means.
-        devs : Tensor
-            The feature std devs.
+        logvar : Tensor
+            The log variance
         feats : Tensor
             The encoder features.
 
@@ -159,7 +159,7 @@ class VAE2d(Module):
             The feature dist.
 
         """
-        return means + (randn_like(feats) * devs)
+        return means + (randn_like(feats) * (0.5 * logvar).exp())
 
     def encode(self, batch: Tensor) -> Union[Tensor, Tuple[Tensor, Tensor]]:
         """Encode the inputs in ``batch``.
@@ -172,12 +172,15 @@ class VAE2d(Module):
         """
         encoder_feats = self.encoder(batch)
 
-        means, std = self._get_means_and_devs(encoder_feats)
+        means, logvar = self._get_mean_and_logvar(encoder_feats)
 
-        feats = means + (randn_like(encoder_feats) * std)
+        feats = means + (randn_like(encoder_feats) * logvar)
 
         if self.training is True:
-            return feats, (std**2.0 + means**2.0 - std - 0.5).mean()
+            return (
+                feats,
+                -0.5 * (-logvar.exp() - means**2.0 + 1.0 + logvar).mean(),
+            )
 
         return feats
 
@@ -232,7 +235,10 @@ class VAE2d(Module):
 
         decoded = self.decode(features)
 
-        return decoded, kl_div if self.training is True else decoded
+        if self.training is True:
+            return decoded, kl_div
+
+        return decoded
 
 
 def _features_size(
@@ -281,10 +287,14 @@ def _features_size(
         else:
             out_chans = min(max_feats, out_chans * 2)
 
-    out_height = in_height // factor
-    out_width = in_width // factor
+    out_height = in_height / factor
+    out_width = in_width / factor
 
-    features_size = out_chans * out_height * out_width
+    if (out_height % 1 != 0) or (out_width % 1 != 0):
+        msg = f"Image dims '{(in_height, in_width)}' can't be halved {num_blocks - 1} times."
+        raise ValueError(msg)
+
+    features_size = out_chans * int(out_height) * int(out_width)
 
     if features_size == 0:
         raise ValueError(f"{input_dims} too small for number of layers.")
