@@ -6,6 +6,7 @@ from torch import (  # pylint: disable=no-name-in-module
     flatten,
     unflatten,
     randn_like,
+    set_grad_enabled,
 )
 
 from torch.nn import Module
@@ -160,14 +161,58 @@ class VAE2d(Module):
         """
         return means + (randn_like(feats) * devs)
 
-    def forward(self, batch: Tensor) -> Union[Tensor, Tuple[Tensor, Tensor]]:
+    def encode(self, batch: Tensor) -> Union[Tensor, Tuple[Tensor, Tensor]]:
+        """Encode the inputs in ``batch``.
+
+        Parameters
+        ----------
+        batch : Tensor
+            Mini-batch of inputs.
+
+        """
+        encoder_feats = self.encoder(batch)
+
+        means, std = self._get_means_and_devs(encoder_feats)
+
+        feats = means + (randn_like(encoder_feats) * std)
+
+        if self.training is True:
+            return feats, (std**2.0 + means**2.0 - std - 0.5).mean()
+
+        return feats
+
+    def decode(self, features: Tensor) -> Tensor:
+        """Decode the latent ``features``.
+
+        Parameters
+        ----------
+        features : Tensor
+            VA-encoded features.
+
+        Returns
+        -------
+        Tensor
+            The decoded ``features``.
+
+        """
+        return self.decoder(features)
+
+    def forward(
+        self,
+        batch: Tensor,
+        frozen_encoder: bool = False,
+        frozen_decoder: bool = False,
+    ) -> Union[Tensor, Tuple[Tensor, Tensor]]:
         """Pass ``batch`` through the model.
 
         Parameters
         ----------
         batch : Tensor
             A mini-batch of image-like inputs.
-
+        frozen_encoder : bool, optional
+            Should the encoder's parameters be fixed?
+        frozen_decoder : bool, optional
+            Should the decoder's weights be fixed?
 
         Returns
         -------
@@ -178,19 +223,16 @@ class VAE2d(Module):
             mode.
 
         """
-        encoder_feats = self.encoder(batch)
-
-        means, std = self._get_means_and_devs(encoder_feats)
-
-        feats = self.get_features(means, std, encoder_feats)
-
         if self.training is True:
-            return (
-                self.decoder(feats),
-                (std**2.0 + means**2.0 - std - 0.5).mean(),
-            )
+            with set_grad_enabled(not frozen_encoder):
+                features, kl_div = self.encode(batch)
+        else:
+            with set_grad_enabled(not frozen_decoder):
+                features = self.encode(batch)
 
-        return self.decoder(feats)
+        decoded = self.decode(features)
+
+        return decoded, kl_div if self.training is True else decoded
 
 
 def _features_size(
