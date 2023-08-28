@@ -145,3 +145,36 @@ def test_vae_2d_contents_with_different_max_feats():
         )
 
         model.encoder.apply(lambda x: down_max_feats(x, max_feats))
+
+
+def test_vae_2d_contents_with_different_min_up_feats():
+    """Test the contents of the decoder with different ``min_up_feats`` arg."""
+    # pylint: disable=cell-var-from-loop
+
+    def down_max_feats(model: Module, min_feats: int):
+        """Check the min feats is correct."""
+
+        if isinstance(model, DownBlock) and (min_feats is not None):
+            assert model[1][0][0].in_channels <= min_feats
+            assert model[1][0][0].out_channels <= min_feats
+            assert model[1][0][1].num_features <= min_feats
+
+            assert model[1][1][0].in_channels <= min_feats
+            assert model[1][1][0].out_channels <= min_feats
+            assert model[1][1][1].num_features <= min_feats
+
+            print(model)
+
+    for min_feats in [None, 8, 16]:
+        model = VAE2d(
+            in_chans=3,
+            out_chans=3,
+            start_features=64,
+            input_dims=(64, 64),
+            num_layers=5,
+            lr_slope=0.666,
+            kernel_size=3,
+            min_up_feats=min_feats,
+        )
+
+        model.decoder.apply(lambda x: down_max_feats(x, min_feats))
