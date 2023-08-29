@@ -1,3 +1,6 @@
+## Version 0.4.2
+  - Fixed error in the doc-building caused by Torchvision (and possibly PyTorch).
+
 ## Version 0.4.1
   - Added a demo for the ``patchify_img_batch`` function.
 
