@@ -161,36 +161,69 @@ class VAE2d(Module):
         """
         return means + (randn_like(feats) * (0.5 * logvar).exp())
 
-    def encode(self, batch: Tensor) -> Union[Tensor, Tuple[Tensor, Tensor]]:
+    @staticmethod
+    def kl_divergence(means: Tensor, log_var: Tensor) -> Tensor:
+        """Compute the KL divergence between the dists and a unit normal.
+
+        Parameters
+        ----------
+        means : Tensor
+            Samples from the mean distributions.
+        log_var : Tensor
+            The logarithm of the variances.
+
+        Returns
+        -------
+        Tensor
+            Kullback-Leibler divergence between the feature dists and unit
+            normals.
+
+        Notes
+        -----
+
+        """
+        return -0.5 * (-log_var.exp() - means**2.0 + 1.0 + (log_var)).mean()
+
+    def encode(
+        self,
+        batch: Tensor,
+        frozen_encoder: bool,
+    ) -> Union[Tensor, Tuple[Tensor, Tensor]]:
         """Encode the inputs in ``batch``.
 
         Parameters
         ----------
         batch : Tensor
             Mini-batch of inputs.
+        frozen_encoder : bool
+            Shoould the encoder's weights be frozen, or not?
 
         """
-        encoder_feats = self.encoder(batch)
+        with set_grad_enabled(not frozen_encoder):
+            encoder_feats = self.encoder(batch)
 
-        means, logvar = self._get_mean_and_logvar(encoder_feats)
+            means, log_var = self._get_mean_and_logvar(encoder_feats)
 
-        feats = means + (randn_like(encoder_feats) * logvar)
+            feats = self.get_features(means, log_var, encoder_feats)
 
-        if self.training is True:
-            return (
-                feats,
-                -0.5 * (-logvar.exp() - means**2.0 + 1.0 + logvar).mean(),
-            )
+            if self.training is True:
+                return feats, self.kl_divergence(means, log_var)
 
-        return feats
+            return feats
 
-    def decode(self, features: Tensor) -> Tensor:
+    def decode(
+        self,
+        features: Tensor,
+        frozen_decoder: bool,
+    ) -> Tensor:
         """Decode the latent ``features``.
 
         Parameters
         ----------
         features : Tensor
             VA-encoded features.
+        frozen_decoder : bool
+            Should the decoder's weights be frozen, or not?
 
         Returns
         -------
@@ -198,7 +231,8 @@ class VAE2d(Module):
             The decoded ``features``.
 
         """
-        return self.decoder(features)
+        with set_grad_enabled(not frozen_decoder):
+            return self.decoder(features)
 
     def forward(
         self,
@@ -227,13 +261,11 @@ class VAE2d(Module):
 
         """
         if self.training is True:
-            with set_grad_enabled(not frozen_encoder):
-                features, kl_div = self.encode(batch)
+            features, kl_div = self.encode(batch, frozen_encoder)
         else:
-            with set_grad_enabled(not frozen_decoder):
-                features = self.encode(batch)
+            features = self.encode(batch, frozen_encoder)
 
-        decoded = self.decode(features)
+        decoded = self.decode(features, frozen_decoder)
 
         if self.training is True:
             return decoded, kl_div
