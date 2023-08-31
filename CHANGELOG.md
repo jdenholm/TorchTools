@@ -1,3 +1,6 @@
+## Version 0.4.3
+  - Updated the docstring in ``torch_tools.ConvNet2d``.
+
 ## Version 0.4.2
   - Fixed error in the doc-building caused by Torchvision (and possibly PyTorch).
 

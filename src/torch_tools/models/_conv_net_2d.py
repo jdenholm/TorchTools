@@ -13,7 +13,7 @@ from torch_tools.models._fc_net import FCNet
 
 
 class ConvNet2d(Module):
-    """CNN model which wraps Torchvision's ResNet and VGG models.
+    """CNN model which wraps Torchvision's ResNet, VGG and Mobilenet_v3 models.
 
     The model contains:
         — An encoder, taken from Torchvision's ResNet/VGG models.
