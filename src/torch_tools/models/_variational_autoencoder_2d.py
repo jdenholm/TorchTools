@@ -178,9 +178,6 @@ class VAE2d(Module):
             Kullback-Leibler divergence between the feature dists and unit
             normals.
 
-        Notes
-        -----
-
         """
         return -0.5 * (-log_var.exp() - means**2.0 + 1.0 + (log_var)).mean()
 
