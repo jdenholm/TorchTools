@@ -13,7 +13,7 @@ from torch_tools.models._fc_net import FCNet
 
 
 class ConvNet2d(Module):
-    """CNN model which wraps Torchvision's ResNet and VGG models.
+    """CNN model which wraps Torchvision's ResNet, VGG and Mobilenet_v3 models.
 
     The model contains:
         — An encoder, taken from Torchvision's ResNet/VGG models.
@@ -31,10 +31,11 @@ class ConvNet2d(Module):
         Number of input channels the model should take. Warning: if you don't
         use three input channels, the first conv layer is overwritten, which
         renders freezing the encoder pointless.
-    encoder_option : str, optional
+    encoder_style : str, optional
         The encoder option to use. The encoders are loaded from torchvision's
-        models. Options include all of torchvision's VGG and ResNET options
-        (i.e. ``"vgg11"``, ``"vgg11_bn"``, ``"resnet18"``, etc.).
+        models. Options include all of torchvision's VGG, ResNET and MOBILENET
+        v3 options (i.e. ``"vgg11"``, ``"vgg11_bn"``, ``"resnet18"``,
+        ``mobilenet_v3_small`` etc.).
     pretrained : bool, optional
         Determines whether the encoder is initialised with Torchvision's
         pretrained weights. If ``True``, the model will load Torchvision's most

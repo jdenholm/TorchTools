@@ -160,3 +160,25 @@ def test_both_transforms_types(inputs_and_targets):
         _ = DataSet(inputs=inputs, targets=targets, both_tfms="Frodo")
     with pytest.raises(TypeError):
         _ = DataSet(inputs=inputs, targets=targets, both_tfms=lambda x: x)
+
+
+def test_dataset_mixup_argument_types(inputs_and_targets):
+    """Test the types accepted by the ``mixup`` arguments."""
+    inputs, targets = inputs_and_targets
+
+    # Should work with bools
+    _ = DataSet(inputs=inputs, targets=targets, mixup=True)
+    _ = DataSet(inputs=inputs, targets=targets, mixup=False)
+
+    # Should break with non-bool
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=targets, mixup=1)
+
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=targets, mixup=1.0)
+
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=targets, mixup=1j)
+
+    with pytest.raises(TypeError):
+        _ = DataSet(inputs=inputs, targets=targets, mixup="Grima Wormtongue")
