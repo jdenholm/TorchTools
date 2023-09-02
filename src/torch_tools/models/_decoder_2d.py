@@ -62,7 +62,6 @@ class Decoder2d(Sequential):
         min_up_feats: Optional[int] = None,
     ):
         """Build `Decoder`."""
-
         super().__init__(
             *self._get_blocks(
                 process_num_feats(in_chans),
