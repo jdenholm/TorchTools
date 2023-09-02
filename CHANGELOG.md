@@ -1,3 +1,6 @@
+## Version 0.5.0
+  - Added ``torch_tools.VAE2d`` model.
+
 ## Version 0.4.3
   - Updated the docstring in ``torch_tools.ConvNet2d``.
 
