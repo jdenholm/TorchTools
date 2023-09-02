@@ -1,7 +1,37 @@
+## Version 0.4.3
+  - Updated the docstring in ``torch_tools.ConvNet2d``.
+
+## Version 0.4.2
+  - Fixed error in the doc-building caused by Torchvision (and possibly PyTorch).
+
+## Version 0.4.1
+  - Added a demo for the ``patchify_img_batch`` function.
+
+## Version 0.4.0
+Changes:
+  - Added mixup augmentation option to ```DataSet``.
+
+## Version 0.3.2
+Changes:
+  - Fixed typo in ``FCNet`` docstring: ``DenseNetwork`` -> ``FCNet``
+  - Minor refactoring of GitHub workflows.
+  - Move some of the dev requirements into the pip section.
+
+
+## Version 0.3.1
+Updated the docstring in ``ConvNet2d`` to include the mobilenet options.
+
+## Version 0.3.0
+This release introduces:
+
+- Mobilenet v3 as an encoder style for ``ConvNet2d``.
+- Fixing a docstring typo in ``ConvNet2d``.
+
+## Version 0.2.2
+The only difference in this minor version update is a tiny patch to the README: the instructions for the ``pip install ...`` commands were missing the ``"git+"`` prefixes before the URL. They have now been added.
+
 ## Version 0.2.1
 The source-code links in docs weren't working. This ha now been fixed.
-
-
 
 
 ## Version 0.2.0
