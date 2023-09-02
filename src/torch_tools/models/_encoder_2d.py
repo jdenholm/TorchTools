@@ -1,5 +1,5 @@
 """Two-dimensional convolutional encoder moder."""
-from typing import List
+from typing import List, Optional
 
 from torch.nn import Sequential
 
@@ -11,6 +11,7 @@ from torch_tools.models._argument_processing import (
     process_negative_slope_arg,
     process_u_architecture_layers,
     process_2d_kernel_size,
+    process_optional_feats_arg,
 )
 
 # pylint: disable=too-many-arguments
@@ -39,6 +40,9 @@ class Encoder2d(Sequential):
     kernel_size : int
         Size of the square convolutional kernel to use in the ``Conv2d``
         layers. Should be a positive, odd, int.
+    max_features
+        In each of the down-sampling blocks, the numbers of features is
+        doubled. Optionally supplying ``max_features`` places a limit on this.
 
 
     Examples
@@ -51,6 +55,7 @@ class Encoder2d(Sequential):
                     pool_style="max",
                     lr_slope=0.123,
                     kernel_size=3,
+                    max_feats=512,
                 )
 
     """
@@ -63,6 +68,7 @@ class Encoder2d(Sequential):
         pool_style: str,
         lr_slope: float,
         kernel_size: int,
+        max_feats: Optional[int] = None,
     ):
         """Build `Encoder`."""
         super().__init__(
@@ -78,6 +84,7 @@ class Encoder2d(Sequential):
                 process_str_arg(pool_style),
                 process_negative_slope_arg(lr_slope),
                 process_2d_kernel_size(kernel_size),
+                process_optional_feats_arg(max_feats),
             ),
         )
 
@@ -88,6 +95,7 @@ class Encoder2d(Sequential):
         pool_style: str,
         lr_slope: float,
         kernel_size: int,
+        max_feats: Optional[int] = None,
     ) -> List[DownBlock]:
         """Get the encoding layers in a sequential.
 
@@ -104,6 +112,9 @@ class Encoder2d(Sequential):
         kernel_size : int
             Size of the square convolutional kernel to use in the ``Conv2d``
             layers. Should be a positive, odd, int.
+        max_feats : int, optional
+            Optional limit on the maximum number of features the down blocks
+            can produce.
 
         Returns
         -------
@@ -114,10 +125,15 @@ class Encoder2d(Sequential):
         chans = in_chans
         blocks = []
         for _ in range(num_blocks - 1):
+            in_chans, out_chans = chans, chans * 2
+            if max_feats is not None:
+                in_chans = min(in_chans, max_feats)
+                out_chans = min(out_chans, max_feats)
+
             blocks.append(
                 DownBlock(
-                    chans,
-                    chans * 2,
+                    in_chans,
+                    out_chans,
                     pool_style,
                     lr_slope,
                     kernel_size=kernel_size,

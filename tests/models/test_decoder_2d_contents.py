@@ -330,3 +330,29 @@ def test_contents_with_different_kernel_sizes():
             if isinstance(block, UpBlock):
                 assert block[1][0][0].kernel_size == (size, size)
                 assert block[1][1][0].kernel_size == (size, size)
+
+
+def test_contents_with_different_min_up_feats():
+    """Test the condents with different ``min_up_feats`` args."""
+    for min_feats in [1, 2, 3]:
+        model = Decoder2d(
+            in_chans=16,
+            out_chans=3,
+            num_blocks=8,
+            bilinear=False,
+            lr_slope=0.1,
+            kernel_size=3,
+            min_up_feats=min_feats,
+        )
+
+        for block in list(model.children())[:-1]:
+            assert block[0].in_channels >= min_feats
+            assert block[0].out_channels >= min_feats
+
+            assert block[1][0][0].in_channels >= min_feats
+            assert block[1][0][0].out_channels >= min_feats
+            assert block[1][0][1].num_features >= min_feats
+
+            assert block[1][1][0].in_channels >= min_feats
+            assert block[1][1][0].out_channels >= min_feats
+            assert block[1][1][1].num_features >= min_feats

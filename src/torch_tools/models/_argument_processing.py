@@ -1,5 +1,5 @@
 """Functions for processing arguments to models and blocks."""
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
 
 def process_num_feats(num_feats: int) -> int:
@@ -296,3 +296,63 @@ def process_hidden_sizes(
         raise ValueError(msg)
 
     return hidden_sizes
+
+
+def process_input_dims(input_dims: Tuple[int, int]):
+    """Process the ``input_dims`` arguments.
+
+    Parameters
+    ----------
+    input_dims : Tuple[int, int]
+        Tuple of two ints.
+
+    Raises
+    ------
+    TypeError
+        If ``input_dims`` is not a tuple.
+    RuntimeError
+        If ``input_dims`` is not of length two.
+    TypeError
+        If ``input_dims`` contains anything other than int.
+    ValueError
+        If ``input_dims`` contains any values less than ones.
+
+
+    """
+    if not isinstance(input_dims, tuple):
+        msg = f"Input dims should be tuple, got '{type(input_dims)}'."
+        raise TypeError(msg)
+
+    if len(input_dims) != 2:
+        msg = f"'input_dims' should have length two, got '{input_dims}'."
+        raise RuntimeError(msg)
+
+    if not all(map(lambda x: isinstance(x, int), input_dims)):
+        msg = f"'input_dims' should only contain ints, got '{input_dims}'."
+        raise TypeError(msg)
+
+    if min(input_dims) < 1:
+        msg = f"'input_dims' should contain 1s or more, got '{input_dims}'."
+        raise ValueError(msg)
+
+    return input_dims
+
+
+def process_optional_feats_arg(max_feats: Optional[int] = None) -> Union[None, int]:
+    """Process the ``max_feats`` argument.
+
+    Parameters
+    ----------
+    max_feats : int
+        Maximum number of features allowed in a model.
+
+    Returns
+    -------
+    max_feats : int
+        See Parameters.
+
+    """
+    if max_feats is None:
+        return None
+
+    return process_num_feats(max_feats)

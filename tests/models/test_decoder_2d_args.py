@@ -351,3 +351,60 @@ def test_kernel_size_argument_values():
                 lr_slope=0.666,
                 kernel_size=size,
             )
+
+
+def test_min_up_feats_arg_types():
+    """Test the types accepted by the ``min_up_feats`` arg."""
+    # Should work with positive ints, or None
+    for min_feats in [1, None]:
+        _ = Decoder2d(
+            in_chans=8,
+            out_chans=3,
+            num_blocks=3,
+            bilinear=True,
+            lr_slope=0.666,
+            kernel_size=3,
+            min_up_feats=min_feats,
+        )
+
+    # Should break with non-int or non-None
+
+    for min_feats in [1.0, 2.0j]:
+        with pytest.raises(TypeError):
+            _ = Decoder2d(
+                in_chans=8,
+                out_chans=3,
+                num_blocks=3,
+                bilinear=True,
+                lr_slope=0.666,
+                kernel_size=3,
+                min_up_feats=min_feats,
+            )
+
+
+def test_min_up_feats_arg_values():
+    """Test the values accepted by the ``min_up_feats`` argument."""
+    # Should work with positive ints, or None
+    for min_feats in [1, None]:
+        _ = Decoder2d(
+            in_chans=8,
+            out_chans=3,
+            num_blocks=3,
+            bilinear=True,
+            lr_slope=0.666,
+            kernel_size=3,
+            min_up_feats=min_feats,
+        )
+
+    # Should break with non-positive ints
+    for min_feats in [-2, -1, 0]:
+        with pytest.raises(ValueError):
+            _ = Decoder2d(
+                in_chans=8,
+                out_chans=3,
+                num_blocks=3,
+                bilinear=True,
+                lr_slope=0.666,
+                kernel_size=3,
+                min_up_feats=min_feats,
+            )

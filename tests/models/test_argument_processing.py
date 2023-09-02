@@ -277,3 +277,90 @@ def test_process_hidden_sizes_argument_values():
         ap.process_hidden_sizes((10, 10, -1))
     with pytest.raises(ValueError):
         ap.process_hidden_sizes((0, 10, 1))
+
+
+def test_process_input_dims_arg_types():
+    """Test ``process_input_dims`` argument type."""
+    # Should work with Tuple[int, int]
+    _ = ap.process_input_dims((10, 10))
+
+    # Should break with non-tuple
+    with pytest.raises(TypeError):
+        _ = ap.process_input_dims([1, 2])
+
+    with pytest.raises(TypeError):
+        _ = ap.process_input_dims({1, 2})
+
+
+def test_process_input_dims_arg_length():
+    """Test ``process_input_dims`` argument length."""
+    # Should work with tuple of length 2
+    _ = ap.process_input_dims((10, 10))
+
+    # Should break with tuples whose length are not 2
+    with pytest.raises(RuntimeError):
+        _ = ap.process_input_dims((10,))
+
+    with pytest.raises(RuntimeError):
+        _ = ap.process_input_dims((10, 10, 10))
+
+
+def test_process_input_dims_arg_element_types():
+    """Test the types allowed in the ``input_dims`` arg."""
+    # Should work with tuples containing ints
+    _ = ap.process_input_dims((10, 10))
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = ap.process_input_dims((10, 10.0))
+
+    with pytest.raises(TypeError):
+        _ = ap.process_input_dims((10.0, 10))
+
+    with pytest.raises(TypeError):
+        _ = ap.process_input_dims((10, 10j))
+
+
+def test_process_input_dims_element_values():
+    """Test the values allowed in the ``input_dims`` arg."""
+    # Should work with positive ints
+    _ = ap.process_input_dims((1, 1))
+    _ = ap.process_input_dims((2, 2))
+
+    # Should break with non-positve ints
+    with pytest.raises(ValueError):
+        _ = ap.process_input_dims((1, 0))
+
+    with pytest.raises(ValueError):
+        _ = ap.process_input_dims((1, 0))
+
+    with pytest.raises(ValueError):
+        _ = ap.process_input_dims((-1, -1))
+
+
+def test_process_optional_features_arg_types():
+    """Test the types accepted by the ``max_feats`` argument."""
+    # Should work with ints or None
+    _ = ap.process_optional_feats_arg(max_feats=1)
+    _ = ap.process_optional_feats_arg(max_feats=None)
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = ap.process_optional_feats_arg(max_feats=1.0)
+
+    with pytest.raises(TypeError):
+        _ = ap.process_optional_feats_arg(max_feats=1.0j)
+
+
+def test_process_optional_features_arg_values():
+    """Test the values accepted by the ``max_feats`` argument."""
+    # Should work with ints of one or more, or None
+    _ = ap.process_optional_feats_arg(max_feats=1)
+    _ = ap.process_optional_feats_arg(max_feats=None)
+
+    # Should break with ints less than 1
+    with pytest.raises(ValueError):
+        _ = ap.process_optional_feats_arg(max_feats=0)
+
+    with pytest.raises(ValueError):
+        _ = ap.process_optional_feats_arg(max_feats=-1)

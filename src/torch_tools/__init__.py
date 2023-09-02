@@ -10,5 +10,6 @@ from .models import Encoder2d
 from .models import Decoder2d
 from .models import AutoEncoder2d
 from .models import SimpleConvNet2d
+from .models import VAE2d
 
 __version__ = _version("torch_tools")

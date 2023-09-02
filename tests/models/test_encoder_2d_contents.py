@@ -202,3 +202,35 @@ def test_encoder_2d_contents_with_different_kernel_sizes():
 
         # pylint: disable=cell-var-from-loop
         encoder.apply(lambda x: kernel_size_check(x, kernel_size))
+
+
+def test_encoder_2d_contents_with_different_max_feats():
+    """Test the contents of ``Encoder2d`` with different ``max_feats``."""
+    # pylint: disable=cell-var-from-loop
+
+    def down_max_feats(model: Module, max_feats: int):
+        """Check the max feats is correct."""
+
+        if isinstance(model, DownBlock) and (max_feats is not None):
+            assert model[1][0][0].in_channels <= max_feats
+            assert model[1][0][0].out_channels <= max_feats
+            assert model[1][0][1].num_features <= max_feats
+
+            assert model[1][1][0].in_channels <= max_feats
+            assert model[1][1][0].out_channels <= max_feats
+            assert model[1][1][1].num_features <= max_feats
+
+            print(model)
+
+    for max_feats in [None, 1, 128, 256]:
+        encoder = Encoder2d(
+            in_chans=123,
+            start_features=64,
+            num_blocks=5,
+            pool_style="max",
+            lr_slope=0.666,
+            kernel_size=3,
+            max_feats=max_feats,
+        )
+
+        encoder.apply(lambda x: down_max_feats(x, max_feats))

@@ -360,3 +360,59 @@ def test_kernel_size_argument_values():
                 lr_slope=0.1,
                 kernel_size=bad_size,
             )
+
+
+def test_max_feats_arg_types():
+    """Test the types accepted by the ``max_feats`` argument."""
+    # Should work with ints or None
+    for max_feats in [1, None]:
+        _ = Encoder2d(
+            in_chans=32,
+            start_features=64,
+            num_blocks=4,
+            pool_style="max",
+            lr_slope=0.1,
+            kernel_size=3,
+            max_feats=max_feats,
+        )
+
+    # Should break with non-ints
+    for max_feats in [1.0, 1j, True]:
+        with pytest.raises(TypeError):
+            _ = Encoder2d(
+                in_chans=32,
+                start_features=64,
+                num_blocks=4,
+                pool_style="max",
+                lr_slope=0.1,
+                kernel_size=3,
+                max_feats=max_feats,
+            )
+
+
+def test_max_feats_arg_values():
+    """Test the values accepted by the ``max_feats`` argument."""
+    # Should work with positive ints or None
+    for max_feats in [1, 2, 3, None]:
+        _ = Encoder2d(
+            in_chans=32,
+            start_features=64,
+            num_blocks=4,
+            pool_style="max",
+            lr_slope=0.1,
+            kernel_size=3,
+            max_feats=max_feats,
+        )
+
+    # Should break with non-positive ints
+    for max_feats in [-2, -1, 0]:
+        with pytest.raises(ValueError):
+            _ = Encoder2d(
+                in_chans=32,
+                start_features=64,
+                num_blocks=4,
+                pool_style="max",
+                lr_slope=0.1,
+                kernel_size=3,
+                max_feats=max_feats,
+            )
