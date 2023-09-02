@@ -1,5 +1,5 @@
 """Two-dimensional decoder model."""
-from typing import List
+from typing import List, Optional
 
 from torch.nn import Sequential, Conv2d
 
@@ -9,6 +9,7 @@ from torch_tools.models._argument_processing import process_num_feats
 from torch_tools.models._argument_processing import process_boolean_arg
 from torch_tools.models._argument_processing import process_negative_slope_arg
 from torch_tools.models._argument_processing import process_2d_kernel_size
+from torch_tools.models._argument_processing import process_optional_feats_arg
 
 # pylint: disable=too-many-arguments
 
@@ -32,6 +33,9 @@ class Decoder2d(Sequential):
     kernel_size : int
         The size of the square convolutional kernel in the ``Conv2d`` layers.
         Should be an odd, positive, int.
+    min_up_feats : int, optional
+        The minimum numbers features the up-sampling blocks are allowed to
+        produce.
 
     Examples
     --------
@@ -55,6 +59,7 @@ class Decoder2d(Sequential):
         bilinear: bool,
         lr_slope: float,
         kernel_size: int,
+        min_up_feats: Optional[int] = None,
     ):
         """Build `Decoder`."""
         super().__init__(
@@ -64,9 +69,14 @@ class Decoder2d(Sequential):
                 process_boolean_arg(bilinear),
                 process_negative_slope_arg(lr_slope),
                 process_2d_kernel_size(kernel_size),
+                min_feats=process_optional_feats_arg(min_up_feats),
             ),
             Conv2d(
-                in_channels=in_chans // (2 ** (process_num_feats(num_blocks) - 1)),
+                in_channels=self._channel_size_check(
+                    in_chans,
+                    num_blocks,
+                    min_feats=process_optional_feats_arg(min_up_feats),
+                ),
                 out_channels=process_num_feats(out_chans),
                 kernel_size=1,
                 stride=1,
@@ -74,7 +84,11 @@ class Decoder2d(Sequential):
         )
 
     @staticmethod
-    def _channel_size_check(in_chans: int, num_blocks: int):
+    def _channel_size_check(
+        in_chans: int,
+        num_blocks: int,
+        min_feats: Optional[int] = None,
+    ) -> int:
         """Check ``in_chans`` can be halved ``num_layers - 1`` times.
 
         Parameters
@@ -83,6 +97,13 @@ class Decoder2d(Sequential):
             The number of inputs channels the model should take.
         num_blocks : int
             The number of layers in the model.
+        min_feats : int, optional
+            Min number of out feats the up-sampling layers can produce.
+
+        Returns
+        -------
+        chans : int
+            The number of channels the up blocks should produce.
 
         Raises
         ------
@@ -92,11 +113,16 @@ class Decoder2d(Sequential):
         """
         chans = in_chans
         for _ in range(num_blocks - 1):
-            if (chans % 2) != 0:
+            if (chans % 2) != 0 and (chans != min_feats):
                 msg = f"'in_chans' value {in_chans} can't be halved "
                 msg += f"{num_blocks - 1} times."
                 raise ValueError(msg)
             chans //= 2
+
+            if min_feats is not None:
+                chans = max(min_feats, chans)
+
+        return chans
 
     def _get_blocks(
         self,
@@ -105,6 +131,7 @@ class Decoder2d(Sequential):
         bilinear: bool,
         lr_slope: float,
         kernel_size: int,
+        min_feats: Optional[int] = None,
     ) -> List[UpBlock]:
         """Get the upsampling blocks in a ``Sequential``.
 
@@ -122,6 +149,8 @@ class Decoder2d(Sequential):
         kernel_size : int
             The size of the square convolutional kernel in the ``Conv2d``
             layers. Should be an odd, positive, int.
+        min_feats : int, optional
+            Min number of out feats the up-sampling layers can produce.
 
         Returns
         -------
@@ -129,14 +158,20 @@ class Decoder2d(Sequential):
             A list of the upsampling layers to include in the decoder.
 
         """
-        self._channel_size_check(in_chans, num_blocks)
+        self._channel_size_check(in_chans, num_blocks, min_feats=min_feats)
         chans = in_chans
         blocks = []
         for _ in range(num_blocks - 1):
+            if min_feats is None:
+                in_chans, out_chans = chans, chans // 2
+            else:
+                in_chans = max(min_feats, chans)
+                out_chans = max(min_feats, chans // 2)
+
             blocks.append(
                 UpBlock(
-                    process_num_feats(chans),
-                    process_num_feats(chans // 2),
+                    process_num_feats(in_chans),
+                    process_num_feats(out_chans),
                     bilinear,
                     lr_slope,
                     kernel_size,
