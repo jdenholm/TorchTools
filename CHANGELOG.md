@@ -1,3 +1,6 @@
+## Version 0.5.1
+  - Added ``py.typed`` file.
+
 ## Version 0.5.0
   - Added ``torch_tools.VAE2d`` model.
 
