@@ -10,6 +10,9 @@ from torch import (  # pylint: disable=no-name-in-module
 )
 
 
+from torch.nn import Module
+
+
 def target_from_mask_img(mask_img: Tensor, num_classes: int) -> Tensor:
     """Convert 1-channel image to a target tensor for semantic segmentation.
 
@@ -204,3 +207,21 @@ def img_batch_dims_power_of_2(batch: Tensor):
         msg = "Mini-batch of image-like's width should be power of 2. Got "
         msg += f"'{width}'."
         raise RuntimeError(msg)
+
+
+def disable_biases(model: Module):
+    """Disable all ``bias`` parameters in model.
+
+    Parameters
+    ----------
+    model : Module
+        The model to disable biases in.
+
+    """
+    if not isinstance(model, Module):
+        msg = "'disable_biases' function should only be applied to "
+        msg += f"'torch.nn.Module'. Got '{type(model)}'."
+        raise TypeError(msg)
+
+    if hasattr(model, "bias"):
+        model.bias = None  # type: ignore

@@ -1,3 +1,6 @@
+## Version 0.5.2
+  - Removed biases in residual block.
+
 ## Version 0.5.1
   - Added ``py.typed`` file.
 
