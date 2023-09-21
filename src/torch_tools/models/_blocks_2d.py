@@ -17,6 +17,8 @@ from torch_tools.models._argument_processing import (
     process_str_arg,
 )
 
+from torch_tools.torch_utils import disable_biases
+
 # pylint: disable=too-many-arguments
 
 
@@ -181,6 +183,8 @@ class ResidualBlock(Module):
         )
 
         self.relu = ReLU()
+
+        self.apply(disable_biases)
 
     def forward(self, batch: Tensor) -> Tensor:
         """Pass `batch` through the block.
