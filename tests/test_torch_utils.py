@@ -3,11 +3,14 @@ import pytest
 
 from torch import randint, rand, full, zeros, ones  # pylint: disable=no-name-in-module
 
+from torch.nn import Linear, Conv2d
+
 
 from torch_tools.torch_utils import (
     target_from_mask_img,
     patchify_img_batch,
     img_batch_dims_power_of_2,
+    disable_biases,
 )
 
 # pylint: disable=redefined-outer-name
@@ -298,3 +301,28 @@ def test_patchify_img_batch_allows_gradient_flow():
     out.backward()
 
     assert (batch.grad == 123).all()
+
+
+def test_disable_biases_argument_type():
+    """Test the types accepted by the ``model`` arg."""
+    # Should work with ``torch.nn.Module``
+    disable_biases(Linear(10, 2))
+    disable_biases(Conv2d(5, 5, 3))
+
+    # Should break with any other types
+    with pytest.raises(TypeError):
+        disable_biases(1)
+
+    with pytest.raises(TypeError):
+        disable_biases([1, 2, 3])
+
+
+def test_disable_biases_works():
+    """Test the biases are actually disabled."""
+    linear_layer = Linear(10, 2, bias=True)
+    disable_biases(linear_layer)
+    assert linear_layer.bias is None
+
+    conv_layer = Conv2d(10, 2, 3, bias=True)
+    disable_biases(conv_layer)
+    assert conv_layer.bias is None
