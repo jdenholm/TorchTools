@@ -2,7 +2,7 @@
 from itertools import product
 
 
-from torch import rand  # pylint: disable=no-name-in-module
+from torch import rand, zeros  # pylint: disable=no-name-in-module
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResidualBlock
 from torch_tools.models._blocks_2d import DownBlock, UpBlock, UNetUpBlock
@@ -67,6 +67,19 @@ def test_res_block_call_return_shapes():
         block = ResidualBlock(in_chans=in_chans, kernel_size=kernel_size)
         out = block(rand(10, in_chans, 50, 100))
         assert out.shape == (10, in_chans, 50, 100)
+
+
+def test_res_block_call_with_zeros():
+    """Resisudal blocks called on zeros should return zeros.
+
+    Notes
+    -----
+    If they don't, the biases are on.
+
+    """
+    block = ResidualBlock(in_chans=3)
+
+    assert (block(zeros(1, 3, 20, 20)) == 0).all()
 
 
 def test_down_block_call_return_shapes():
