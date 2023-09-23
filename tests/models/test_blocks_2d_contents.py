@@ -281,7 +281,40 @@ def test_conv_res_block_first_conv_contents():
 
 def test_conv_res_block_res_block_contents():
     """Test the contents of the residual block."""
-    raise Exception()
+    in_channels = [2, 5, 9]
+    out_channels = [2, 5, 9]
+    lr_slopes = [0.1, 0.2]
+    kernel_sizes = [1, 3]
+
+    iterator = product(in_channels, out_channels, lr_slopes, kernel_sizes)
+
+    for in_chans, out_chans, lr_slope, kernel_size in iterator:
+        block = ConvResBlock(
+            in_chans=in_chans,
+            out_chans=out_chans,
+            lr_slope=lr_slope,
+            kernel_size=kernel_size,
+        )
+
+        res_block = block[1]
+
+        assert isinstance(res_block.first_conv, ConvBlock)
+        assert isinstance(res_block.first_conv[0], Conv2d)
+        assert isinstance(res_block.first_conv[1], BatchNorm2d)
+        assert isinstance(res_block.first_conv[2], LeakyReLU)
+
+        assert res_block.first_conv[0].in_channels == out_chans
+        assert res_block.first_conv[0].out_channels == out_chans
+        assert res_block.first_conv[1].num_features == out_chans
+        assert res_block.first_conv[2].negative_slope == 0.0
+
+        assert isinstance(res_block.second_conv, ConvBlock)
+        assert isinstance(res_block.second_conv[0], Conv2d)
+        assert isinstance(res_block.second_conv[1], BatchNorm2d)
+
+        assert res_block.second_conv[0].in_channels == out_chans
+        assert res_block.second_conv[0].out_channels == out_chans
+        assert res_block.second_conv[1].num_features == out_chans
 
 
 def test_down_block_contents_pool_assignment():
