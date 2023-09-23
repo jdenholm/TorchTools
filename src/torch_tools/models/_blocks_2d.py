@@ -207,6 +207,47 @@ class ResidualBlock(Module):
         return self.relu(out)
 
 
+class ConvResBlock(Sequential):
+    """A single ``ConvBlock`` followed by a ``ResidualBlock``.
+
+    Parameters
+    ----------
+    in_chans : int
+        The number of input channels.
+    out_chans : int
+        The number of output channels.
+    lr_slope : float
+        The negative slope to use in the leaky relu layers.
+    kernel_size : int
+        Size of the square convolutional kernel to use.
+
+
+    """
+
+    def __init__(
+        self,
+        in_chans: int,
+        out_chans: int,
+        lr_slope: float,
+        kernel_size: int = 3,
+    ):
+        """Build ``ConvResBlock``."""
+        super().__init__(
+            ConvBlock(
+                process_num_feats(in_chans),
+                process_num_feats(out_chans),
+                kernel_size=process_2d_kernel_size(kernel_size),
+                batch_norm=process_boolean_arg(True),
+                leaky_relu=process_boolean_arg(True),
+                lr_slope=process_negative_slope_arg(lr_slope),
+            ),
+            ResidualBlock(
+                process_num_feats(out_chans),
+                kernel_size=process_2d_kernel_size(kernel_size),
+            ),
+        )
+
+
 class DownBlock(Sequential):
     """Down-sampling block which reduces image size by a factor of 2.
 
