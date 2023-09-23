@@ -279,6 +279,11 @@ def test_conv_res_block_first_conv_contents():
         assert first_conv[2].negative_slope == lr_slope
 
 
+def test_conv_res_block_res_block_contents():
+    """Test the contents of the residual block."""
+    raise Exception()
+
+
 def test_down_block_contents_pool_assignment():
     """Test pool assignment in `DownBlock`."""
     # Test with max pool
