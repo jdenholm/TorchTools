@@ -4,8 +4,9 @@ from itertools import product
 
 from torch import rand, zeros  # pylint: disable=no-name-in-module
 
-from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResidualBlock
+from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
 from torch_tools.models._blocks_2d import DownBlock, UpBlock, UNetUpBlock
+from torch_tools.models._blocks_2d import ResidualBlock, ConvResBlock
 
 
 def test_conv_block_call_return_shapes():
@@ -80,6 +81,26 @@ def test_res_block_call_with_zeros():
     block = ResidualBlock(in_chans=3)
 
     assert (block(zeros(1, 3, 20, 20)) == 0).all()
+
+
+def test_conv_res_block_call_return_shapes():
+    """Test the return shapes produced by ``ConvResBlock``."""
+    in_channels = [3, 10, 50]
+    out_channels = [3, 10, 50]
+    kernel_sizes = [3, 5, 7]
+
+    for in_chans, out_chans, kernel_size in product(
+        in_channels, out_channels, kernel_sizes
+    ):
+        block = ConvResBlock(
+            in_chans=in_chans,
+            out_chans=out_chans,
+            lr_slope=0.1,
+            kernel_size=kernel_size,
+        )
+
+        out = block(rand(10, in_chans, 50, 50))
+        assert out.shape == (10, out_chans, 50, 50)
 
 
 def test_down_block_call_return_shapes():

@@ -1,3 +1,6 @@
+## Version 0.5.3
+  - Added ``torch_tools.models._blocks_2d.ConvResBlock``.
+
 ## Version 0.5.2
   - Removed biases in residual block.
 

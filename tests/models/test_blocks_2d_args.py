@@ -3,7 +3,7 @@
 import pytest
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock, ResidualBlock
-from torch_tools.models._blocks_2d import UNetUpBlock, DownBlock, UpBlock
+from torch_tools.models._blocks_2d import UNetUpBlock, DownBlock, UpBlock, ConvResBlock
 
 
 def test_conv_block_in_chans_arg_types():
@@ -416,6 +416,122 @@ def test_res_block_kernel_size_arg_values():
 
     with pytest.raises(ValueError):
         _ = ResidualBlock(in_chans=3, kernel_size=-1)
+
+
+def test_conv_res_block_in_chans_arg_type():
+    """Test the types accepted by the ``in_chans`` arg."""
+    # Should work with positive ints
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1)
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1)
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = ConvResBlock(in_chans=1.0, out_chans=3, lr_slope=0.1)
+
+    with pytest.raises(TypeError):
+        _ = ConvResBlock(in_chans=1j, out_chans=3, lr_slope=0.1)
+
+
+def test_conv_res_block_in_chans_arg_values():
+    """Test the values accepted by the ``in_chans`` arg."""
+    # Should work with positive ints
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1)
+    _ = ConvResBlock(in_chans=2, out_chans=3, lr_slope=0.1)
+    _ = ConvResBlock(in_chans=3, out_chans=3, lr_slope=0.1)
+
+    # Should break with non-positive ints
+    with pytest.raises(ValueError):
+        _ = ConvResBlock(in_chans=0, out_chans=3, lr_slope=0.1)
+
+    with pytest.raises(ValueError):
+        _ = ConvResBlock(in_chans=-1, out_chans=3, lr_slope=0.1)
+
+
+def test_conv_res_block_out_chans_arg_types():
+    """Test the types accepted by the ``out_chans`` arg."""
+    # Should work with positive ints
+    _ = ConvResBlock(in_chans=1, out_chans=1, lr_slope=0.1)
+    _ = ConvResBlock(in_chans=1, out_chans=2, lr_slope=0.1)
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1)
+
+    # Should break with non-ints
+    with pytest.raises(TypeError):
+        _ = ConvResBlock(in_chans=1, out_chans=1.0, lr_slope=0.1)
+
+    with pytest.raises(TypeError):
+        _ = ConvResBlock(in_chans=1, out_chans=1j, lr_slope=0.1)
+
+
+def test_conv_res_block_out_chans_arg_values():
+    """Test the values accepted by the ``out_chans`` arg."""
+    # Should work with positive ints
+    _ = ConvResBlock(in_chans=1, out_chans=1, lr_slope=0.1)
+    _ = ConvResBlock(in_chans=1, out_chans=2, lr_slope=0.1)
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1)
+
+    # Should break with non-positive ints
+    with pytest.raises(ValueError):
+        _ = ConvResBlock(in_chans=1, out_chans=0, lr_slope=0.1)
+
+    with pytest.raises(ValueError):
+        _ = ConvResBlock(in_chans=1, out_chans=-1, lr_slope=0.1)
+
+
+def test_conv_res_block_lr_slope_arg_types():
+    """Test the types accepted by the ``lr_slope`` arg."""
+    # Should work with float
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1)
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.01)
+
+    # Should break with non-float
+    with pytest.raises(TypeError):
+        _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=1)
+
+    with pytest.raises(TypeError):
+        _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=1j)
+
+
+def test_conv_res_block_kernel_size_arg_types():
+    """Test the values accepted by the ``out_chans`` arg."""
+    # Should work with positive odd ints
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, kernel_size=1)
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, kernel_size=3)
+
+    # Should break with non-int
+    with pytest.raises(TypeError):
+        _ = ConvResBlock(
+            in_chans=1,
+            out_chans=3,
+            lr_slope=0.1,
+            kernel_size=1.0,
+        )
+
+    with pytest.raises(TypeError):
+        _ = ConvResBlock(
+            in_chans=1,
+            out_chans=3,
+            lr_slope=0.1,
+            kernel_size=1j,
+        )
+
+
+def test_conv_res_block_kernel_size_arg_values():
+    """Test the types accepted by the ``lr_slope`` arg."""
+    # Should work with positive odd ints
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, kernel_size=1)
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, kernel_size=3)
+
+    # Should break with non-odd positive int
+    with pytest.raises(ValueError):
+        _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, kernel_size=2)
+    with pytest.raises(ValueError):
+        _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, kernel_size=4)
+
+    # Should break with ints less than one
+    with pytest.raises(ValueError):
+        _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, kernel_size=0)
+    with pytest.raises(ValueError):
+        _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, kernel_size=-1)
 
 
 def test_unet_up_block_in_chans_arg_types():
