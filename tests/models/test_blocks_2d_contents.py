@@ -1,10 +1,12 @@
 """Test the contents of the blocks in `torch_tools.models._blocks_2d`."""
+from itertools import product
+
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU, Upsample
 from torch.nn import MaxPool2d, AvgPool2d, ConvTranspose2d, Sequential
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
 from torch_tools.models._blocks_2d import ResidualBlock, DownBlock
-from torch_tools.models._blocks_2d import UpBlock, UNetUpBlock
+from torch_tools.models._blocks_2d import UpBlock, UNetUpBlock, ConvResBlock
 
 
 # pylint: disable=protected-access
@@ -243,6 +245,38 @@ def test_residual_block_contents_with_different_kernel_sizes():
 
         assert block.first_conv[0].kernel_size == (kernel_size, kernel_size)
         assert block.second_conv[0].kernel_size == (kernel_size, kernel_size)
+
+
+def test_conv_res_block_first_conv_contents():
+    """Test the contents of ``ConvResBlock``'s first conv block."""
+    in_channels = [2, 5, 9]
+    out_channels = [2, 5, 9]
+    lr_slopes = [0.1, 0.2]
+    kernel_sizes = [1, 3]
+
+    iterator = product(in_channels, out_channels, lr_slopes, kernel_sizes)
+
+    for in_chans, out_chans, lr_slope, kernel_size in iterator:
+        block = ConvResBlock(
+            in_chans=in_chans,
+            out_chans=out_chans,
+            lr_slope=lr_slope,
+            kernel_size=kernel_size,
+        )
+
+        first_conv = block[0]
+
+        assert isinstance(first_conv, ConvBlock)
+
+        assert isinstance(first_conv[0], Conv2d)
+        assert isinstance(first_conv[1], BatchNorm2d)
+        assert isinstance(first_conv[2], LeakyReLU)
+
+        assert first_conv[0].in_channels == in_chans
+        assert first_conv[0].out_channels == out_chans
+        assert first_conv[1].num_features == out_chans
+
+        assert first_conv[2].negative_slope == lr_slope
 
 
 def test_down_block_contents_pool_assignment():
