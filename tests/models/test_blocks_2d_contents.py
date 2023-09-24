@@ -1,7 +1,7 @@
 """Test the contents of the blocks in `torch_tools.models._blocks_2d`."""
 from itertools import product
 
-from torch.nn import Conv2d, BatchNorm2d, LeakyReLU, Upsample
+from torch.nn import Conv2d, BatchNorm2d, LeakyReLU, Upsample, ReLU
 from torch.nn import MaxPool2d, AvgPool2d, ConvTranspose2d, Sequential
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
@@ -317,64 +317,128 @@ def test_conv_res_block_res_block_contents():
         assert res_block.second_conv[1].num_features == out_chans
 
 
-def test_down_block_contents_pool_assignment():
-    """Test pool assignment in `DownBlock`."""
-    # Test with max pool
-    block = DownBlock(in_chans=123, out_chans=321, pool="max", lr_slope=0.1)
-    assert isinstance(block[0], MaxPool2d), "Should be max pool."
-    assert block[0].kernel_size == 2, "Kernel size should be 2."
-    assert block[0].stride == 2, "Stride should be 2."
+def test_down_block_contents_with_double_conv():
+    """Test the conents of ``DownBlock`` with the double conv block style."""
+    in_channels = [3, 6]
+    out_channels = [3, 6]
+    pools = ["max", "avg"]
+    lr_slopes = [0.0, 0.1]
+    kernel_sizes = [1, 3]
 
-    # Test with average pool
-    block = DownBlock(in_chans=123, out_chans=321, pool="avg", lr_slope=0.1)
-    assert isinstance(block[0], AvgPool2d), "Should be avg pool."
-    assert block[0].kernel_size == 2, "Kernel size should be 2."
-    assert block[0].stride == 2, "Stride should be 2."
+    iterator = product(
+        in_channels,
+        out_channels,
+        pools,
+        lr_slopes,
+        kernel_sizes,
+    )
 
+    pool_layers = {"avg": AvgPool2d, "max": MaxPool2d}
 
-def test_down_block_double_conv_contents():
-    """Test the contents of the `DoubleConvBlock` block in `DownBlock`."""
-    block = DownBlock(in_chans=123, out_chans=321, pool="max", lr_slope=0.1234)
-
-    in_conv = block[1][0]
-    assert isinstance(in_conv[0], Conv2d), "1st layer should be conv"
-    assert isinstance(in_conv[1], BatchNorm2d), "2nd layer should be batchnorm"
-    assert isinstance(in_conv[2], LeakyReLU), "3rd layer should be leaky relu"
-
-    assert in_conv[0].in_channels == 123
-    assert in_conv[0].out_channels == 321
-    assert in_conv[1].num_features == 321
-    assert in_conv[2].negative_slope == 0.1234
-
-    out_conv = block[1][1]
-    assert isinstance(out_conv[0], Conv2d), "Should be conv"
-    assert isinstance(out_conv[1], BatchNorm2d), "Should be batchnorm"
-    assert isinstance(out_conv[2], LeakyReLU), "Should be leaky relu"
-
-    assert out_conv[0].in_channels == 321
-    assert out_conv[0].out_channels == 321
-    assert out_conv[1].num_features == 321
-    assert out_conv[2].negative_slope == 0.1234
-
-
-def test_down_block_contents_with_different_kernel_sizes():
-    """Test the contents of the ``DownBlock`` with different kernel sizes."""
-    for size in [1, 3, 5, 7, 9]:
+    for in_chans, out_chans, pool, slope, kernel in iterator:
         block = DownBlock(
-            in_chans=3,
-            out_chans=3,
-            pool="max",
-            lr_slope=0.1,
-            kernel_size=size,
+            in_chans=in_chans,
+            out_chans=out_chans,
+            pool=pool,
+            lr_slope=slope,
+            kernel_size=kernel,
+            block_style="double_conv",
         )
 
-        # The pool's strid and kernel size should remain unchanged
-        assert block[0].kernel_size == 2
-        assert block[0].stride == 2
+        assert isinstance(block[0], pool_layers[pool])
 
-        # The convolutional layers' kernel sizes should change
-        assert block[1][0][0].kernel_size == (size, size)
-        assert block[1][1][0].kernel_size == (size, size)
+        assert isinstance(block[1], DoubleConvBlock)
+
+        # Test the first conv block of the double conv block
+        assert isinstance(block[1][0], ConvBlock)
+        assert isinstance(block[1][0][0], Conv2d)
+        assert isinstance(block[1][0][1], BatchNorm2d)
+        assert isinstance(block[1][0][2], LeakyReLU)
+
+        assert block[1][0][0].in_channels == in_chans
+        assert block[1][0][0].out_channels == out_chans
+        assert block[1][0][1].num_features == out_chans
+        assert block[1][0][2].negative_slope == slope
+
+        # Test the second conv block of the double conv block
+        assert isinstance(block[1][1], ConvBlock)
+        assert isinstance(block[1][1][0], Conv2d)
+        assert isinstance(block[1][1][1], BatchNorm2d)
+        assert isinstance(block[1][1][2], LeakyReLU)
+
+        assert block[1][1][0].in_channels == out_chans
+        assert block[1][1][0].out_channels == out_chans
+        assert block[1][1][1].num_features == out_chans
+        assert block[1][1][2].negative_slope == slope
+
+
+def test_down_block_contents_with_conv_residual():
+    """Test the conents of ``DownBlock`` with the double conv residual style."""
+    in_channels = [3, 6]
+    out_channels = [3, 6]
+    pools = ["max", "avg"]
+    lr_slopes = [0.0, 0.1]
+    kernel_sizes = [1, 3]
+
+    iterator = product(
+        in_channels,
+        out_channels,
+        pools,
+        lr_slopes,
+        kernel_sizes,
+    )
+
+    pool_layers = {"avg": AvgPool2d, "max": MaxPool2d}
+
+    for in_chans, out_chans, pool, slope, kernel in iterator:
+        block = DownBlock(
+            in_chans=in_chans,
+            out_chans=out_chans,
+            pool=pool,
+            lr_slope=slope,
+            kernel_size=kernel,
+            block_style="conv_res",
+        )
+
+        assert isinstance(block[0], pool_layers[pool])
+
+        assert isinstance(block[1], ConvResBlock)
+
+        # Test the ConvBlock
+        assert isinstance(block[1][0], ConvBlock)
+
+        assert isinstance(block[1][0][0], Conv2d)
+        assert isinstance(block[1][0][1], BatchNorm2d)
+        assert isinstance(block[1][0][2], LeakyReLU)
+
+        assert block[1][0][0].in_channels == in_chans
+        assert block[1][0][0].out_channels == out_chans
+        assert block[1][0][1].num_features == out_chans
+        assert block[1][0][2].negative_slope == slope
+
+        # Test the residual block
+        assert isinstance(block[1][1], ResidualBlock)
+        assert isinstance(block[1][1].first_conv, ConvBlock)
+
+        assert isinstance(block[1][1].first_conv[0], Conv2d)
+        assert isinstance(block[1][1].first_conv[1], BatchNorm2d)
+        assert isinstance(block[1][1].first_conv[2], LeakyReLU)
+
+        assert block[1][1].first_conv[0].in_channels == out_chans
+        assert block[1][1].first_conv[0].out_channels == out_chans
+        assert block[1][1].first_conv[1].num_features == out_chans
+        assert block[1][1].first_conv[2].negative_slope == 0.0
+
+        assert isinstance(block[1][1].second_conv, ConvBlock)
+
+        assert isinstance(block[1][1].second_conv[0], Conv2d)
+        assert isinstance(block[1][1].second_conv[1], BatchNorm2d)
+
+        assert block[1][1].second_conv[0].in_channels == out_chans
+        assert block[1][1].second_conv[0].out_channels == out_chans
+        assert block[1][1].second_conv[1].num_features == out_chans
+
+        assert isinstance(block[1][1].relu, ReLU)
 
 
 def test_up_block_upsample_contents_with_bilinear_false():
