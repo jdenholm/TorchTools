@@ -802,6 +802,30 @@ def test_down_block_kernel_size_arg_values():
             )
 
 
+def test_down_block_block_style_arg_values():
+    """Test the values accepted by the ``block_style`` arg."""
+    # Should work with allowed options
+    for option in ["double_conv", "conv_res"]:
+        _ = DownBlock(
+            in_chans=8,
+            out_chans=1,
+            pool="max",
+            lr_slope=0.1,
+            block_style=option,
+        )
+
+    # Should break with any other options
+    for option in ["Radagast the Brown", 666]:
+        with pytest.raises(ValueError):
+            _ = DownBlock(
+                in_chans=8,
+                out_chans=1,
+                pool="max",
+                lr_slope=0.1,
+                block_style=option,
+            )
+
+
 def test_up_block_in_chans_arg_type():
     """Test the types accepted by the `in_chans` arg."""
     # Should work with ints of one or more
