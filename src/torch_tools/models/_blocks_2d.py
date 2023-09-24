@@ -592,4 +592,4 @@ class UNetUpBlock(Module):
         return self.double_conv(concatenated)
 
 
-_conv_blocks = {"double_conv": ConvBlock, "conv_res": ConvResBlock}
+_conv_blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
