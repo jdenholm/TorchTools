@@ -15,6 +15,7 @@ from torch_tools.models._argument_processing import (
     process_negative_slope_arg,
     process_boolean_arg,
     process_str_arg,
+    process_2d_block_style_arg,
 )
 
 from torch_tools.torch_utils import disable_biases
@@ -261,9 +262,12 @@ class DownBlock(Sequential):
         The style of the pooling layer to use: can be `"avg"` or `"max"`.
     lr_slope : float
         The negative slope to use in the ``LeakyReLU`` arguments.
-    kernel_size : int
+    kernel_size : int, optional
         The size of the square convolutional kernel to use on the ``Conv2d``
         layers. Must be an odd, positive, int.
+    block_style : str, optional
+        Encoding block style. See
+        ``torch_tools.models._blocks_2d._conv_blocks`` for options.
 
     """
 
@@ -274,6 +278,7 @@ class DownBlock(Sequential):
         pool: str,
         lr_slope: float,
         kernel_size: int = 3,
+        block_style: str = "double_conv",
     ):
         """Build `DownBlock`."""
         super().__init__(
@@ -282,9 +287,9 @@ class DownBlock(Sequential):
                 stride=2,
                 padding=0,
             ),
-            DoubleConvBlock(
-                process_num_feats(in_chans),
-                process_num_feats(out_chans),
+            _conv_blocks[process_2d_block_style_arg(block_style)](
+                in_chans=process_num_feats(in_chans),
+                out_chans=process_num_feats(out_chans),
                 lr_slope=process_negative_slope_arg(lr_slope),
                 kernel_size=process_2d_kernel_size(kernel_size),
             ),
@@ -585,3 +590,6 @@ class UNetUpBlock(Module):
         # Concatenate along the channel dimension (dim=1) (N, C, H, W)
         concatenated = cat([down_features, upsampled], dim=1)
         return self.double_conv(concatenated)
+
+
+_conv_blocks = {"double_conv": ConvBlock, "conv_res": ConvResBlock}
