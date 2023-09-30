@@ -43,9 +43,12 @@ class Encoder2d(Sequential):
     kernel_size : int
         Size of the square convolutional kernel to use in the ``Conv2d``
         layers. Should be a positive, odd, int.
-    max_features
+    max_features, optional
         In each of the down-sampling blocks, the numbers of features is
         doubled. Optionally supplying ``max_features`` places a limit on this.
+    block_style : str, optional
+        Style of encoding block to use: ``"conv_block"`` or ``"conv_res"``.
+
 
 
     Examples
