@@ -1,3 +1,6 @@
+## Version 0.5.4
+  - Added missing docs for ``VAE2d``.
+
 ## Version 0.5.3
   - Added ``torch_tools.models._blocks_2d.ConvResBlock``.
 
