@@ -32,6 +32,10 @@ AutoEncoder2d
 .. automodule:: torch_tools.models._autoencoder_2d
    :members:
 
+VAE2d
+==================
+.. automodule:: torch_tools.models._variational_autoencoder_2d
+   :members:
 
 SimpleConvNet2d
 ==================
