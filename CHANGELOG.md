@@ -1,3 +1,6 @@
+## Version 0.5.5
+  - Added ``py.typed`` package data to toml.
+
 ## Version 0.5.4
   - Added missing docs for ``VAE2d``.
 

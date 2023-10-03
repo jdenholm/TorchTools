@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "torch_tools"
-version = "0.5.4"
+version = "0.5.5"
 description = "PyTorch and other tools"
 authors = [
   { name="Jim Denholm", email="j.denholm.2017@gmail.com" },
@@ -22,3 +22,6 @@ dependencies = ["torch", "torchvision"]
 
 [tool.setuptools]
 package-dir = {}
+
+[tool.setuptools.package-data]
+torch_tools = ["py.typed"]
