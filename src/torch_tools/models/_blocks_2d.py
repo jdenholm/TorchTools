@@ -312,7 +312,10 @@ class UpBlock(Sequential):
         ``ConvTranspose2d`` (``False``).
     lr_slope : float
         Negative slope to use in the ``LeakyReLU`` layers.
-    kernel_size : int
+    block_style : str, optional
+        Encoding block style. See
+        ``torch_tools.models._blocks_2d._conv_blocks`` for options.
+    kernel_size : int, optional
         Size of the covolutional kernel. Must be an odd, positive, int.
 
     """
@@ -323,6 +326,7 @@ class UpBlock(Sequential):
         out_chans: int,
         bilinear: bool,
         lr_slope: float,
+        block_style: str = "double_conv",
         kernel_size: int = 3,
     ):
         """Build `UpBlock`."""
@@ -331,7 +335,7 @@ class UpBlock(Sequential):
                 process_num_feats(in_chans),
                 process_boolean_arg(bilinear),
             ),
-            DoubleConvBlock(
+            _conv_blocks[block_style](
                 process_num_feats(in_chans),
                 process_num_feats(out_chans),
                 lr_slope=process_negative_slope_arg(lr_slope),
