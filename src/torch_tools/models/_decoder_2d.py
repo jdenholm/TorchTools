@@ -174,7 +174,7 @@ class Decoder2d(Sequential):
                     process_num_feats(out_chans),
                     bilinear,
                     lr_slope,
-                    kernel_size,
+                    kernel_size=kernel_size,
                 )
             )
             chans //= 2
