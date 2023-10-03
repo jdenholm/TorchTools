@@ -22,3 +22,6 @@ dependencies = ["torch", "torchvision"]
 
 [tool.setuptools]
 package-dir = {}
+
+[tool.setuptools.package-data]
+torch_tools = ["py.typed"]
