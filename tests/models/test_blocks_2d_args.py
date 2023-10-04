@@ -958,6 +958,41 @@ def test_up_block_kernel_size_argument_values():
             )
 
 
+def test_up_block_block_style_arg_values():
+    """Test the values accepted by the ``block_style`` arg."""
+    # Should work with allowed options
+    for option in ["double_conv", "conv_res"]:
+        _ = UpBlock(
+            in_chans=1,
+            out_chans=1,
+            bilinear=True,
+            lr_slope=0.1,
+            kernel_size=1,
+            block_style=option,
+        )
+
+    # Should break with any other option
+    with pytest.raises(KeyError):
+        _ = UpBlock(
+            in_chans=1,
+            out_chans=1,
+            bilinear=True,
+            lr_slope=0.1,
+            kernel_size=1,
+            block_style="666",
+        )
+
+    with pytest.raises(KeyError):
+        _ = UpBlock(
+            in_chans=1,
+            out_chans=1,
+            bilinear=True,
+            lr_slope=0.1,
+            kernel_size=1,
+            block_style="Saruman the White",
+        )
+
+
 def test_unet_up_block_kernel_size_argument_types():
     """Test the types accepted by the ``kernel_size`` argument."""
     # Should work with positive, odd int.
