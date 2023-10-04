@@ -478,13 +478,14 @@ def test_up_block_upsample_contents_with_bilinear_true():
     assert block[0][1].stride == (1, 1), "Stride should be 1."
 
 
-def test_up_block_double_conv_first_conv_block_contents():
+def test_up_block_with_double_conv_block():
     """Test contents of first conv block of `DoubleConvBlock` in `UpBlock`."""
     block = UpBlock(
         in_chans=123,
         out_chans=321,
         bilinear=False,
         lr_slope=0.54321,
+        block_style="double_conv",
     )
 
     assert isinstance(block[1], DoubleConvBlock), "Should be double conv."
@@ -502,19 +503,7 @@ def test_up_block_double_conv_first_conv_block_contents():
     assert block[1][0][1].num_features == 321
     assert block[1][0][2].negative_slope == 0.54321
 
-
-def test_up_block_double_conv_second_conv_block_contents():
-    """Test contents of second conv block of `DoubleConvBlock` in `UpBlock`."""
-    block = UpBlock(
-        in_chans=123,
-        out_chans=321,
-        bilinear=False,
-        lr_slope=0.54321,
-    )
-
-    assert isinstance(block[1], DoubleConvBlock), "Should be double conv."
-
-    # Test the first conv block of double conv block
+    # Test the second conv block of double conv block
     assert isinstance(block[1][1], ConvBlock), "Should be conv block."
     assert isinstance(block[1][1][0], Conv2d), "Should be conv2d."
     assert isinstance(block[1][1][1], BatchNorm2d), "Should be batchnorm."
@@ -526,6 +515,54 @@ def test_up_block_double_conv_second_conv_block_contents():
     assert block[1][1][0].out_channels == 321
     assert block[1][1][1].num_features == 321
     assert block[1][1][2].negative_slope == 0.54321
+
+
+def test_up_block_with_conv_res_block():
+    """Test contents of first conv block of `DoubleConvBlock` in `UpBlock`."""
+    block = UpBlock(
+        in_chans=123,
+        out_chans=321,
+        bilinear=False,
+        lr_slope=0.54321,
+        block_style="conv_res",
+    )
+
+    assert isinstance(block[1], ConvResBlock), "Should be conv res."
+
+    # Test the conv block of the conv residual block
+    assert isinstance(block[1][0], ConvBlock), "Should be conv block."
+    assert isinstance(block[1][0][0], Conv2d), "Should be conv2d."
+    assert isinstance(block[1][0][1], BatchNorm2d), "Should be batchnorm."
+    assert isinstance(block[1][0][2], LeakyReLU), "Should be leaky relu."
+
+    assert len(block[1][0]) == 3, "Should be three items in the block."
+
+    assert block[1][0][0].in_channels == 123
+    assert block[1][0][0].out_channels == 321
+    assert block[1][0][1].num_features == 321
+    assert block[1][0][2].negative_slope == 0.54321
+
+    # Test the residual block
+
+    assert isinstance(block[1][1], ResidualBlock), "Should be Residual block."
+    assert isinstance(block[1][1].first_conv, ConvBlock)
+    assert isinstance(block[1][1].first_conv[0], Conv2d)
+    assert isinstance(block[1][1].first_conv[1], BatchNorm2d)
+    assert isinstance(block[1][1].first_conv[2], LeakyReLU)
+
+    assert block[1][1].first_conv[0].in_channels == 321
+    assert block[1][1].first_conv[0].out_channels == 321
+    assert block[1][1].first_conv[1].num_features == 321
+    assert block[1][1].first_conv[2].negative_slope == 0.0
+
+    assert isinstance(block[1][1], ResidualBlock), "Should be Residual block."
+    assert isinstance(block[1][1].second_conv, ConvBlock)
+    assert isinstance(block[1][1].second_conv[0], Conv2d)
+    assert isinstance(block[1][1].second_conv[1], BatchNorm2d)
+
+    assert block[1][1].second_conv[0].in_channels == 321
+    assert block[1][1].second_conv[0].out_channels == 321
+    assert block[1][1].second_conv[1].num_features == 321
 
 
 def test_up_block_contents_with_different_kernel_sizes():
