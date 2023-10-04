@@ -131,16 +131,25 @@ def test_up_block_call_return_shapes():
     bilinears = [True, False]
     slopes = [0.0, 0.1]
     kernels = [1, 3, 5]
+    block_styles = ["double_conv", "conv_res"]
 
-    iterator = product(in_channels, out_channels, bilinears, slopes, kernels)
+    iterator = product(
+        in_channels,
+        out_channels,
+        bilinears,
+        slopes,
+        kernels,
+        block_styles,
+    )
 
-    for in_chans, out_chans, bilinear, lr_slope, kernel_size in iterator:
+    for in_chans, out_chans, bilinear, lr_slope, kernel_size, block_style in iterator:
         block = UpBlock(
             in_chans=in_chans,
             out_chans=out_chans,
             bilinear=bilinear,
             lr_slope=lr_slope,
             kernel_size=kernel_size,
+            block_style=block_style,
         )
         assert block(rand(10, in_chans, 16, 32)).shape == (10, out_chans, 32, 64)
 
