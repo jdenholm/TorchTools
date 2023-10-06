@@ -36,6 +36,8 @@ class Decoder2d(Sequential):
     min_up_feats : int, optional
         The minimum numbers features the up-sampling blocks are allowed to
         produce.
+    block_style : str, optional
+        Style of decoding block to use: ``"conv_block"`` or ``"conv_res"``.
 
     Examples
     --------
@@ -60,6 +62,7 @@ class Decoder2d(Sequential):
         lr_slope: float,
         kernel_size: int,
         min_up_feats: Optional[int] = None,
+        block_style: str = "double_conv",
     ):
         """Build `Decoder`."""
         super().__init__(
@@ -69,6 +72,7 @@ class Decoder2d(Sequential):
                 process_boolean_arg(bilinear),
                 process_negative_slope_arg(lr_slope),
                 process_2d_kernel_size(kernel_size),
+                block_style,
                 min_feats=process_optional_feats_arg(min_up_feats),
             ),
             Conv2d(
@@ -131,6 +135,7 @@ class Decoder2d(Sequential):
         bilinear: bool,
         lr_slope: float,
         kernel_size: int,
+        block_style: str,
         min_feats: Optional[int] = None,
     ) -> List[UpBlock]:
         """Get the upsampling blocks in a ``Sequential``.
@@ -149,6 +154,8 @@ class Decoder2d(Sequential):
         kernel_size : int
             The size of the square convolutional kernel in the ``Conv2d``
             layers. Should be an odd, positive, int.
+        block_style : str
+            Style of decoding block to use. See class docstring.
         min_feats : int, optional
             Min number of out feats the up-sampling layers can produce.
 
@@ -175,6 +182,7 @@ class Decoder2d(Sequential):
                     bilinear,
                     lr_slope,
                     kernel_size=kernel_size,
+                    block_style=block_style,
                 )
             )
             chans //= 2
