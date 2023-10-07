@@ -18,4 +18,5 @@ dependencies:
     - pandas
     - matplotlib
     - scikit-image
+    - palmerpenguins
     - "-e ."
