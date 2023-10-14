@@ -10,6 +10,7 @@ from torch_tools.models._argument_processing import process_boolean_arg
 from torch_tools.models._argument_processing import process_negative_slope_arg
 from torch_tools.models._argument_processing import process_2d_kernel_size
 from torch_tools.models._argument_processing import process_optional_feats_arg
+from torch_tools.models._argument_processing import process_2d_block_style_arg
 
 # pylint: disable=too-many-arguments
 
@@ -72,7 +73,7 @@ class Decoder2d(Sequential):
                 process_boolean_arg(bilinear),
                 process_negative_slope_arg(lr_slope),
                 process_2d_kernel_size(kernel_size),
-                block_style,
+                process_2d_block_style_arg(block_style),
                 min_feats=process_optional_feats_arg(min_up_feats),
             ),
             Conv2d(
