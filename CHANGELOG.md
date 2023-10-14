@@ -1,3 +1,6 @@
+## Version 0.5.6
+  - Changed the classification demo for ``FCNet`` to the penguin problem.
+
 ## Version 0.5.5
   - Added ``py.typed`` package data to toml.
 
