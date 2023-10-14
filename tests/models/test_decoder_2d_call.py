@@ -15,12 +15,20 @@ def test_decoder_2d_returns_images_of_the_right_shape():
     lr_slopes = [0.0, 0.1]
     kernel_size = [1, 3, 5]
     min_up_feats = [None, 1, 3]
+    block_styles = ["double_conv", "conv_res"]
 
     iterator = product(
-        in_chans, out_chans, num_blocks, biliner, lr_slopes, kernel_size, min_up_feats
+        in_chans,
+        out_chans,
+        num_blocks,
+        biliner,
+        lr_slopes,
+        kernel_size,
+        min_up_feats,
+        block_styles,
     )
 
-    for ins, outs, blocks, bilin, slope, size, min_feats in iterator:
+    for ins, outs, blocks, bilin, slope, size, min_feats, block_style in iterator:
         decoder = Decoder2d(
             in_chans=ins,
             out_chans=outs,
@@ -29,6 +37,7 @@ def test_decoder_2d_returns_images_of_the_right_shape():
             lr_slope=slope,
             kernel_size=size,
             min_up_feats=min_feats,
+            block_style=block_style,
         )
 
         mini_batch = rand(10, ins, 8, 4)
