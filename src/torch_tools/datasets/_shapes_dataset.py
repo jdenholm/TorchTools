@@ -11,7 +11,7 @@ from skimage.draw import disk, rectangle  # pylint: disable=no-name-in-module
 
 
 class ShapesDataset(Dataset):
-    """Synthetic shape dataset.
+    """Synthetic dataset which produces images withs spots and squares.
 
     Parameters
     ----------
@@ -27,6 +27,12 @@ class ShapesDataset(Dataset):
         The length of the data set.
     image_size : int, optional
         The length of the square images.
+
+    Notes
+    -----
+    The images have white backrounds and the shapes have randomly selected
+    RGB colours on [0, 1)^{3}.
+
 
     """
 
