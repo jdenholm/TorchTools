@@ -9,8 +9,6 @@ from numpy.random import default_rng
 
 from skimage.draw import disk, rectangle  # pylint: disable=no-name-in-module
 
-import matplotlib.pyplot as plt
-
 
 class ShapesDataset(Dataset):
     """Synthetic shape dataset.
@@ -174,14 +172,3 @@ class ShapesDataset(Dataset):
             from_numpy(image).permute(2, 0, 1),
             from_numpy(array([spots, squares])).float(),
         )
-
-
-if __name__ == "__main__":
-    data_set = ShapesDataset()
-
-    for index in range(16):
-        img, tgt = data_set[index]
-
-        plt.imshow(img.permute(1, 2, 0))
-        plt.title(tgt)
-        plt.show()
