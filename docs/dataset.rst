@@ -4,7 +4,7 @@ DataSet
 .. automodule:: torch_tools.datasets._dataset
    :members:
 
-DataSet
+ShapesDataset
 ==================
 
 .. automodule:: torch_tools.datasets._shapes_dataset
