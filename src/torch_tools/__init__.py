@@ -3,6 +3,7 @@ from importlib.metadata import version as _version
 
 
 from .datasets import DataSet
+from .datasets import ShapesDataset
 from .models import FCNet
 from .models import ConvNet2d
 from .models import UNet
