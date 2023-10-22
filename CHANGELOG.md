@@ -1,3 +1,6 @@
+## Version 0.6.0
+  - Added synthetic shapes dataset and demo.
+
 ## Version 0.5.6
   - Changed the classification demo for ``FCNet`` to the penguin problem.
 
