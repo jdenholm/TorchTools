@@ -13,6 +13,8 @@ from skimage.draw import disk, rectangle  # pylint: disable=no-name-in-module
 class ShapesDataset(Dataset):
     """Synthetic dataset which produces images withs spots and squares.
 
+    *Warning—*this dataset object is untested.
+
     Parameters
     ----------
     spot_prob : float, optional
