@@ -193,3 +193,14 @@ def test_kernel_size_argument_values():
 
     with pytest.raises(ValueError):
         _ = AutoEncoder2d(in_chans=3, out_chans=3, kernel_size=4)
+
+
+def test_block_style_argument_values():
+    """Test the values accepted by the ``block_stlye`` argument."""
+    # Should work with accepted values
+    _ = AutoEncoder2d(in_chans=3, out_chans=3, block_style="double_conv")
+    _ = AutoEncoder2d(in_chans=3, out_chans=3, block_style="conv_res")
+
+    # Should break with any other value
+    with pytest.raises(ValueError):
+        _ = AutoEncoder2d(in_chans=3, out_chans=3, block_style="Gandalf")
