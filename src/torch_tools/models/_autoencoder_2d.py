@@ -46,7 +46,7 @@ class AutoEncoder2d(Module):
         layers. Must be a positive, odd, int.
     block_style : str, optional
         Style of convolutional blocks to use in the encoding and decoding
-        blocks.  Use either ``"conv_block"`` or ``"conv_res"``.
+        blocks.  Use either ``"double_conv"`` or ``"conv_res"``.
 
 
     Notes
