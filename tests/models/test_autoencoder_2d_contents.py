@@ -340,7 +340,7 @@ def test_decoder_contents_with_double_conv_block():
 
 
 def test_encoder_contents_with_conv_res_block():
-    """Test the contents of the encoder with double conv blocks."""
+    """Test the contents of the encoder with conv res blocks."""
     model = AutoEncoder2d(
         in_chans=3,
         out_chans=3,
@@ -385,3 +385,53 @@ def test_encoder_contents_with_conv_res_block():
 
         in_chans *= 2
         out_chans *= 2
+
+
+def test_decoder_contents_with_conv_res_block():
+    """Test the contents of the decoder with conv res blocks."""
+    model = AutoEncoder2d(
+        in_chans=3,
+        out_chans=3,
+        features_start=64,
+        block_style="conv_res",
+        lr_slope=0.123,
+        num_layers=4,
+    )
+
+    in_chans = 64 * 2 ** (3)
+    out_chans = in_chans // 2
+
+    for block in list(model.decoder.children())[:-1]:
+        assert isinstance(block[1], ConvResBlock)
+        assert isinstance(block[1][0], ConvBlock)
+        assert isinstance(block[1][0][0], Conv2d)
+        assert isinstance(block[1][0][1], BatchNorm2d)
+        assert isinstance(block[1][0][2], LeakyReLU)
+
+        assert block[1][0][0].in_channels == in_chans
+        assert block[1][0][0].out_channels == out_chans
+        assert block[1][0][1].num_features == out_chans
+        assert block[1][0][2].negative_slope == 0.123
+
+        assert isinstance(block[1][1], ResidualBlock)
+        assert isinstance(block[1][1].first_conv, ConvBlock)
+        assert isinstance(block[1][1].first_conv[0], Conv2d)
+        assert isinstance(block[1][1].first_conv[1], BatchNorm2d)
+        assert isinstance(block[1][1].first_conv[2], LeakyReLU)
+
+        assert isinstance(block[1][1], ResidualBlock)
+        assert isinstance(block[1][1].second_conv, ConvBlock)
+        assert isinstance(block[1][1].second_conv[0], Conv2d)
+        assert isinstance(block[1][1].second_conv[1], BatchNorm2d)
+
+        assert block[1][1].first_conv[0].in_channels == out_chans
+        assert block[1][1].first_conv[0].out_channels == out_chans
+        assert block[1][1].first_conv[1].num_features == out_chans
+        assert block[1][1].first_conv[2].negative_slope == 0.0
+
+        assert block[1][1].second_conv[0].in_channels == out_chans
+        assert block[1][1].second_conv[0].out_channels == out_chans
+        assert block[1][1].second_conv[1].num_features == out_chans
+
+        in_chans //= 2
+        out_chans //= 2
