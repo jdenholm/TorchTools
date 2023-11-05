@@ -1,13 +1,15 @@
 """Synthetic dataset object."""
-from typing import Tuple
+from typing import Tuple, Optional
 
 from torch import from_numpy, Tensor  # pylint: disable=no-name-in-module
 from torch.utils.data import Dataset
 
-from numpy import ones, float32, ndarray, array
+from torchvision.transforms import Compose
+
+from numpy import ones, float32, ndarray, array, where, full
 from numpy.random import default_rng
 
-from skimage.draw import disk, rectangle  # pylint: disable=no-name-in-module
+from skimage.morphology import star, square, octagon, disk
 
 
 class ShapesDataset(Dataset):
@@ -29,6 +31,10 @@ class ShapesDataset(Dataset):
         The length of the data set.
     image_size : int, optional
         The length of the square images.
+    input_tfms : Compose, optional
+        A composition of transforms to apply to the input.
+    target_tfms : Compose, optional
+        A composition of transforms to apply to the target.
 
     Notes
     -----
@@ -40,22 +46,38 @@ class ShapesDataset(Dataset):
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        spots_prob: float = 0.5,
+        spot_prob: float = 0.5,
         square_prob: float = 0.5,
-        num_spots: int = 10,
-        num_squares: int = 10,
+        star_prob: float = 0.5,
+        octagon_prob: float = 0.5,
+        num_shapes: int = 3,
         length: int = 1000,
         image_size: int = 256,
+        input_tfms: Optional[Compose] = None,
+        target_tfms: Optional[Compose] = None,
     ):
         """Build ``ShapesDataset``."""
         self._len = length
-        self._spot_prob = spots_prob
-        self._square_prob = square_prob
-        self._num_spots = num_spots
-        self._num_squares = num_squares
+        self._num_shapes = num_shapes
+
+        self._probs = {
+            "square": square_prob,
+            "spot": spot_prob,
+            "star": star_prob,
+            "octagon": octagon_prob,
+        }
+
         self._img_size = image_size
+        self._x_tfms = input_tfms
+        self._y_tfms = target_tfms
 
     _rng = default_rng(seed=123)
+    _shapes = {
+        "square": square,
+        "star": star,
+        "octagon": lambda x: octagon(x, x),
+        "spot": disk,
+    }
 
     def __len__(self) -> int:
         """Return the length of the dataset.
@@ -78,9 +100,9 @@ class ShapesDataset(Dataset):
 
         Returns
         -------
-        Tensor
+        img : Tensor
             An RGB image of shape (c, H, W).
-        Tensor
+        tgt : Tensor
             Target vector:
 
                 — If there are no spots or squares, [0.0, 0.0]
@@ -89,9 +111,17 @@ class ShapesDataset(Dataset):
                 — If there are both, [1.0, 1.0]
 
         """
-        return self._create_image()
+        img, tgt = self._create_image()
 
-    def _add_spots(self, image: ndarray) -> bool:
+        if self._x_tfms is not None:
+            img = self._x_tfms(img)
+
+        if self._y_tfms is not None:
+            tgt = self._y_tfms(tgt)
+
+        return img, tgt
+
+    def _add_shape(self, image: ndarray, shape: str) -> bool:
         """Add spots to ``image``.
 
         Parameters
@@ -105,55 +135,27 @@ class ShapesDataset(Dataset):
             Whether or not the spots were added.
 
         """
-        include_spots = self._rng.random() <= self._spot_prob
+        include_shape = self._rng.random() <= self._probs[shape]
 
-        if include_spots:
-            for _ in range(self._num_spots):
-                colour = self._rng.random(size=3)
-                radius = self._img_size // 20
-                centre = self._rng.integers(
-                    radius,
-                    self._img_size - radius,
-                    size=2,
-                )
+        if include_shape:
+            for _ in range(self._num_shapes):
+                colour = self._rng.random(size=(1, 3))
+                radius = self._img_size // 40
+                shape_arr = self._shapes[shape](radius)
 
-                rows, cols = disk(centre, radius)
-
-                image[rows, cols, :] = colour
-
-        return include_spots
-
-    def _add_squares(self, image: ndarray) -> bool:
-        """Add spots to ``image``.
-
-        Parameters
-        ----------
-        image : ndarray
-            RGB image.
-
-        Returns
-        -------
-        include_squares : bool
-            Whether or no squares were included.
-
-        """
-        include_squares = self._rng.random() <= self._square_prob
-
-        if include_squares:
-            for _ in range(self._num_spots):
-                colour = self._rng.random(size=3)
-                length = self._img_size // 20
-                origin = self._rng.integers(
+                # pylint: disable=unbalanced-tuple-unpacking
+                rows, cols = where(shape_arr == 1)
+                left, top = self._rng.integers(
                     0,
-                    self._img_size - (2 * length),
+                    self._img_size - len(shape_arr),
                     size=2,
                 )
 
-                rows, cols = rectangle(origin, origin + (2 * length))
+                rows, cols = rows + top, cols + left
 
-                image[rows, cols, :] = colour
+                image[rows, cols] = colour
 
-        return include_squares
+        return include_shape
 
     def _create_image(self) -> Tuple[Tensor, Tensor]:
         """Create image.
@@ -171,12 +173,18 @@ class ShapesDataset(Dataset):
                 — If there are both, [1.0, 1.0]
 
         """
-        image = ones((self._img_size, self._img_size, 3), dtype=float32)
+        # image = ones((self._img_size, self._img_size, 3), dtype=float32)
 
-        spots = self._add_spots(image)
-        squares = self._add_squares(image)
+        image = full(
+            (self._img_size, self._img_size, 3),
+            fill_value=self._rng.random(size=(1, 3)),
+        )
+
+        targets = []
+        for key in self._shapes:
+            targets.append(self._add_shape(image, key))
 
         return (
-            from_numpy(image).permute(2, 0, 1),
-            from_numpy(array([spots, squares])).float(),
+            from_numpy(image).permute(2, 0, 1).float(),
+            from_numpy(array(targets)).float(),
         )
