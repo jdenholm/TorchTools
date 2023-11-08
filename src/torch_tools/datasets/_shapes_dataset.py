@@ -6,7 +6,7 @@ from torch.utils.data import Dataset
 
 from torchvision.transforms import Compose
 
-from numpy import ones, float32, ndarray, array, where, full
+from numpy import ones, float32, ndarray, array, where, full, zeros
 from numpy.random import default_rng
 
 from skimage.morphology import star, square, octagon, disk
@@ -140,7 +140,7 @@ class ShapesDataset(Dataset):
         if include_shape:
             for _ in range(self._num_shapes):
                 colour = self._rng.random(size=(1, 3))
-                radius = self._img_size // 40
+                radius = self._img_size // 20
                 shape_arr = self._shapes[shape](radius)
 
                 # pylint: disable=unbalanced-tuple-unpacking
