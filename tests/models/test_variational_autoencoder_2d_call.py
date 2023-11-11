@@ -10,15 +10,16 @@ def test_vae_call_return_shapes():
     """Test the return types in the call method of ``VAE2d``."""
     in_channels = [1, 12]
     out_channels = [1, 3]
-    num_layers = [4, 5]
-    features_start = [16, 32]
+    num_layers = [3, 4]
+    features_start = [8, 16]
     slopes = [0.0, 0.1]
     pools = ["avg", "max"]
     bilinear = [True, False]
     kernel_size = [1, 3, 5]
-    image_dims = [(16, 32), (32, 16)]
+    image_dims = [(8, 16), (16, 32)]
     max_features = [64, 128, None]
     min_features = [None, 16, 32]
+    block_styles = ["double_conv", "conv_res"]
 
     iterator = product(
         in_channels,
@@ -32,6 +33,7 @@ def test_vae_call_return_shapes():
         image_dims,
         max_features,
         min_features,
+        block_styles,
     )
 
     for (
@@ -46,6 +48,7 @@ def test_vae_call_return_shapes():
         in_dims,
         max_feats,
         min_feats,
+        block,
     ) in iterator:
         model = VAE2d(
             in_chans=in_chans,
@@ -59,6 +62,7 @@ def test_vae_call_return_shapes():
             kernel_size=k_size,
             max_down_feats=max_feats,
             min_up_feats=min_feats,
+            block_style=block,
         )
 
         batch = rand(10, in_chans, *in_dims)
