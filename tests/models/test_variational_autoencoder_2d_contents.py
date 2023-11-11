@@ -3,7 +3,7 @@ from torch.nn import Module, Conv2d, LeakyReLU, BatchNorm2d
 
 from torch_tools import VAE2d
 from torch_tools.models._blocks_2d import DownBlock, ConvBlock, ConvResBlock
-from torch_tools.models._blocks_2d import ResidualBlock
+from torch_tools.models._blocks_2d import ResidualBlock, DoubleConvBlock
 
 
 def test_number_of_blocks_in_encoder_and_decoder():
@@ -182,7 +182,7 @@ def test_vae_2d_contents_with_different_min_up_feats():
 
 
 def test_vae_2d_encoder_contents_with_conv_res_blocks():
-    """Test the contents of the encoder in ``VAE2d``."""
+    """Test the contents of the encoder in ``VAE2d`` with conv res blocks."""
     model = VAE2d(
         in_chans=3,
         out_chans=3,
@@ -228,6 +228,48 @@ def test_vae_2d_encoder_contents_with_conv_res_blocks():
         assert block[1][1].second_conv[0].in_channels == out_chans
         assert block[1][1].second_conv[0].out_channels == out_chans
         assert block[1][1].second_conv[1].num_features == out_chans
+
+        in_chans *= 2
+        out_chans *= 2
+
+
+def test_vae_2d_encoder_contents_with_double_conv_blocks():
+    """Test the contents of the encoder in ``VAE2d`` with conv res blocks."""
+    model = VAE2d(
+        in_chans=3,
+        out_chans=3,
+        start_features=32,
+        input_dims=(64, 64),
+        block_style="double_conv",
+        lr_slope=0.123,
+    )
+
+    encoder = model.encoder
+
+    in_chans, out_chans = 32, 64
+
+    for block in list(encoder.children())[1:]:
+        assert isinstance(block, DownBlock)
+        assert isinstance(block[1], DoubleConvBlock)
+        assert isinstance(block[1][0], ConvBlock)
+
+        assert isinstance(block[1][0][0], Conv2d)
+        assert isinstance(block[1][0][1], BatchNorm2d)
+        assert isinstance(block[1][0][2], LeakyReLU)
+
+        assert block[1][0][0].in_channels == in_chans
+        assert block[1][0][0].out_channels == out_chans
+        assert block[1][0][1].num_features == out_chans
+        assert block[1][0][2].negative_slope == 0.123
+
+        assert isinstance(block[1][1][0], Conv2d)
+        assert isinstance(block[1][1][1], BatchNorm2d)
+        assert isinstance(block[1][1][2], LeakyReLU)
+
+        assert block[1][1][0].in_channels == out_chans
+        assert block[1][1][0].out_channels == out_chans
+        assert block[1][1][1].num_features == out_chans
+        assert block[1][1][2].negative_slope == 0.123
 
         in_chans *= 2
         out_chans *= 2
