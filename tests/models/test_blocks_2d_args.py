@@ -1047,3 +1047,29 @@ def test_unet_up_block_kernel_size_argument_values():
                 lr_slope=0.0,
                 kernel_size=size,
             )
+
+
+def test_unet_up_block_block_style_arg_values():
+    """Test the values accepted by the ``block_style`` arg."""
+    # Should work with allowed values
+    for block_style in ["double_conv", "conv_res"]:
+        _ = UNetUpBlock(
+            in_chans=4,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            kernel_size=3,
+            block_style=block_style,
+        )
+
+    # Should break with any other values
+    for block_style in ["gandalf", 666]:
+        with pytest.raises(ValueError):
+            _ = UNetUpBlock(
+                in_chans=3,
+                out_chans=3,
+                bilinear=False,
+                lr_slope=0.1,
+                kernel_size=3,
+                block_style=block_style,
+            )
