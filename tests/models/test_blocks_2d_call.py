@@ -161,16 +161,25 @@ def test_unet_upblock_call_return_shapes():
     bilinears = [True, False]
     slopes = [0.0, 0.1]
     kernels = [1, 3, 5]
+    styles = ["conv_res", "double_conv"]
 
-    iterator = product(in_channels, out_channels, bilinears, slopes, kernels)
+    iterator = product(
+        in_channels,
+        out_channels,
+        bilinears,
+        slopes,
+        kernels,
+        styles,
+    )
 
-    for in_chans, out_chans, bilinear, lr_slope, kernel_size in iterator:
+    for in_chans, out_chans, bilinear, lr_slope, kernel_size, block in iterator:
         block = UNetUpBlock(
             in_chans,
             out_chans,
             bilinear,
             lr_slope,
             kernel_size=kernel_size,
+            block_style=block,
         )
 
         to_upsample = rand(10, in_chans, 25, 50)
