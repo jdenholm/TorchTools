@@ -623,7 +623,7 @@ def test_unet_up_block_double_conv_first_conv_block_contents():
         lr_slope=0.12345,
     )
 
-    double_conv = up_block.double_conv
+    double_conv = up_block.conv_block
 
     # Test the first conv block of the double conv
     assert isinstance(double_conv[0], ConvBlock)
@@ -646,7 +646,7 @@ def test_unet_up_block_double_conv_second_conv_block_contents():
         lr_slope=0.12345,
     )
 
-    double_conv = up_block.double_conv
+    double_conv = up_block.conv_block
 
     # Test the second conv block of the double conv
     assert isinstance(double_conv[1], ConvBlock)
@@ -660,6 +660,52 @@ def test_unet_up_block_double_conv_second_conv_block_contents():
     assert double_conv[1][2].negative_slope == 0.12345
 
 
+def test_unet_up_block_conv_res_first_conv_block_contents():
+    """Test the contents with a conv-res block."""
+    up_block = UNetUpBlock(
+        in_chans=64,
+        out_chans=128,
+        bilinear=False,
+        lr_slope=0.12345,
+        block_style="conv_res",
+    )
+
+    conv_res = up_block.conv_block
+
+    assert isinstance(conv_res, ConvResBlock)
+
+    # Test the first conv block of the conv res block
+    assert isinstance(conv_res[0], ConvBlock)
+    assert isinstance(conv_res[0][0], Conv2d)
+    assert isinstance(conv_res[0][1], BatchNorm2d)
+    assert isinstance(conv_res[0][2], LeakyReLU)
+
+    assert conv_res[0][0].in_channels == 64
+    assert conv_res[0][0].out_channels == 128
+    assert conv_res[0][1].num_features == 128
+    assert conv_res[0][2].negative_slope == 0.12345
+
+    # Test the contents of the residual block
+    assert isinstance(conv_res[1], ResidualBlock)
+    assert isinstance(conv_res[1].first_conv, ConvBlock)
+    assert isinstance(conv_res[1].first_conv[0], Conv2d)
+    assert isinstance(conv_res[1].first_conv[1], BatchNorm2d)
+    assert isinstance(conv_res[1].first_conv[2], LeakyReLU)
+
+    assert conv_res[1].first_conv[0].in_channels == 128
+    assert conv_res[1].first_conv[0].out_channels == 128
+    assert conv_res[1].first_conv[1].num_features == 128
+    assert conv_res[1].first_conv[2].negative_slope == 0.0
+
+    assert isinstance(conv_res[1].first_conv, ConvBlock)
+    assert isinstance(conv_res[1].second_conv[0], Conv2d)
+    assert isinstance(conv_res[1].second_conv[1], BatchNorm2d)
+
+    assert conv_res[1].second_conv[0].in_channels == 128
+    assert conv_res[1].second_conv[0].out_channels == 128
+    assert conv_res[1].second_conv[1].num_features == 128
+
+
 def test_unet_up_block_contents_with_different_kernel_sizes():
     """Test the contents of ``UNetUpBlock`` with different kernel sizes."""
     for size in [1, 3, 5, 7, 9]:
@@ -671,5 +717,5 @@ def test_unet_up_block_contents_with_different_kernel_sizes():
             kernel_size=size,
         )
 
-        assert up_block.double_conv[0][0].kernel_size == (size, size)
-        assert up_block.double_conv[1][0].kernel_size == (size, size)
+        assert up_block.conv_block[0][0].kernel_size == (size, size)
+        assert up_block.conv_block[1][0].kernel_size == (size, size)
