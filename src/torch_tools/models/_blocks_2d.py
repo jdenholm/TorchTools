@@ -16,6 +16,7 @@ from torch_tools.models._argument_processing import (
     process_boolean_arg,
     process_str_arg,
     process_2d_block_style_arg,
+    process_2d_block_style_arg,
 )
 
 from torch_tools.torch_utils import disable_biases
@@ -394,6 +395,8 @@ class UNetUpBlock(Module):
     kernel_size : int
         The size of the square convolutional kernel to use in the convolutional
         layers, Should be an odd, positive, int.
+    block_style : str
+        Style of the convolutional block: ``"double_conv"`` or ``"conv_res"``.
 
     """
 
@@ -404,6 +407,7 @@ class UNetUpBlock(Module):
         bilinear: bool,
         lr_slope: float,
         kernel_size: int = 3,
+        block_style: str = "double_conv",
     ):
         """Build `UNetUpBlock`."""
         super().__init__()
@@ -411,12 +415,21 @@ class UNetUpBlock(Module):
         self._out_chans = process_num_feats(out_chans)
 
         self.upsample = self._get_upsampler(process_boolean_arg(bilinear))
-        self.double_conv = DoubleConvBlock(
-            self._in_chans,
-            self._out_chans,
-            lr_slope=lr_slope,
-            kernel_size=process_2d_kernel_size(kernel_size),
-        )
+
+        if process_2d_block_style_arg(block_style) == "double_conv":
+            self.conv_block = DoubleConvBlock(
+                self._in_chans,
+                self._out_chans,
+                lr_slope=lr_slope,
+                kernel_size=process_2d_kernel_size(kernel_size),
+            )
+        else:
+            self.conv_block = ConvResBlock(
+                self._in_chans,
+                self._out_chans,
+                lr_slope,
+                kernel_size,
+            )
 
     @staticmethod
     def _process_in_chans(in_chans: int) -> int:
@@ -593,7 +606,7 @@ class UNetUpBlock(Module):
 
         # Concatenate along the channel dimension (dim=1) (N, C, H, W)
         concatenated = cat([down_features, upsampled], dim=1)
-        return self.double_conv(concatenated)
+        return self.conv_block(concatenated)
 
 
 _conv_blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
