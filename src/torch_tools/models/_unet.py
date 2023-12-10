@@ -8,9 +8,17 @@ from torch_tools.models._argument_processing import (
     process_num_feats,
     process_u_architecture_layers,
     process_2d_kernel_size,
+    process_negative_slope_arg,
+    process_2d_block_style_arg,
+    process_boolean_arg,
 )
 
-from torch_tools.models._blocks_2d import DoubleConvBlock, DownBlock, UNetUpBlock
+from torch_tools.models._blocks_2d import (
+    DoubleConvBlock,
+    DownBlock,
+    UNetUpBlock,
+    ConvResBlock,
+)
 
 
 # pylint: disable=too-many-arguments
@@ -41,6 +49,9 @@ class UNet(Module):
     kernel_size : int, optional
         Linear size of the square convolutional kernel to use in the ``Conv2d``
         layers. Should be a positive, odd, int.
+    block_style : str
+        Type of convolutional blocks to use: ``"double_conv"`` or
+        ``"conv_res"``.
 
 
     Examples
@@ -69,31 +80,35 @@ class UNet(Module):
         bilinear: bool = False,
         lr_slope: float = 0.1,
         kernel_size: int = 3,
+        block_style: str = "double_conv",
     ):
         """Build `UNet`."""
         super().__init__()
 
-        self.in_conv = DoubleConvBlock(
-            in_chans,
+        self.in_conv = self._get_input_block(
+            process_num_feats(in_chans),
             process_num_feats(features_start),
-            lr_slope,
+            process_negative_slope_arg(lr_slope),
             process_2d_kernel_size(kernel_size),
+            process_2d_block_style_arg(block_style),
         )
 
         self.down_blocks = self._get_down_blocks(
             process_u_architecture_layers(num_layers),
-            features_start,
+            process_num_feats(features_start),
             pool_style,
-            lr_slope,
+            process_negative_slope_arg(lr_slope),
             process_2d_kernel_size(kernel_size),
+            process_2d_block_style_arg(block_style),
         )
 
         self.up_blocks = self._get_up_blocks(
             process_u_architecture_layers(num_layers),
-            features_start,
-            bilinear,
-            lr_slope,
+            process_num_feats(features_start),
+            process_boolean_arg(bilinear),
+            process_negative_slope_arg(lr_slope),
             process_2d_kernel_size(kernel_size),
+            process_2d_block_style_arg(block_style),
         )
 
         self.out_conv = Conv2d(
@@ -103,6 +118,52 @@ class UNet(Module):
             stride=1,
         )
 
+    def _get_input_block(
+        self,
+        in_chans: int,
+        features_start: int,
+        lr_slope: float,
+        kernel_size: int,
+        block_style: str,
+    ) -> Module:
+        """Return the UNet's input block.
+
+        Parameters
+        ----------
+        in_chans : int
+            The number input channels to the model.
+        features_start : int
+            The number of features the input block should produce.
+        lr_slope : float
+            The negative slope argument in the leaky relu layers.
+        kernel_size : int
+            Length of the square convolutional kernel.
+        block_style : str
+            The style of the block.
+
+        Returns
+        -------
+        block : Module
+            The input convolutional block.
+
+        """
+        if block_style == "double_conv":
+            block: Module = DoubleConvBlock(
+                in_chans=in_chans,
+                out_chans=features_start,
+                lr_slope=lr_slope,
+                kernel_size=kernel_size,
+            )
+        else:
+            block = ConvResBlock(
+                in_chans=in_chans,
+                out_chans=features_start,
+                lr_slope=lr_slope,
+                kernel_size=kernel_size,
+            )
+
+        return block
+
     def _get_down_blocks(
         self,
         num_layers: int,
@@ -110,6 +171,7 @@ class UNet(Module):
         pool_style: str,
         lr_slope: float,
         kernel_size: int,
+        block_style: str,
     ) -> ModuleList:
         """Stack the downsampling blocks in a `ModuleList`.
 
@@ -127,7 +189,8 @@ class UNet(Module):
         kernel_size : int, optional
             Linear size of the square convolutional kernel to use in the
             ``Conv2d`` layers. Should be a positive, odd, int.
-
+        block_style : str
+            Type of convolutional block to use.
 
         Returns
         -------
@@ -144,7 +207,8 @@ class UNet(Module):
                     chans * 2,
                     pool_style,
                     lr_slope,
-                    kernel_size,
+                    kernel_size=kernel_size,
+                    block_style=block_style,
                 )
             )
             chans *= 2
@@ -158,6 +222,7 @@ class UNet(Module):
         bilinear: bool,
         lr_slope: float,
         kernel_size: int,
+        block_style: str,
     ) -> ModuleList:
         """Stack the upsampling blocks in a ``ModuleList``.
 
@@ -175,6 +240,8 @@ class UNet(Module):
         kernel_size : int, optional
             Linear size of the square convolutional kernel to use in the
             ``Conv2d`` layers. Should be a positive, odd, int.
+        block_style : str
+            Style of convolutional blocks to use.
 
         Returns
         -------
@@ -192,6 +259,7 @@ class UNet(Module):
                     bilinear,
                     lr_slope,
                     kernel_size=kernel_size,
+                    block_style=block_style,
                 )
             )
             chans //= 2
