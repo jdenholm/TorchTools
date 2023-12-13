@@ -2,10 +2,16 @@
 from itertools import product
 
 from torch.nn import Module, LeakyReLU, Conv2d, AvgPool2d, MaxPool2d
-from torch.nn import ConvTranspose2d, Sequential, Upsample
+from torch.nn import ConvTranspose2d, Sequential, Upsample, BatchNorm2d
 
 from torch_tools import UNet
-from torch_tools.models._blocks_2d import DownBlock
+from torch_tools.models._blocks_2d import (
+    DownBlock,
+    DoubleConvBlock,
+    ConvBlock,
+    ConvResBlock,
+    ResidualBlock,
+)
 
 
 # pylint: disable=cell-var-from-loop
@@ -152,12 +158,12 @@ def test_up_blocks_channels_without_blinear_interp():
 
         for block in up_blocks:
             # Test the first block in the double conv block
-            assert block.double_conv[0][0].in_channels == feats
-            assert block.double_conv[0][0].out_channels == feats // 2
+            assert block.conv_block[0][0].in_channels == feats
+            assert block.conv_block[0][0].out_channels == feats // 2
 
             # Test the second block in the double conv block
-            assert block.double_conv[1][0].in_channels == feats // 2
-            assert block.double_conv[1][0].out_channels == feats // 2
+            assert block.conv_block[1][0].in_channels == feats // 2
+            assert block.conv_block[1][0].out_channels == feats // 2
 
             feats //= 2
 
@@ -185,11 +191,89 @@ def test_up_blocks_channels_with_blinear_interp():
             assert block.upsample[1].out_channels == feats // 2
 
             # Test the first block in the double conv block
-            assert block.double_conv[0][0].in_channels == feats
-            assert block.double_conv[0][0].out_channels == feats // 2
+            assert block.conv_block[0][0].in_channels == feats
+            assert block.conv_block[0][0].out_channels == feats // 2
 
             # Test the second block in the double conv block
-            assert block.double_conv[1][0].in_channels == feats // 2
-            assert block.double_conv[1][0].out_channels == feats // 2
+            assert block.conv_block[1][0].in_channels == feats // 2
+            assert block.conv_block[1][0].out_channels == feats // 2
 
             feats //= 2
+
+
+def test_in_conv_contents_with_double_conv_block():
+    """Test the contents of the ``in_conv`` with double conv blocks."""
+    model = UNet(
+        in_chans=123,
+        out_chans=1,
+        features_start=321,
+        block_style="double_conv",
+        lr_slope=0.123456,
+    )
+
+    in_conv = model.in_conv
+
+    assert isinstance(in_conv, DoubleConvBlock)
+
+    assert isinstance(in_conv[0], ConvBlock)
+    assert isinstance(in_conv[0][0], Conv2d)
+    assert isinstance(in_conv[0][1], BatchNorm2d)
+    assert isinstance(in_conv[0][2], LeakyReLU)
+
+    assert in_conv[0][0].in_channels == 123
+    assert in_conv[0][0].out_channels == 321
+    assert in_conv[0][1].num_features == 321
+    assert in_conv[0][2].negative_slope == 0.123456
+
+    assert isinstance(in_conv[0], ConvBlock)
+    assert isinstance(in_conv[1][0], Conv2d)
+    assert isinstance(in_conv[1][1], BatchNorm2d)
+    assert isinstance(in_conv[1][2], LeakyReLU)
+
+    assert in_conv[1][0].in_channels == 321
+    assert in_conv[1][0].out_channels == 321
+    assert in_conv[1][1].num_features == 321
+    assert in_conv[1][2].negative_slope == 0.123456
+
+
+def test_in_conv_contents_with_conv_res_block():
+    """Test the contents of the ``in_conv`` with conv res blocks."""
+    model = UNet(
+        in_chans=123,
+        out_chans=1,
+        features_start=321,
+        block_style="conv_res",
+        lr_slope=0.123456,
+    )
+
+    in_conv = model.in_conv
+
+    assert isinstance(in_conv, ConvResBlock)
+    assert isinstance(in_conv[0], ConvBlock)
+    assert isinstance(in_conv[0][0], Conv2d)
+    assert isinstance(in_conv[0][1], BatchNorm2d)
+    assert isinstance(in_conv[0][2], LeakyReLU)
+
+    assert in_conv[0][0].in_channels == 123
+    assert in_conv[0][0].out_channels == 321
+    assert in_conv[0][1].num_features == 321
+    assert in_conv[0][2].negative_slope == 0.123456
+
+    assert isinstance(in_conv[1], ResidualBlock)
+    assert isinstance(in_conv[1].first_conv, ConvBlock)
+    assert isinstance(in_conv[1].first_conv[0], Conv2d)
+    assert isinstance(in_conv[1].first_conv[1], BatchNorm2d)
+    assert isinstance(in_conv[1].first_conv[2], LeakyReLU)
+
+    assert in_conv[1].first_conv[0].in_channels == 321
+    assert in_conv[1].first_conv[0].out_channels == 321
+    assert in_conv[1].first_conv[1].num_features == 321
+    assert in_conv[1].first_conv[2].negative_slope == 0.0
+
+    assert isinstance(in_conv[1].second_conv, ConvBlock)
+    assert isinstance(in_conv[1].second_conv[0], Conv2d)
+    assert isinstance(in_conv[1].second_conv[1], BatchNorm2d)
+
+    assert in_conv[1].second_conv[0].in_channels == 321
+    assert in_conv[1].second_conv[0].out_channels == 321
+    assert in_conv[1].second_conv[1].num_features == 321
