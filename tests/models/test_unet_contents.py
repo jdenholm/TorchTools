@@ -277,3 +277,47 @@ def test_in_conv_contents_with_conv_res_block():
     assert in_conv[1].second_conv[0].in_channels == 321
     assert in_conv[1].second_conv[0].out_channels == 321
     assert in_conv[1].second_conv[1].num_features == 321
+
+
+def test_unet_down_block_contents_with_double_conv_blocks():
+    """Test the contents of the down blocks with double conv style."""
+    model = UNet(
+        in_chans=1,
+        out_chans=1,
+        features_start=16,
+        block_style="double_conv",
+        lr_slope=0.123456,
+        pool_style="max",
+    )
+
+    down_blocks = model.down_blocks
+
+    in_chans, out_chans = 16, 32
+
+    for block in down_blocks.children():
+        assert isinstance(block, DownBlock)
+        assert isinstance(block[0], MaxPool2d)
+
+        assert isinstance(block[1], DoubleConvBlock)
+        assert isinstance(block[1][0], ConvBlock)
+        assert isinstance(block[1][0][0], Conv2d)
+        assert isinstance(block[1][0][1], BatchNorm2d)
+        assert isinstance(block[1][0][2], LeakyReLU)
+
+        assert block[1][0][0].in_channels == in_chans
+        assert block[1][0][0].out_channels == out_chans
+        assert block[1][0][1].num_features == out_chans
+        assert block[1][0][2].negative_slope == 0.123456
+
+        assert isinstance(block[1][1], ConvBlock)
+        assert isinstance(block[1][1][0], Conv2d)
+        assert isinstance(block[1][1][1], BatchNorm2d)
+        assert isinstance(block[1][1][2], LeakyReLU)
+
+        assert block[1][1][0].in_channels == out_chans
+        assert block[1][1][0].out_channels == out_chans
+        assert block[1][1][1].num_features == out_chans
+        assert block[1][1][2].negative_slope == 0.123456
+
+        in_chans *= 2
+        out_chans *= 2
