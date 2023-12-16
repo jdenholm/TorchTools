@@ -418,3 +418,57 @@ def test_unet_up_block_contents_with_double_conv_blocks():
 
         in_chans //= 2
         out_chans //= 2
+
+
+def test_unet_up_blocks_contents_with_conv_res_blocks():
+    """Test the contents of the up blocks with conv res style."""
+    model = UNet(
+        in_chans=1,
+        out_chans=1,
+        features_start=16,
+        block_style="conv_res",
+        lr_slope=0.123456,
+        pool_style="max",
+        num_layers=4,
+    )
+
+    up_blocks = model.up_blocks
+
+    in_chans = 16 * 2**3
+    out_chans = in_chans // 2
+
+    for block in up_blocks.children():
+        assert isinstance(block, UNetUpBlock)
+
+        assert isinstance(block.conv_block, ConvResBlock)
+        assert isinstance(block.conv_block[0], ConvBlock)
+        assert isinstance(block.conv_block[0][0], Conv2d)
+        assert isinstance(block.conv_block[0][1], BatchNorm2d)
+        assert isinstance(block.conv_block[0][2], LeakyReLU)
+
+        assert block.conv_block[0][0].in_channels == in_chans
+        assert block.conv_block[0][0].out_channels == out_chans
+        assert block.conv_block[0][1].num_features == out_chans
+        assert block.conv_block[0][2].negative_slope == 0.123456
+
+        assert isinstance(block.conv_block[1], ResidualBlock)
+        assert isinstance(block.conv_block[1].first_conv, ConvBlock)
+        assert isinstance(block.conv_block[1].first_conv[0], Conv2d)
+        assert isinstance(block.conv_block[1].first_conv[1], BatchNorm2d)
+        assert isinstance(block.conv_block[1].first_conv[2], LeakyReLU)
+
+        assert block.conv_block[1].first_conv[0].in_channels == out_chans
+        assert block.conv_block[1].first_conv[0].out_channels == out_chans
+        assert block.conv_block[1].first_conv[1].num_features == out_chans
+        assert block.conv_block[1].first_conv[2].negative_slope == 0.0
+
+        assert isinstance(block.conv_block[1].second_conv, ConvBlock)
+        assert isinstance(block.conv_block[1].second_conv[0], Conv2d)
+        assert isinstance(block.conv_block[1].second_conv[1], BatchNorm2d)
+
+        assert block.conv_block[1].second_conv[0].in_channels == out_chans
+        assert block.conv_block[1].second_conv[0].out_channels == out_chans
+        assert block.conv_block[1].second_conv[1].num_features == out_chans
+
+        in_chans //= 2
+        out_chans //= 2
