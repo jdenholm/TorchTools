@@ -1,3 +1,7 @@
+## Varsion 0.6.1
+  - Added residual blocks as optional block style to all relevant models.
+  - Changed the ``UNet`` demo to use a nuclei segmentation data set.
+
 ## Version 0.5.3
   - Added ``torch_tools.models._blocks_2d.ConvResBlock``.
 
