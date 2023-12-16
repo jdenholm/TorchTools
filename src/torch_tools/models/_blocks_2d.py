@@ -16,7 +16,6 @@ from torch_tools.models._argument_processing import (
     process_boolean_arg,
     process_str_arg,
     process_2d_block_style_arg,
-    process_2d_block_style_arg,
 )
 
 from torch_tools.torch_utils import disable_biases
@@ -602,7 +601,7 @@ class UNetUpBlock(Module):
             height_diff - height_diff // 2,  # Bottom padding
         )
 
-        upsampled = pad(upsampled, padding)
+        upsampled = pad(upsampled, padding)  # pylint: disable=not-callable
 
         # Concatenate along the channel dimension (dim=1) (N, C, H, W)
         concatenated = cat([down_features, upsampled], dim=1)
