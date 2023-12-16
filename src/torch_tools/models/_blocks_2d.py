@@ -416,7 +416,7 @@ class UNetUpBlock(Module):
         self.upsample = self._get_upsampler(process_boolean_arg(bilinear))
 
         if process_2d_block_style_arg(block_style) == "double_conv":
-            self.conv_block = DoubleConvBlock(
+            self.conv_block: Module = DoubleConvBlock(
                 self._in_chans,
                 self._out_chans,
                 lr_slope=lr_slope,
