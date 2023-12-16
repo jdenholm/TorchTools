@@ -196,3 +196,15 @@ def test_kernel_size_argument_values():
     for size in [-2, -1, 0, 2, 4]:
         with pytest.raises(ValueError):
             _ = SimpleConvNet2d(in_chans=123, out_feats=321, kernel_size=size)
+
+
+def test_block_style_argument_values():
+    """Test the values accepted by the ``block_size`` argument."""
+    _ = SimpleConvNet2d(in_chans=1, out_feats=64, block_style="double_conv")
+    _ = SimpleConvNet2d(in_chans=1, out_feats=64, block_style="conv_res")
+
+    with pytest.raises(ValueError):
+        _ = SimpleConvNet2d(in_chans=1, out_feats=64, block_style=666)
+
+    with pytest.raises(ValueError):
+        _ = SimpleConvNet2d(in_chans=1, out_feats=64, block_style="Arwen")

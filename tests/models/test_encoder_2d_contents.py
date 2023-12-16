@@ -6,7 +6,7 @@ from torch.nn import Module
 from torch_tools import Encoder2d
 
 from torch_tools.models._blocks_2d import DoubleConvBlock, ConvBlock
-from torch_tools.models._blocks_2d import DownBlock
+from torch_tools.models._blocks_2d import DownBlock, ConvResBlock, ResidualBlock
 
 
 def kernel_size_check(layer: Module, kernel_size: int):
@@ -234,3 +234,95 @@ def test_encoder_2d_contents_with_different_max_feats():
         )
 
         encoder.apply(lambda x: down_max_feats(x, max_feats))
+
+
+def test_encoder_2d_contents_with_double_conv_blocks():
+    """Test the contents of ``Encoder2d`` with different block styles."""
+    encoder = Encoder2d(
+        in_chans=123,
+        start_features=64,
+        num_blocks=5,
+        pool_style="max",
+        lr_slope=0.666,
+        kernel_size=3,
+        block_style="double_conv",
+    )
+
+    in_chans, out_chans = 64, 128
+
+    for block in list(encoder.children())[1:]:
+        assert isinstance(block[1], DoubleConvBlock)
+
+        # Test the first conv block of the double conv
+        assert isinstance(block[1][0], ConvBlock)
+        assert isinstance(block[1][0][0], Conv2d)
+        assert isinstance(block[1][0][1], BatchNorm2d)
+        assert isinstance(block[1][0][2], LeakyReLU)
+
+        assert block[1][0][0].in_channels == in_chans
+        assert block[1][0][0].out_channels == out_chans
+        assert block[1][0][1].num_features == out_chans
+
+        # Test the second conv block of the double conv
+        assert isinstance(block[1][1], ConvBlock)
+        assert isinstance(block[1][1][0], Conv2d)
+        assert isinstance(block[1][1][1], BatchNorm2d)
+        assert isinstance(block[1][1][2], LeakyReLU)
+
+        assert block[1][1][0].in_channels == out_chans
+        assert block[1][1][0].out_channels == out_chans
+        assert block[1][1][1].num_features == out_chans
+
+        in_chans *= 2
+        out_chans *= 2
+
+
+def test_encoder_2d_contents_with_conv_res_blocks():
+    """Test the contents of ``Encoder2d`` with different block styles."""
+    encoder = Encoder2d(
+        in_chans=123,
+        start_features=64,
+        num_blocks=5,
+        pool_style="max",
+        lr_slope=0.666,
+        kernel_size=3,
+        block_style="conv_res",
+    )
+
+    in_chans, out_chans = 64, 128
+
+    for block in list(encoder.children())[1:]:
+        assert isinstance(block[1], ConvResBlock)
+
+        # Test the first conv block of the conv res block
+        assert isinstance(block[1][0], ConvBlock)
+        assert isinstance(block[1][0][0], Conv2d)
+        assert isinstance(block[1][0][1], BatchNorm2d)
+        assert isinstance(block[1][0][2], LeakyReLU)
+
+        assert block[1][0][0].in_channels == in_chans
+        assert block[1][0][0].out_channels == out_chans
+        assert block[1][0][1].num_features == out_chans
+
+        # Test the residual block
+        assert isinstance(block[1][1], ResidualBlock)
+        assert isinstance(block[1][1].first_conv, ConvBlock)
+        assert isinstance(block[1][1].first_conv[0], Conv2d)
+        assert isinstance(block[1][1].first_conv[1], BatchNorm2d)
+        assert isinstance(block[1][1].first_conv[2], LeakyReLU)
+
+        assert block[1][1].first_conv[0].in_channels == out_chans
+        assert block[1][1].first_conv[0].out_channels == out_chans
+        assert block[1][1].first_conv[1].num_features == out_chans
+
+        assert isinstance(block[1][1], ResidualBlock)
+        assert isinstance(block[1][1].second_conv, ConvBlock)
+        assert isinstance(block[1][1].second_conv[0], Conv2d)
+        assert isinstance(block[1][1].second_conv[1], BatchNorm2d)
+
+        assert block[1][1].second_conv[0].in_channels == out_chans
+        assert block[1][1].second_conv[0].out_channels == out_chans
+        assert block[1][1].second_conv[1].num_features == out_chans
+
+        in_chans *= 2
+        out_chans *= 2

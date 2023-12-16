@@ -9,6 +9,7 @@ from torch_tools.models._fc_net import FCNet
 from torch_tools.models._conv_net_2d import _forbidden_args_in_dn_kwargs
 from torch_tools.models._argument_processing import process_num_feats
 from torch_tools.models._argument_processing import process_2d_kernel_size
+from torch_tools.models._argument_processing import process_2d_block_style_arg
 
 # pylint: disable=too-many-arguments
 
@@ -40,6 +41,9 @@ class SimpleConvNet2d(Sequential):
     fc_net_kwargs : Dict[str, Any], optional
         Keyword arguments for ``torch_tools.models.fc_net.FCNet`` which serves
         as the classification/regression part of the model.
+    block_style : str, optional
+        Style of encoding blocks to use: choose from ``"double_conv"`` or
+        ``conv_res``.
 
     Examples
     --------
@@ -68,6 +72,7 @@ class SimpleConvNet2d(Sequential):
         lr_slope: float = 0.1,
         kernel_size: int = 3,
         fc_net_kwargs: Optional[Dict[str, Any]] = None,
+        block_style: str = "double_conv",
     ):
         """Build ``SimpleConvNet2d``."""
         encoder_feats = self._num_output_features(
@@ -88,6 +93,7 @@ class SimpleConvNet2d(Sequential):
                 downsample_pool,
                 lr_slope,
                 process_2d_kernel_size(kernel_size),
+                block_style=process_2d_block_style_arg(block_style),
             ),
             get_adaptive_pool(
                 option=adaptive_pool,

@@ -191,3 +191,14 @@ def test_unet_kernel_size_argument_values():
     for size in [-2, -1, 0, 2, 4]:
         with pytest.raises(ValueError):
             _ = UNet(in_chans=1, out_chans=1, kernel_size=size)
+
+
+def test_unet_block_style_argument_values():
+    """Test the values accepted by the ``block_style`` argument."""
+    # Should work with allowed values
+    for style in ["conv_res", "double_conv"]:
+        _ = UNet(in_chans=1, out_chans=1, block_style=style)
+
+    for bad_style in ["Denathor", 666]:
+        with pytest.raises(ValueError):
+            _ = UNet(in_chans=1, out_chans=1, block_style=bad_style)

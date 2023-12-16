@@ -4,13 +4,14 @@ import pytest
 
 from torch.nn import AdaptiveAvgPool2d, AdaptiveMaxPool2d, Flatten
 from torch.nn import AvgPool2d, MaxPool2d, Conv2d, BatchNorm2d, LeakyReLU
-from torch.nn import Module
+from torch.nn import Module, ReLU
 
 from torch_tools import SimpleConvNet2d, Encoder2d
 from torch_tools.models._adaptive_pools_2d import _ConcatMaxAvgPool2d
 from torch_tools.models._fc_net import FCNet
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
-from torch_tools.models._blocks_2d import DownBlock
+from torch_tools.models._blocks_2d import DownBlock, ConvResBlock
+from torch_tools.models._blocks_2d import ResidualBlock
 
 
 def kernel_size_check(block: Module, kernel_size: int):
@@ -215,6 +216,72 @@ def test_encoder_down_block_contents_with_avg_pool():
         assert down_block[1][1][2].negative_slope == 0.654321
 
         in_chans *= 2
+
+
+def test_simple_conv_net_contents_with_double_conv():
+    """Test the contents of the encoder with double conv blocks."""
+    model = SimpleConvNet2d(
+        in_chans=3,
+        out_feats=8,
+        features_start=32,
+        block_style="double_conv",
+    )
+
+    encoder = model[0]
+
+    in_chans, out_chans = 32, 64
+
+    for block in list(encoder.children())[1:]:
+        assert isinstance(block[1], DoubleConvBlock)
+        assert isinstance(block[1][0], ConvBlock)
+
+        assert isinstance(block[1][0][0], Conv2d)
+        assert block[1][0][0].in_channels == in_chans
+        assert block[1][0][0].out_channels == out_chans
+        assert block[1][0][1].num_features == out_chans
+
+        assert isinstance(block[1][1][0], Conv2d)
+        assert block[1][1][0].in_channels == out_chans
+        assert block[1][1][0].out_channels == out_chans
+        assert block[1][1][1].num_features == out_chans
+
+        in_chans *= 2
+        out_chans *= 2
+
+
+def test_simple_conv_net_contents_with_conv_res():
+    """Test the contents of the encoder with conv res blocks."""
+    model = SimpleConvNet2d(
+        in_chans=3,
+        out_feats=8,
+        features_start=32,
+        block_style="conv_res",
+    )
+
+    encoder = model[0]
+
+    in_chans, out_chans = 32, 64
+
+    for block in list(encoder.children())[1:]:
+        assert isinstance(block[1], ConvResBlock)
+        assert isinstance(block[1][0], ConvBlock)
+        assert isinstance(block[1][1], ResidualBlock)
+
+        assert block[1][0][0].in_channels == in_chans
+        assert block[1][0][0].out_channels == out_chans
+        assert block[1][0][1].num_features == out_chans
+
+        assert block[1][1].first_conv[0].in_channels == out_chans
+        assert block[1][1].first_conv[0].out_channels == out_chans
+        assert block[1][1].first_conv[1].num_features == out_chans
+        assert block[1][1].first_conv[2].negative_slope == 0.0
+
+        assert block[1][1].second_conv[0].in_channels == out_chans
+        assert block[1][1].second_conv[0].out_channels == out_chans
+        assert block[1][1].second_conv[1].num_features == out_chans
+
+        in_chans *= 2
+        out_chans *= 2
 
 
 def test_simple_conv_net_2d_contents_with_variable_kernel_sizes():

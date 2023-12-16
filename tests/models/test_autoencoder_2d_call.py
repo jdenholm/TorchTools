@@ -17,6 +17,7 @@ def test_autoencoder_2d_return_shapes():
     pools = ["avg", "max"]
     bilinear = [True, False]
     kernel_size = [1, 3, 5]
+    block_styles = ["conv_res", "double_conv"]
 
     iterator = product(
         in_channels,
@@ -27,9 +28,10 @@ def test_autoencoder_2d_return_shapes():
         pools,
         bilinear,
         kernel_size,
+        block_styles,
     )
 
-    for ins, outs, layers, feats, slope, pool, bilin, size in iterator:
+    for ins, outs, layers, feats, slope, pool, bilin, size, block in iterator:
         model = AutoEncoder2d(
             in_chans=ins,
             out_chans=outs,
@@ -39,6 +41,7 @@ def test_autoencoder_2d_return_shapes():
             pool_style=pool,
             bilinear=bilin,
             kernel_size=size,
+            block_style=block,
         )
 
         assert model(rand(10, ins, 16, 32)).shape == (10, outs, 16, 32)
