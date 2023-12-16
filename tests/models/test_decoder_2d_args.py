@@ -408,3 +408,31 @@ def test_min_up_feats_arg_values():
                 kernel_size=3,
                 min_up_feats=min_feats,
             )
+
+
+def test_decoder_2d_block_style_arg_values():
+    """Test the types accepted by the ``block_style`` arg."""
+    # Should work with allowed options
+    for block_style in ["double_conv", "conv_res"]:
+        _ = Decoder2d(
+            in_chans=8,
+            out_chans=3,
+            num_blocks=3,
+            bilinear=True,
+            lr_slope=0.666,
+            kernel_size=3,
+            block_style=block_style,
+        )
+
+    # Should break with any other option
+    for block_style in [666, 1.0]:
+        with pytest.raises(ValueError):
+            _ = Decoder2d(
+                in_chans=8,
+                out_chans=3,
+                num_blocks=3,
+                bilinear=True,
+                lr_slope=0.666,
+                kernel_size=3,
+                block_style=block_style,
+            )

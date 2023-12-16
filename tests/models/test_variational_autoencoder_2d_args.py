@@ -359,3 +359,29 @@ def test_min_up_feats_arg_values():
                 input_dims=(16, 16),
                 min_up_feats=size,
             )
+
+
+def test_block_style_argument_values():
+    """Test the values accepted by the ``block_style`` argument."""
+    # Should work with allowed values
+    _ = VAE2d(
+        in_chans=1,
+        out_chans=3,
+        input_dims=(16, 16),
+        block_style="double_conv",
+    )
+    _ = VAE2d(
+        in_chans=1,
+        out_chans=3,
+        input_dims=(16, 16),
+        block_style="conv_res",
+    )
+
+    # Should break with any other values
+    with pytest.raises(ValueError):
+        _ = VAE2d(
+            in_chans=1,
+            out_chans=3,
+            input_dims=(16, 16),
+            block_style=666,
+        )

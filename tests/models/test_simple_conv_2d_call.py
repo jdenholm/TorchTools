@@ -16,6 +16,7 @@ def test_simple_conv_net_2d_call():
     adaptive_pool = ["avg", "max", "avg-max-concat"]
     lr_slopes = [0.0, 0.1]
     sizes = [1, 3, 5]
+    block_styles = ["double_conv", "conv_res"]
 
     iterator = product(
         ins,
@@ -26,9 +27,20 @@ def test_simple_conv_net_2d_call():
         adaptive_pool,
         lr_slopes,
         sizes,
+        block_styles,
     )
 
-    for in_chans, out_feats, feats, num_blocks, d_pool, a_pool, slope, size in iterator:
+    for (
+        in_chans,
+        out_feats,
+        feats,
+        num_blocks,
+        d_pool,
+        a_pool,
+        slope,
+        size,
+        block_style,
+    ) in iterator:
         model = SimpleConvNet2d(
             in_chans,
             out_feats,
@@ -38,6 +50,7 @@ def test_simple_conv_net_2d_call():
             adaptive_pool=a_pool,
             lr_slope=slope,
             kernel_size=size,
+            block_style=block_style,
         )
 
         assert model(rand(10, in_chans, 100, 100)).shape == (10, out_feats)

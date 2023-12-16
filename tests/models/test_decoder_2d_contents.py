@@ -5,6 +5,7 @@ from torch.nn import BatchNorm2d, LeakyReLU
 
 from torch_tools import Decoder2d
 from torch_tools.models._blocks_2d import UpBlock, DoubleConvBlock, ConvBlock
+from torch_tools.models._blocks_2d import ResidualBlock, ConvResBlock
 
 
 def test_decoder_2d_number_of_blocks():
@@ -333,7 +334,7 @@ def test_contents_with_different_kernel_sizes():
 
 
 def test_contents_with_different_min_up_feats():
-    """Test the condents with different ``min_up_feats`` args."""
+    """Test the contents with different ``min_up_feats`` args."""
     for min_feats in [1, 2, 3]:
         model = Decoder2d(
             in_chans=16,
@@ -356,3 +357,81 @@ def test_contents_with_different_min_up_feats():
             assert block[1][1][0].in_channels >= min_feats
             assert block[1][1][0].out_channels >= min_feats
             assert block[1][1][1].num_features >= min_feats
+
+
+def test_contents_with_double_conv_block():
+    """Test the contents with a double conv block."""
+    model = Decoder2d(32, 1, 4, True, 0.321, 3, block_style="double_conv")
+
+    in_chans, out_chans = 32, 16
+
+    for block in list(model.children())[:-1]:
+        assert isinstance(block, UpBlock)
+        assert isinstance(block[1], DoubleConvBlock)
+
+        assert isinstance(block[1][0], ConvBlock)
+        assert isinstance(block[1][0][0], Conv2d)
+        assert isinstance(block[1][0][1], BatchNorm2d)
+        assert isinstance(block[1][0][2], LeakyReLU)
+
+        assert block[1][0][0].in_channels == in_chans
+        assert block[1][0][0].out_channels == out_chans
+        assert block[1][0][1].num_features == out_chans
+        assert block[1][0][2].negative_slope == 0.321
+
+        assert isinstance(block[1][1], ConvBlock)
+        assert isinstance(block[1][1][0], Conv2d)
+        assert isinstance(block[1][1][1], BatchNorm2d)
+        assert isinstance(block[1][1][2], LeakyReLU)
+
+        assert block[1][1][0].in_channels == out_chans
+        assert block[1][1][0].out_channels == out_chans
+        assert block[1][1][1].num_features == out_chans
+        assert block[1][1][2].negative_slope == 0.321
+
+        in_chans //= 2
+        out_chans //= 2
+
+
+def test_contents_with_double_conv_res_block():
+    """Test the contents with a conv res block."""
+    model = Decoder2d(32, 1, 4, True, 0.321, 3, block_style="conv_res")
+
+    in_chans, out_chans = 32, 16
+
+    for block in list(model.children())[:-1]:
+        assert isinstance(block, UpBlock)
+        assert isinstance(block[1], ConvResBlock)
+
+        assert isinstance(block[1][0], ConvBlock)
+        assert isinstance(block[1][0][0], Conv2d)
+        assert isinstance(block[1][0][1], BatchNorm2d)
+        assert isinstance(block[1][0][2], LeakyReLU)
+
+        assert block[1][0][0].in_channels == in_chans
+        assert block[1][0][0].out_channels == out_chans
+        assert block[1][0][1].num_features == out_chans
+        assert block[1][0][2].negative_slope == 0.321
+
+        assert isinstance(block[1][1], ResidualBlock)
+        assert isinstance(block[1][1].first_conv, ConvBlock)
+        assert isinstance(block[1][1].first_conv[0], Conv2d)
+        assert isinstance(block[1][1].first_conv[1], BatchNorm2d)
+        assert isinstance(block[1][1].first_conv[2], LeakyReLU)
+
+        assert block[1][1].first_conv[0].in_channels == out_chans
+        assert block[1][1].first_conv[0].out_channels == out_chans
+        assert block[1][1].first_conv[1].num_features == out_chans
+        assert block[1][1].first_conv[2].negative_slope == 0.0
+
+        assert isinstance(block[1][1], ResidualBlock)
+        assert isinstance(block[1][1].second_conv, ConvBlock)
+        assert isinstance(block[1][1].second_conv[0], Conv2d)
+        assert isinstance(block[1][1].second_conv[1], BatchNorm2d)
+
+        assert block[1][1].second_conv[0].in_channels == out_chans
+        assert block[1][1].second_conv[0].out_channels == out_chans
+        assert block[1][1].second_conv[1].num_features == out_chans
+
+        in_chans //= 2
+        out_chans //= 2
