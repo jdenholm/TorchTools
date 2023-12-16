@@ -2,13 +2,7 @@ name: torch-tools
 channels:
   - main
 dependencies:
-  - python>=3.9.10
-  - black
-  - conda-forge::black-jupyter
-  - mypy>=0.98
-  - pytest
-  - pydocstyle
-  - pylint
+  - python<3.12
   - pip
   - pip:
     - sphinx
@@ -19,4 +13,10 @@ dependencies:
     - matplotlib
     - scikit-image
     - palmerpenguins
+    - black
+    - black-nb
+    - mypy>=0.98
+    - pytest
+    - pydocstyle
+    - pylint
     - "-e ."
