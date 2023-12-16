@@ -1,6 +1,20 @@
+<<<<<<< HEAD
 ## Varsion 0.6.1
   - Added residual blocks as optional block style to all relevant models.
   - Changed the ``UNet`` demo to use a nuclei segmentation data set.
+=======
+## Version 0.6.0
+  - Added synthetic shapes dataset and demo.
+
+## Version 0.5.6
+  - Changed the classification demo for ``FCNet`` to the penguin problem.
+
+## Version 0.5.5
+  - Added ``py.typed`` package data to toml.
+
+## Version 0.5.4
+  - Added missing docs for ``VAE2d``.
+>>>>>>> 3be28d6483077a4cf51ce94a2a10cd85bbb5d1e3
 
 ## Version 0.5.3
   - Added ``torch_tools.models._blocks_2d.ConvResBlock``.
