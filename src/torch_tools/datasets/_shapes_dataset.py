@@ -1,4 +1,5 @@
 """Synthetic dataset object."""
+
 from typing import Tuple, Optional
 
 from torch import from_numpy, Tensor  # pylint: disable=no-name-in-module
@@ -6,7 +7,7 @@ from torch.utils.data import Dataset
 
 from torchvision.transforms import Compose
 
-from numpy import ones, float32, ndarray, array, where, full, zeros
+from numpy import ndarray, array, where, full
 from numpy.random import default_rng
 
 from skimage.morphology import star, square, octagon, disk
@@ -35,6 +36,8 @@ class ShapesDataset(Dataset):
         A composition of transforms to apply to the input.
     target_tfms : Compose, optional
         A composition of transforms to apply to the target.
+    seed : int
+        Integer seed for numpy's default rng.
 
     Notes
     -----
@@ -55,6 +58,7 @@ class ShapesDataset(Dataset):
         image_size: int = 256,
         input_tfms: Optional[Compose] = None,
         target_tfms: Optional[Compose] = None,
+        seed: int = 666,
     ):
         """Build ``ShapesDataset``."""
         self._len = length
@@ -71,7 +75,8 @@ class ShapesDataset(Dataset):
         self._x_tfms = input_tfms
         self._y_tfms = target_tfms
 
-    _rng = default_rng(seed=123)
+        self._rng = default_rng(seed=seed)
+
     _shapes = {
         "square": square,
         "star": star,
