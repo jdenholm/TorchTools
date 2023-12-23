@@ -133,6 +133,9 @@ class ShapesDataset(Dataset):
         ----------
         image : ndarray
             RGB image.
+        shape : str
+            Name of the shape to include.
+
 
         Returns
         -------
