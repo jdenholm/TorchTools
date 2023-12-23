@@ -78,7 +78,7 @@ class ShapesDataset(Dataset):
         self._rng = default_rng(seed=seed)
 
     _shapes = {
-        "square": square,
+        "square": lambda x: square(2 * x),
         "star": star,
         "octagon": lambda x: octagon(x, x),
         "spot": disk,
