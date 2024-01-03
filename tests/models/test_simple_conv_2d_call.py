@@ -54,3 +54,21 @@ def test_simple_conv_net_2d_call():
         )
 
         assert model(rand(10, in_chans, 100, 100)).shape == (10, out_feats)
+
+
+def test_the_returned_shapes_of_get_features_method():
+    """Test the shapes returned by the ``get_features`` method."""
+    for feats_start, num_blocks in zip([16, 32], [3, 4, 5]):
+        model = SimpleConvNet2d(
+            3,
+            10,
+            features_start=feats_start,
+            num_blocks=num_blocks,
+        )
+
+        batch = rand(10, 3, 100, 100)
+
+        assert model.get_features(batch).shape == (
+            10,
+            feats_start * (2 ** (num_blocks - 1)),
+        )
