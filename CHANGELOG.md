@@ -1,3 +1,6 @@
+## Version 0.8.0
+  - To Add
+
 ## Version 0.7.0
   - Changed ``AutoEncoder2d`` demo to use ovarian histology images.
 
