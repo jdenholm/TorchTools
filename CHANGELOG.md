@@ -1,3 +1,6 @@
+## Version ?
+  - Added a demo using a multiple-instance-learning attention model.
+
 ## Version 0.6.0
   - Added synthetic shapes dataset and demo.
 
