@@ -1,6 +1,6 @@
 """Synthetic dataset object."""
 
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Dict, Callable
 
 from torch import from_numpy, Tensor  # pylint: disable=no-name-in-module
 from torch.utils.data import Dataset
@@ -77,7 +77,7 @@ class ShapesDataset(Dataset):
 
         self._rng = default_rng(seed=seed)
 
-    _shapes = {
+    _shapes: Dict[str, Callable] = {
         "square": lambda x: square(2 * x),
         "star": star,
         "octagon": lambda x: octagon(x, x),
