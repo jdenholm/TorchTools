@@ -58,6 +58,8 @@ class VAE2d(Module):
         down-sampling blocks.
     min_up_feats : int, optional
         Minimum number of features the up-sampling blocks can produce.
+    block_style : str
+        Block style to use in the down and up blocks.
 
     """
 
@@ -74,6 +76,7 @@ class VAE2d(Module):
         kernel_size: int = 3,
         max_down_feats: Optional[int] = None,
         min_up_feats: Optional[int] = None,
+        block_style: str = "double_conv",
     ):
         """Build ``VAE2d``."""
         super().__init__()
@@ -87,6 +90,7 @@ class VAE2d(Module):
             lr_slope=process_negative_slope_arg(lr_slope),
             kernel_size=process_2d_kernel_size(kernel_size),
             max_feats=process_optional_feats_arg(max_down_feats),
+            block_style=block_style,
         )
 
         self._num_feats, self._num_chans = _features_size(
@@ -114,6 +118,7 @@ class VAE2d(Module):
             lr_slope=lr_slope,
             kernel_size=kernel_size,
             min_up_feats=min_up_feats,
+            block_style=block_style,
         )
 
     def _get_mean_and_logvar(self, features: Tensor) -> Tuple[Tensor, Tensor]:

@@ -176,6 +176,23 @@ class ConvNet2d(Module):
         pool_out = self.pool(encoder_out)
         return self.dense_layers(pool_out)
 
+    def get_features(self, batch: Tensor) -> Tensor:
+        """Return the features produced by the encoder and pool.
+
+        Parameters
+        ----------
+        batch : Tensor
+            A mini-batch of image-like inputs.
+
+        Returns
+        -------
+        Tensor
+            The encoded features for the items in ``batch``.
+
+        """
+        encoder_out = self.backbone(batch)
+        return self.pool(encoder_out)
+
 
 def _conv_config(conv: Conv2d) -> Dict[str, Any]:
     """Return a dictionary with the `conv`'s instantiation arguments.

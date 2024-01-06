@@ -15,6 +15,7 @@ def test_encoder_2d_return_shapes_with_brute_force_arg_combos():
     lr_slope = [0.0, 0.1]
     kernel_sizes = [1, 3, 5]
     max_features = [None, 64, 128]
+    block_styles = ["double_conv", "conv_res"]
 
     iterator = product(
         in_chans,
@@ -24,9 +25,19 @@ def test_encoder_2d_return_shapes_with_brute_force_arg_combos():
         lr_slope,
         kernel_sizes,
         max_features,
+        block_styles,
     )
 
-    for in_chans, feats, blocks, pool, slope, kernel_size, max_feats in iterator:
+    for (
+        in_chans,
+        feats,
+        blocks,
+        pool,
+        slope,
+        kernel_size,
+        max_feats,
+        block_style,
+    ) in iterator:
         model = Encoder2d(
             in_chans,
             feats,
@@ -35,6 +46,7 @@ def test_encoder_2d_return_shapes_with_brute_force_arg_combos():
             slope,
             kernel_size,
             max_feats=max_feats,
+            block_style=block_style,
         )
 
         out = model(rand(1, in_chans, 32, 64))

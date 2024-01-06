@@ -364,3 +364,16 @@ def test_process_optional_features_arg_values():
 
     with pytest.raises(ValueError):
         _ = ap.process_optional_feats_arg(max_feats=-1)
+
+
+def test_process_2d_block_style_arg_values():
+    """Test the values accepted by the ``block_style`` arg."""
+    # Should work with allowed options
+    _ = ap.process_2d_block_style_arg("double_conv")
+    _ = ap.process_2d_block_style_arg("conv_res")
+
+    with pytest.raises(ValueError):
+        _ = ap.process_2d_block_style_arg("Gandalf the Grey")
+
+    with pytest.raises(ValueError):
+        _ = ap.process_2d_block_style_arg(666)

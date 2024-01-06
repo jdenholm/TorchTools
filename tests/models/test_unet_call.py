@@ -18,6 +18,7 @@ def test_unet_call():
     bilinear = [True, False]
     lr_slope = [0.0, 0.1]
     kernel_size = [3, 5]
+    blocks = ["conv_res", "double_conv"]
 
     iterator = product(
         in_chans,
@@ -28,9 +29,10 @@ def test_unet_call():
         bilinear,
         lr_slope,
         kernel_size,
+        blocks,
     )
 
-    for ins, outs, feats, layers, pool, bilin, slope, size in iterator:
+    for ins, outs, feats, layers, pool, bilin, slope, size, style in iterator:
         model = UNet(
             in_chans=ins,
             out_chans=outs,
@@ -40,6 +42,7 @@ def test_unet_call():
             bilinear=bilin,
             lr_slope=slope,
             kernel_size=size,
+            block_style=style,
         )
 
         assert model(rand(10, ins, 25, 50)).shape == (10, outs, 25, 50)

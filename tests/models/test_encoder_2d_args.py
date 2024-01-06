@@ -416,3 +416,41 @@ def test_max_feats_arg_values():
                 kernel_size=3,
                 max_feats=max_feats,
             )
+
+
+def test_block_style_arg_values():
+    """Test the values accepted ``block_style``."""
+    # Should work with allowed options
+    for option in ["double_conv", "conv_res"]:
+        _ = Encoder2d(
+            in_chans=32,
+            start_features=64,
+            num_blocks=4,
+            pool_style="max",
+            lr_slope=0.1,
+            kernel_size=3,
+            block_style=option,
+        )
+
+    # Should break with any other argument
+    with pytest.raises(ValueError):
+        _ = Encoder2d(
+            in_chans=32,
+            start_features=64,
+            num_blocks=4,
+            pool_style="max",
+            lr_slope=0.1,
+            kernel_size=3,
+            block_style=666,
+        )
+
+    with pytest.raises(ValueError):
+        _ = Encoder2d(
+            in_chans=32,
+            start_features=64,
+            num_blocks=4,
+            pool_style="max",
+            lr_slope=0.1,
+            kernel_size=3,
+            block_style="Gandalf",
+        )

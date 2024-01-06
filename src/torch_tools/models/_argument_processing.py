@@ -356,3 +356,31 @@ def process_optional_feats_arg(max_feats: Optional[int] = None) -> Union[None, i
         return None
 
     return process_num_feats(max_feats)
+
+
+def process_2d_block_style_arg(block_style: str) -> str:
+    """Process the ``block_style`` argument.
+
+    Parameters
+    ----------
+    block_style : str
+        Style of the 2D encoding block.
+
+    Returns
+    -------
+    block_style : str
+        See params.
+
+    Raises
+    ------
+    ValueError
+        If ``block_style`` is not in ``allowed_options``.
+
+    """
+    allowed_options = ["double_conv", "conv_res"]
+    if not block_style in allowed_options:
+        msg = f"Unrecognised option '{block_style}'. Please choose from "
+        msg += f"'{allowed_options}'."
+        raise ValueError(msg)
+
+    return block_style

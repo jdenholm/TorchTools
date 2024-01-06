@@ -802,6 +802,30 @@ def test_down_block_kernel_size_arg_values():
             )
 
 
+def test_down_block_block_style_arg_values():
+    """Test the values accepted by the ``block_style`` arg."""
+    # Should work with allowed options
+    for option in ["double_conv", "conv_res"]:
+        _ = DownBlock(
+            in_chans=8,
+            out_chans=1,
+            pool="max",
+            lr_slope=0.1,
+            block_style=option,
+        )
+
+    # Should break with any other options
+    for option in ["Radagast the Brown", 666]:
+        with pytest.raises(ValueError):
+            _ = DownBlock(
+                in_chans=8,
+                out_chans=1,
+                pool="max",
+                lr_slope=0.1,
+                block_style=option,
+            )
+
+
 def test_up_block_in_chans_arg_type():
     """Test the types accepted by the `in_chans` arg."""
     # Should work with ints of one or more
@@ -934,6 +958,41 @@ def test_up_block_kernel_size_argument_values():
             )
 
 
+def test_up_block_block_style_arg_values():
+    """Test the values accepted by the ``block_style`` arg."""
+    # Should work with allowed options
+    for option in ["double_conv", "conv_res"]:
+        _ = UpBlock(
+            in_chans=1,
+            out_chans=1,
+            bilinear=True,
+            lr_slope=0.1,
+            kernel_size=1,
+            block_style=option,
+        )
+
+    # Should break with any other option
+    with pytest.raises(KeyError):
+        _ = UpBlock(
+            in_chans=1,
+            out_chans=1,
+            bilinear=True,
+            lr_slope=0.1,
+            kernel_size=1,
+            block_style="666",
+        )
+
+    with pytest.raises(KeyError):
+        _ = UpBlock(
+            in_chans=1,
+            out_chans=1,
+            bilinear=True,
+            lr_slope=0.1,
+            kernel_size=1,
+            block_style="Saruman the White",
+        )
+
+
 def test_unet_up_block_kernel_size_argument_types():
     """Test the types accepted by the ``kernel_size`` argument."""
     # Should work with positive, odd int.
@@ -987,4 +1046,30 @@ def test_unet_up_block_kernel_size_argument_values():
                 bilinear=False,
                 lr_slope=0.0,
                 kernel_size=size,
+            )
+
+
+def test_unet_up_block_block_style_arg_values():
+    """Test the values accepted by the ``block_style`` arg."""
+    # Should work with allowed values
+    for block_style in ["double_conv", "conv_res"]:
+        _ = UNetUpBlock(
+            in_chans=4,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            kernel_size=3,
+            block_style=block_style,
+        )
+
+    # Should break with any other values
+    for block_style in ["gandalf", 666]:
+        with pytest.raises(ValueError):
+            _ = UNetUpBlock(
+                in_chans=3,
+                out_chans=3,
+                bilinear=False,
+                lr_slope=0.1,
+                kernel_size=3,
+                block_style=block_style,
             )
