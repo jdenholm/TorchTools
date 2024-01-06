@@ -1,5 +1,6 @@
 ## Version 0.8.0
-  - To Add
+  - Add ``get_features`` method to ``SimpleConvNet2d`` for extracting encoded features.
+  - Add ``get_features`` method to ``ConvNet2d`` for extracting encoded features.
 
 ## Version 0.7.0
   - Changed ``AutoEncoder2d`` demo to use ovarian histology images.
