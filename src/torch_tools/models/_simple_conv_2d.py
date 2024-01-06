@@ -1,6 +1,7 @@
 """A simple two-dimensional convolutional neural network."""
 from typing import Optional, Dict, Any
 
+from torch import Tensor
 from torch.nn import Sequential, Flatten
 
 from torch_tools.models._encoder_2d import Encoder2d
@@ -106,6 +107,24 @@ class SimpleConvNet2d(Sequential):
                 **self._dn_args,
             ),
         )
+
+    def get_features(self, batch: Tensor) -> Tensor:
+        """Get the features produced by the encoder and adaptive poool.
+
+        Parameters
+        ----------
+        batch : Tensor
+            A mini-batch of image-like inputs.
+
+        Returns
+        -------
+        Tensor
+            The features for each item in ``batch``.
+
+        """
+        feats = self[0](batch)
+        feats = self[1](feats)
+        return self[2](feats)
 
     _dn_args: Dict[str, Any] = {
         "hidden_sizes": None,
