@@ -5,7 +5,7 @@ from typing import Tuple, Optional
 from torch import from_numpy, Tensor  # pylint: disable=no-name-in-module
 from torch.utils.data import Dataset
 
-from torchvision.transforms import Compose
+from torchvision.transforms import Compose  # type: ignore
 
 from numpy import ndarray, array, where, full
 from numpy.random import default_rng
