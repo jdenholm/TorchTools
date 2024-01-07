@@ -9,7 +9,6 @@
 ## Version 0.6.1
   - Added residual blocks as optional block style to all relevant models.
   - Changed the ``UNet`` demo to use a nuclei segmentation data set.
->>>>>>> dev
 
 ## Version 0.6.0
   - Added synthetic shapes dataset and demo.
