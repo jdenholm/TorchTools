@@ -1,7 +1,12 @@
+## Version 0.8.0
+  - Add ``get_features`` method to ``SimpleConvNet2d`` for extracting encoded features.
+  - Add ``get_features`` method to ``ConvNet2d`` for extracting encoded features.
+  - Added a demo using a multiple-instance-learning attention model.
+
 ## Version 0.7.0
   - Changed ``AutoEncoder2d`` demo to use ovarian histology images.
 
-## Varsion 0.6.1
+## Version 0.6.1
   - Added residual blocks as optional block style to all relevant models.
   - Changed the ``UNet`` demo to use a nuclei segmentation data set.
 

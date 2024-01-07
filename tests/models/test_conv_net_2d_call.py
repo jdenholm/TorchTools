@@ -64,3 +64,15 @@ def test_call_works_with_all_kinds_of_pools():
 
     model = ConvNet2d(out_feats=1, pool_style="avg-max-concat")
     _ = model(rand(10, 3, 50, 50))
+
+
+def test_the_returned_shapes_of_get_features_method():
+    """Test the shapes returned by the ``get_features`` method."""
+    model = ConvNet2d(10, encoder_style="resnet18", pool_style="avg")
+    assert model.get_features(rand(10, 3, 100, 100)).shape == (10, 512)
+
+    model = ConvNet2d(10, encoder_style="resnet34", pool_style="avg")
+    assert model.get_features(rand(10, 3, 100, 100)).shape == (10, 512)
+
+    model = ConvNet2d(10, encoder_style="resnet50", pool_style="avg")
+    assert model.get_features(rand(10, 3, 100, 100)).shape == (10, 2048)
