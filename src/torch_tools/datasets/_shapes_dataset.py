@@ -44,12 +44,15 @@ class ShapesDataset(Dataset):
     RGB colours on [0, 1)^{3}.
 
     To get the indices of each shape, use, for example
-    ```
-    data_set = ShapesDataset()
-    spot_index = data_set.target_names.index("spot")
-    star_index = data_set.target_names.index("star")
 
-    ```
+    >>> data_set = ShapesDataset()
+    >>> spot_index = data_set.target_names.index("spot")
+    >>> star_index = data_set.target_names.index("star")
+
+    To print the classes as a list, use
+
+    >>> print(data_set.target_names)
+
 
     """
 
