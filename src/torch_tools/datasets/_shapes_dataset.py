@@ -1,6 +1,5 @@
 """Synthetic dataset object."""
-
-from typing import Tuple, Optional, Dict, Callable
+from typing import Tuple, Optional, Dict, Callable, List
 
 from torch import from_numpy, Tensor  # pylint: disable=no-name-in-module
 from torch.utils.data import Dataset
@@ -16,7 +15,7 @@ from skimage.morphology import star, square, octagon, disk
 class ShapesDataset(Dataset):
     """Synthetic dataset which produces images withs spots and squares.
 
-    *Warning—*this dataset object is untested.
+    *Warning*—this dataset object is untested.
 
     Parameters
     ----------
@@ -44,6 +43,13 @@ class ShapesDataset(Dataset):
     The images have white backrounds and the shapes have randomly selected
     RGB colours on [0, 1)^{3}.
 
+    To get the indices of each shape, use, for example
+    ```
+    data_set = ShapesDataset()
+    spot_index = data_set.target_names.index("spot")
+    star_index = data_set.target_names.index("star")
+
+    ```
 
     """
 
@@ -196,3 +202,16 @@ class ShapesDataset(Dataset):
             from_numpy(image).permute(2, 0, 1).float(),
             from_numpy(array(targets)).float(),
         )
+
+    @property
+    def target_names(self) -> List[str]:
+        """Return a list of target names order by their one-hot indices.
+
+        Returns
+        -------
+        List[str]
+            A list of the names of the shapes, ordered by their one-hot
+            indices.
+
+        """
+        return list(self._shapes.keys())
