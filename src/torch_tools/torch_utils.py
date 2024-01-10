@@ -1,6 +1,8 @@
 """PyTorch utilities."""
 from itertools import chain
 
+
+import torch
 from torch import (  # pylint: disable=no-name-in-module
     Tensor,
     eye,
@@ -225,3 +227,57 @@ def disable_biases(model: Module):
 
     if hasattr(model, "bias"):
         model.bias = None  # type: ignore
+
+
+def total_image_variation(
+    img_batch: Tensor,
+    mean_reduce: bool = True,
+) -> Tensor:
+    """Compute the total variation of ``img_batch``.
+
+    Parameters
+    ----------
+    img_batch : Tensor
+        A mini-batch of image-like inputs.
+    mean_reduce : bool, optional
+        If ``True``, the returned value is normalised by the number of
+        elements in ``img_batch``. If ``False``, no division is performed.
+
+    Returns
+    -------
+    Tensor
+        The total variation measure.
+
+    Raises
+    ------
+    TypeError
+        If ``img_batch`` is not a ``Tensor``.
+    TypeError
+        If ``mean_reduce`` is not a ``bool``.
+    RuntimeError
+        If ``img_batch`` is not a 4D ``Tensor``.
+
+    Notes
+    -----
+    Heavily inspired by the TensorFlow code:
+    https://github.com/tensorflow/tensorflow/blob/v2.14.0/tensorflow/python/ops/image_ops_impl.py#L3322-L3391
+
+    """
+    if not isinstance(img_batch, Tensor):
+        msg = f"'img_batch' should be 'Tensor', got {type(img_batch)}."
+        raise TypeError(msg)
+
+    if not isinstance(mean_reduce, bool):
+        msg = f"'mean_reduce' should be 'bool', got {type(mean_reduce)}."
+        raise TypeError(msg)
+
+    if not img_batch.ndim == 4:
+        msg = f"'img_batch' should be 4D, but got {img_batch.ndim}D instead."
+        raise RuntimeError(msg)
+
+    row = torch.abs(img_batch[:, :, 1:, :] - img_batch[:, :, :-1, :]).sum()
+    col = torch.abs(img_batch[:, :, :, 1:] - img_batch[:, :, :, :-1]).sum()
+
+    total = (row + col).sum()
+
+    return total / img_batch.numel() if mean_reduce is True else total

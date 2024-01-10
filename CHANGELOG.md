@@ -1,3 +1,6 @@
+## Version 0.9.0
+  - Added total variational loss function ``total_image_variation``.
+
 ## Version 0.8.0
   - Add ``get_features`` method to ``SimpleConvNet2d`` for extracting encoded features.
   - Add ``get_features`` method to ``ConvNet2d`` for extracting encoded features.
