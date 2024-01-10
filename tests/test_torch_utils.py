@@ -11,6 +11,7 @@ from torch_tools.torch_utils import (
     patchify_img_batch,
     img_batch_dims_power_of_2,
     disable_biases,
+    total_image_variation,
 )
 
 # pylint: disable=redefined-outer-name
@@ -326,3 +327,51 @@ def test_disable_biases_works():
     conv_layer = Conv2d(10, 2, 3, bias=True)
     disable_biases(conv_layer)
     assert conv_layer.bias is None
+
+
+def test_total_image_variation_img_batch_type():
+    """Test the types accepted by the ``img_batch`` argument."""
+    # Should work with 4D Tensors
+    _ = total_image_variation(rand(1, 3, 50, 50))
+
+    # Should break with other types
+    with pytest.raises(TypeError):
+        _ = total_image_variation(rand(1, 3, 50, 50).numpy())
+
+    with pytest.raises(TypeError):
+        _ = total_image_variation(666.0)
+
+
+def test_total_image_variation_img_batch_dims():
+    """Test the number of dimensions accepted by the ``img_batch`` argument."""
+    # Should work with 4D Tensors
+    _ = total_image_variation(rand(1, 3, 50, 50))
+
+    # Should break with any other number of dimensions
+    with pytest.raises(RuntimeError):
+        _ = total_image_variation(rand(1))
+
+    with pytest.raises(RuntimeError):
+        _ = total_image_variation(rand(10, 10))
+
+    with pytest.raises(RuntimeError):
+        _ = total_image_variation(rand(1, 3, 10))
+
+
+def test_total_img_variation_reduce_mean_types():
+    """Test the types accepted by the ``mean_reduce`` arg."""
+    # Should work with bools
+    _ = total_image_variation(rand(1, 3, 10, 10), mean_reduce=True)
+    _ = total_image_variation(rand(1, 3, 10, 10), mean_reduce=False)
+
+
+def test_total_img_variation_return_values():
+    """Test the types accepted by the ``mean_reduce`` arg."""
+    # Should be zero with all ones
+    assert total_image_variation(ones(1, 3, 10, 10)).item() == 0.0
+
+    # Should be zero with all zeros
+    assert total_image_variation(zeros(1, 3, 10, 10)).item() == 0.0
+
+    rand_result = total_image_variation(rand(100, 3, 1000, 1000)).item()
+    assert rand_result == pytest.approx(0.666, abs=0.001)
