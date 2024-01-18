@@ -1,5 +1,5 @@
 ## Version 0.10.0
-  - Updated ``torch_tools.weight_init.normal_init`` with options for which attrs get intialised.
+  - Updated ``torch_tools.weight_init.normal_init`` with options for which attrs get initialised.
 
 ## Version 0.9.0
   - Added total variational loss function ``total_image_variation``.
