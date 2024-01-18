@@ -1,3 +1,6 @@
+## Version 0.10.0
+  -
+
 ## Version 0.9.0
   - Added total variational loss function ``total_image_variation``.
 
