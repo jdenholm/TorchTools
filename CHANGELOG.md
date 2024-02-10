@@ -1,3 +1,6 @@
+## Version 0.10.1
+  - Made Scikit Image a requirement of ``torch_tools`` rather than just having it in the dev env; the shapes dataset needs it.
+
 ## Version 0.10.0
   - Updated ``torch_tools.weight_init.normal_init`` with options for which attrs get initialised.
 
