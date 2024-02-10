@@ -2,7 +2,7 @@ name: torch-tools
 channels:
   - main
 dependencies:
-  - python<3.12
+  - python<=3.12
   - pip
   - pip:
     - sphinx
@@ -11,7 +11,6 @@ dependencies:
     - scikit-learn
     - pandas
     - matplotlib
-    - scikit-image
     - palmerpenguins
     - black
     - black-nb
