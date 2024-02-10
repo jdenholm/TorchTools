@@ -11,7 +11,7 @@ authors = [
 ]
 readme = "README.md"
 license = {file = "LICENSE.md"}
-requires-python = "3"
+requires-python = "<=3.12"
 
 dependencies = ["torch", "torchvision", "scikit-image"]
 
