@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "torch_tools"
-version = "0.10.1"
+version = "0.10.2"
 description = "PyTorch and other tools"
 authors = [
   { name="Jim Denholm", email="j.denholm.2017@gmail.com" },

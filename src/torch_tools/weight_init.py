@@ -56,4 +56,13 @@ def normal_init(
     if hasattr(model, attr_name):
         with no_grad():
             attr = getattr(model, attr_name)
-            setattr(model, attr_name, Parameter((randn_like(attr) * std) + mean))
+            if attr is None:
+                set_to = None
+            else:
+                set_to = (
+                    Parameter((randn_like(attr) * std) + mean)
+                    if attr is not None
+                    else None
+                )
+
+            setattr(model, attr_name, set_to)

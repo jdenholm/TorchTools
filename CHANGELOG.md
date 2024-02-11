@@ -1,3 +1,6 @@
+## Version 0.10.2
+  - Account for the attribution being initialised by ``normal_init`` being None.
+
 ## Version 0.10.1
   - Made Scikit Image a requirement of ``torch_tools`` rather than just having it in the dev env; the shapes dataset needs it.
 
