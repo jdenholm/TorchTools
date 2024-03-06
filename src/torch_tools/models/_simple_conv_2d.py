@@ -1,7 +1,8 @@
 """A simple two-dimensional convolutional neural network."""
+
 from typing import Optional, Dict, Any
 
-from torch import Tensor
+from torch import Tensor, set_grad_enabled
 from torch.nn import Sequential, Flatten
 
 from torch_tools.models._encoder_2d import Encoder2d
@@ -107,6 +108,31 @@ class SimpleConvNet2d(Sequential):
                 **self._dn_args,
             ),
         )
+
+    # pylint: disable=arguments-renamed
+    def forward(self, batch: Tensor, frozen_encoder: bool = False) -> Tensor:
+        """Pass ``batch`` through the model.
+
+        Parameters
+        ----------
+        batch : Tensor
+            A mini-batch of inputs.
+        frozen_encoder : bool, optional
+            Should the encoder's weights be frozen (i.e. have no grad) during
+            the forward pass?
+
+        Returns
+        -------
+        Tensor
+            The result of passing ``batch`` through the model.
+
+        """
+        with set_grad_enabled(not frozen_encoder):
+            encoder_out = self[0](batch)
+            pooled = self[1](encoder_out)
+            flat = self[2](pooled)
+
+        return self[3](flat)
 
     def get_features(self, batch: Tensor) -> Tensor:
         """Get the features produced by the encoder and adaptive poool.
