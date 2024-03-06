@@ -1,3 +1,6 @@
+## Version 0.10.3
+  - Added the option to freeze the encoder in the forward pass of ``SimpleConvNet2d``.
+
 ## Version 0.10.2
   - Account for the attribution being initialised by ``normal_init`` being None.
 
