@@ -1,4 +1,5 @@
 """Test the contents of ``VAE2d``."""
+
 from torch.nn import Module, Conv2d, LeakyReLU, BatchNorm2d
 
 from torch_tools import VAE2d
@@ -41,7 +42,7 @@ def test_mean_net_in_feats():
         start_features=8,
     )
 
-    assert model._mean_net[0][0].in_features == 8192
+    assert model.mean_net[0][0].in_features == 8192
 
 
 def test_std_net_in_feats():
@@ -55,7 +56,7 @@ def test_std_net_in_feats():
         start_features=8,
     )
 
-    assert model._var_net[0][0].in_features == 8192
+    assert model.var_net[0][0].in_features == 8192
 
 
 def test_mean_net_out_feats():
@@ -69,7 +70,7 @@ def test_mean_net_out_feats():
         start_features=8,
     )
 
-    assert model._mean_net[0][0].out_features == 8192
+    assert model.mean_net[0][0].out_features == 8192
 
 
 def test_mean_net_out_feats_with_max_down_feats():
@@ -84,7 +85,7 @@ def test_mean_net_out_feats_with_max_down_feats():
         max_down_feats=64,
     )
 
-    assert model._mean_net[0][0].out_features == 64
+    assert model.mean_net[0][0].out_features == 64
 
 
 def test_std_net_out_feats():
@@ -98,7 +99,7 @@ def test_std_net_out_feats():
         start_features=8,
     )
 
-    assert model._var_net[0][0].out_features == 8192
+    assert model.var_net[0][0].out_features == 8192
 
 
 def test_std_net_out_feats_with_max_down_feats():
@@ -113,7 +114,7 @@ def test_std_net_out_feats_with_max_down_feats():
         max_down_feats=128,
     )
 
-    assert model._var_net[0][0].out_features == 128
+    assert model.var_net[0][0].out_features == 128
 
 
 def test_vae_2d_contents_with_different_max_feats():
