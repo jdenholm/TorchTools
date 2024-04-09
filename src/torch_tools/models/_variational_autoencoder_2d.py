@@ -1,4 +1,5 @@
 """2D convolutional variational autoencoder."""
+
 from typing import Tuple, Union, Optional
 
 from torch import (  # pylint: disable=no-name-in-module
@@ -9,7 +10,7 @@ from torch import (  # pylint: disable=no-name-in-module
     set_grad_enabled,
 )
 
-from torch.nn import Module
+from torch.nn import Module, Sequential, Conv2d
 
 from torch_tools.models._encoder_2d import Encoder2d
 from torch_tools.models._decoder_2d import Decoder2d
@@ -26,6 +27,7 @@ from torch_tools.models._argument_processing import (
     process_input_dims,
     process_optional_feats_arg,
 )
+from torch_tools.models._blocks_2d import DoubleConvBlock
 
 
 class VAE2d(Module):
@@ -38,7 +40,8 @@ class VAE2d(Module):
     out_chans : int
         The number of output channels the model should produce.
     input_dims : Tuple[int, int]
-        The ``(height, width)`` of the input images.
+        The ``(height, width)`` of the input images (only necessary if
+        ``mean_var_nets == "linear"``).
     start_features : int, optional
         The number of features the first double conv block should produce.
     num_layers : int, optional
@@ -60,6 +63,9 @@ class VAE2d(Module):
         Minimum number of features the up-sampling blocks can produce.
     block_style : str
         Block style to use in the down and up blocks.
+    mean_var_net : str
+        The style of the networks for which learn the mean and variances:
+        ``"linear"`` or ``"conv"``.
 
     """
 
@@ -67,7 +73,7 @@ class VAE2d(Module):
         self,
         in_chans: int,
         out_chans: int,
-        input_dims: Tuple[int, int],
+        input_dims: Optional[Tuple[int, int]] = None,
         start_features: int = 64,
         num_layers: int = 4,
         down_pool: str = "max",
@@ -77,10 +83,11 @@ class VAE2d(Module):
         max_down_feats: Optional[int] = None,
         min_up_feats: Optional[int] = None,
         block_style: str = "double_conv",
+        mean_var_nets: str = "conv",
     ):
         """Build ``VAE2d``."""
         super().__init__()
-        _ = process_input_dims(input_dims)
+        self._input_dim_mean_var_net_check(input_dims, mean_var_nets)
 
         self.encoder = Encoder2d(
             in_chans=process_num_feats(in_chans),
@@ -100,15 +107,15 @@ class VAE2d(Module):
             max_down_feats,
         )
 
-        self._mean_net = FCNet(
-            in_feats=self._num_feats,
-            out_feats=self._num_feats,
-        )
+        self._mean_var_style = mean_var_nets
 
-        self._var_net = FCNet(
-            in_feats=self._num_feats,
-            out_feats=self._num_feats,
-        )
+        self._mean_var_funcs = {
+            "linear": self._mean_logvar_linear,
+            "conv": self._mean_logvar_conv,
+        }
+
+        self.mean_net = self._mean_or_var_net(lr_slope, kernel_size)
+        self.var_net = self._mean_or_var_net(lr_slope, kernel_size)
 
         self.decoder = Decoder2d(
             in_chans=self._num_chans,
@@ -121,7 +128,101 @@ class VAE2d(Module):
             block_style=block_style,
         )
 
-    def _get_mean_and_logvar(self, features: Tensor) -> Tuple[Tensor, Tensor]:
+    def _input_dim_mean_var_net_check(
+        self,
+        input_dims: Union[Tuple[int, int], None],
+        mean_var_nets: str,
+    ):
+        """Check ``input_dims`` and ``mean_var_nets`` compatibility.
+
+        Parameters
+        ----------
+        input_dims : Tuple[int, int] or None
+            The size of the input image.
+        mean_var_nets : str
+            The style of the mean/variance nets.
+
+        """
+        msg = "``input_dims`` should be ``None`` if ``mean_var_nets`` is "
+        msg += "``''conv'`` and ``Tuple[int, int]`` if ``mean_var_nets`` is "
+        msg += f"``'linear'``. Got '{mean_var_nets}' and '{input_dims}'."
+
+        if mean_var_nets == "linear" and not isinstance(mean_var_nets, tuple):
+            raise ValueError(msg)
+        if mean_var_nets == "conv" and not isinstance(mean_var_nets, type(None)):
+            raise ValueError(msg)
+
+    def _mean_or_var_net(
+        self,
+        lr_slope: float,
+        kernel_size: int,
+    ) -> Module:
+        """Return a model for calculating the mean or variance.
+
+        Parameters
+        ----------
+        lr_slope : float
+            The negative slope aregument in the leaky relus.
+        kernel_size : int
+            The size of the kernel in the convolutional layers,
+
+        Returns
+        -------
+        Module
+            A network for learning the mean or standard deviation.
+
+        Raises
+        ------
+        ValueError
+            If ``mean_var_style`` is not ``"conv"`` or ``"linear"``.
+
+        """
+        if self._mean_var_style == "conv":
+            return Sequential(
+                DoubleConvBlock(
+                    in_chans=process_num_feats(self._num_chans),
+                    out_chans=process_num_feats(self._num_chans),
+                    lr_slope=process_negative_slope_arg(lr_slope),
+                    kernel_size=process_2d_kernel_size(kernel_size),
+                ),
+                Conv2d(
+                    in_channels=process_num_feats(self._num_chans),
+                    out_channels=process_num_feats(self._num_chans),
+                    kernel_size=1,
+                    stride=1,
+                ),
+            )
+        if self._mean_var_style == "linear":
+            return FCNet(
+                in_feats=process_num_feats(self._num_feats * self._num_chans),
+                out_feats=process_num_feats(self._num_feats * self._num_chans),
+            )
+
+        msg = f"mean_var_style '{self._mean_var_style}' not recognised. Choose"
+        msg += " from 'conv' or 'linear'."
+        raise ValueError(msg)
+
+    def _mean_logvar_conv(self, features: Tensor) -> Tuple[Tensor, Tensor]:
+        """Estimate the mean and logvar vector.
+
+        Parameters
+        ----------
+        features : Tensor
+            Raw features from the encoders.
+
+        Returns
+        -------
+        mean : Tensor
+            The means.
+        logvar : Tensor
+            The logarithm of the variance.
+        """
+        mean = self.mean_net(features)
+        logvar = self.var_net(features)
+
+        return mean, logvar
+
+    def _mean_logvar_linear(self, features: Tensor) -> Tuple[Tensor, Tensor]:
         """Estimate the mean and logvar vector.
 
         Parameters
@@ -137,10 +238,8 @@ class VAE2d(Module):
             The logarithm of the variance.
 
         """
-        flat_feats = flatten(features, start_dim=1)
-
-        mean, logvar = self._mean_net(flat_feats), self._var_net(flat_feats)
-
+        featueres = flatten(features, start_dim=1)
+        mean, logvar = self._mean_net(featueres), self._var_net(featueres)
         mean = unflatten(mean, dim=1, sizes=features.shape[1:])
         logvar = unflatten(logvar, dim=1, sizes=features.shape[1:])
 
@@ -204,12 +303,12 @@ class VAE2d(Module):
         with set_grad_enabled(not frozen_encoder):
             encoder_feats = self.encoder(batch)
 
-            means, log_var = self._get_mean_and_logvar(encoder_feats)
+            mean, log_var = self._mean_var_funcs[self._mean_var_style](encoder_feats)
 
-            feats = self.get_features(means, log_var, encoder_feats)
+            feats = self.get_features(mean, log_var, encoder_feats)
 
             if self.training is True:
-                return feats, self.kl_divergence(means, log_var)
+                return feats, self.kl_divergence(mean, log_var)
 
             return feats
 
@@ -278,7 +377,7 @@ class VAE2d(Module):
 def _features_size(
     start_features: int,
     num_blocks: int,
-    input_dims,
+    input_dims: Union[Tuple[int, int], None],
     max_feats: Optional[int] = None,
 ) -> Tuple[int, int]:
     """Get the size of the features produced by the encoder.
@@ -289,7 +388,7 @@ def _features_size(
         The number features produced by the first block in the encoder.
     num_blocks : int
         The number of blocks in one half of the U-like architecture.
-    input_dims : int
+    input_dims : Tuple[int, int] or None
         The spatial dimensions of the model's inputs.
     max_feats : int, optional
         The maximum number of features allowed.
@@ -310,6 +409,8 @@ def _features_size(
 
 
     """
+    input_dims = input_dims if input_dims is not None else (1, 1)
+
     in_height, in_width = input_dims
 
     factor = 2 ** (num_blocks - 1)
