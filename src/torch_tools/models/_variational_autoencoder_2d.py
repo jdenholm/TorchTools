@@ -69,7 +69,7 @@ class VAE2d(Module):
 
     """
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments, too-many-instance-attributes
         self,
         in_chans: int,
         out_chans: int,
@@ -147,9 +147,9 @@ class VAE2d(Module):
         msg += "``''conv'`` and ``Tuple[int, int]`` if ``mean_var_nets`` is "
         msg += f"``'linear'``. Got '{mean_var_nets}' and '{input_dims}'."
 
-        if mean_var_nets == "linear" and not isinstance(mean_var_nets, tuple):
+        if mean_var_nets == "linear" and (not isinstance(input_dims, tuple)):
             raise ValueError(msg)
-        if mean_var_nets == "conv" and not isinstance(mean_var_nets, type(None)):
+        if mean_var_nets == "conv" and (not isinstance(input_dims, type(None))):
             raise ValueError(msg)
 
     def _mean_or_var_net(
@@ -379,7 +379,7 @@ def _features_size(
     num_blocks: int,
     input_dims: Union[Tuple[int, int], None],
     max_feats: Optional[int] = None,
-) -> Tuple[int, int]:
+) -> Union[Tuple[int, int], Tuple[None, int]]:
     """Get the size of the features produced by the encoder.
 
     Parameters
@@ -409,18 +409,18 @@ def _features_size(
 
 
     """
-    input_dims = input_dims if input_dims is not None else (1, 1)
-
-    in_height, in_width = input_dims
-
-    factor = 2 ** (num_blocks - 1)
-
     out_chans = start_features
     for _ in range(num_blocks - 1):
         if max_feats is None:
             out_chans *= 2
         else:
             out_chans = min(max_feats, out_chans * 2)
+
+    if input_dims is None:
+        return None, out_chans
+
+    in_height, in_width = input_dims
+    factor = 2 ** (num_blocks - 1)
 
     out_height = in_height / factor
     out_width = in_width / factor
