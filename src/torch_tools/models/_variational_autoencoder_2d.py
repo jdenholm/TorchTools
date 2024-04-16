@@ -30,7 +30,7 @@ from torch_tools.models._argument_processing import (
 from torch_tools.models._blocks_2d import DoubleConvBlock
 
 
-class VAE2d(Module):
+class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
     """2D convolutional variational autoencoder.
 
     Parameters
@@ -69,7 +69,7 @@ class VAE2d(Module):
 
     """
 
-    def __init__(  # pylint: disable=too-many-arguments, too-many-instance-attributes
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         in_chans: int,
         out_chans: int,
