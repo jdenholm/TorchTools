@@ -304,13 +304,13 @@ def process_input_dims(input_dims: Union[Tuple[int, int], None]) -> Tuple[int, i
 
     Parameters
     ----------
-    input_dims : Tuple[int, int]
+    input_dims : Tuple[int, int] or None
         Tuple of two ints.
 
     Raises
     ------
     TypeError
-        If ``input_dims`` is not a tuple.
+        If ``input_dims`` is not a tuple or ``None``.
     RuntimeError
         If ``input_dims`` is not of length two.
     TypeError
@@ -320,11 +320,12 @@ def process_input_dims(input_dims: Union[Tuple[int, int], None]) -> Tuple[int, i
 
 
     """
-    if not isinstance(input_dims, (tuple, type(None))):
+    if input_dims is None:
+        return input_dims
+
+    if not isinstance(input_dims, tuple):
         msg = f"Input dims should be tuple, got '{type(input_dims)}'."
         raise TypeError(msg)
-
-    input_dims = input_dims if input_dims is not None else (1, 1)
 
     if len(input_dims) != 2:
         msg = f"'input_dims' should have length two, got '{input_dims}'."
