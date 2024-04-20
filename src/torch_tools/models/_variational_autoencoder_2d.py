@@ -100,6 +100,7 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
             block_style=block_style,
         )
 
+        self._num_feats: Union[None, int]
         self._num_feats, self._num_chans = _features_size(
             start_features,
             num_layers,
@@ -194,8 +195,8 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
             )
         if self._mean_var_style == "linear":
             return FCNet(
-                in_feats=process_num_feats(self._num_feats * self._num_chans),
-                out_feats=process_num_feats(self._num_feats * self._num_chans),
+                in_feats=process_num_feats(self._num_feats * self._num_chans),  # type: ignore
+                out_feats=process_num_feats(self._num_feats * self._num_chans),  # type: ignore
             )
 
         msg = f"mean_var_style '{self._mean_var_style}' not recognised. Choose"
