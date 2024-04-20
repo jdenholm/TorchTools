@@ -299,7 +299,9 @@ def process_hidden_sizes(
     return hidden_sizes
 
 
-def process_input_dims(input_dims: Union[Tuple[int, int], None]) -> Tuple[int, int]:
+def process_input_dims(
+    input_dims: Union[Tuple[int, int], None]
+) -> Union[None, Tuple[int, int]]:
     """Process the ``input_dims`` arguments.
 
     Parameters
