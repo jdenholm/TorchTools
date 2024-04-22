@@ -402,7 +402,7 @@ def test_mean_var_nets_argument_style_arg_values():
         in_chans=1,
         out_chans=3,
         mean_var_nets="conv",
-        input_dims=(16, 16),
+        input_dims=None,
         max_down_feats=16,
     )
 
@@ -413,5 +413,25 @@ def test_mean_var_nets_argument_style_arg_values():
             out_chans=3,
             mean_var_nets="Gandalf",
             input_dims=(16, 16),
+            max_down_feats=16,
+        )
+
+    # Should break if input_dims is specificed with conv mean var nets
+    with pytest.raises(ValueError):
+        _ = VAE2d(
+            in_chans=1,
+            out_chans=3,
+            mean_var_nets="conv",
+            input_dims=(16, 16),
+            max_down_feats=16,
+        )
+
+    # Should break if input_dims is not specificed with linear mean var nets
+    with pytest.raises(ValueError):
+        _ = VAE2d(
+            in_chans=1,
+            out_chans=3,
+            mean_var_nets="linear",
+            input_dims=None,
             max_down_feats=16,
         )
