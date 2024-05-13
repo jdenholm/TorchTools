@@ -83,12 +83,10 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
         max_down_feats: Optional[int] = None,
         min_up_feats: Optional[int] = None,
         block_style: str = "double_conv",
-        mean_var_nets: str = "conv",
+        mean_var_nets: str = "linear",
     ):
         """Build ``VAE2d``."""
         super().__init__()
-        self._input_dim_mean_var_net_check(input_dims, mean_var_nets)
-
         self.encoder = Encoder2d(
             in_chans=process_num_feats(in_chans),
             start_features=process_num_feats(start_features),
@@ -100,13 +98,14 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
             block_style=block_style,
         )
 
-        self._num_feats: Union[None, int]
-        self._num_feats, self._num_chans = _features_size(
+        self._latent_chans, self._latent_feats = _latent_sizes(
             start_features,
             num_layers,
             process_input_dims(input_dims),
             max_down_feats,
         )
+
+        self._input_dim_mean_var_net_check(input_dims, mean_var_nets)
 
         self._mean_var_style = mean_var_nets
 
@@ -119,7 +118,7 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
         self.var_net = self._mean_or_var_net(lr_slope, kernel_size)
 
         self.decoder = Decoder2d(
-            in_chans=self._num_chans,
+            in_chans=self._latent_chans,
             out_chans=process_num_feats(out_chans),
             num_blocks=num_layers,
             bilinear=bilinear,
@@ -181,22 +180,22 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
         if self._mean_var_style == "conv":
             return Sequential(
                 DoubleConvBlock(
-                    in_chans=process_num_feats(self._num_chans),
-                    out_chans=process_num_feats(self._num_chans),
+                    in_chans=process_num_feats(self._latent_chans),
+                    out_chans=process_num_feats(self._latent_chans),
                     lr_slope=process_negative_slope_arg(lr_slope),
                     kernel_size=process_2d_kernel_size(kernel_size),
                 ),
                 Conv2d(
-                    in_channels=process_num_feats(self._num_chans),
-                    out_channels=process_num_feats(self._num_chans),
+                    in_channels=process_num_feats(self._latent_chans),
+                    out_channels=process_num_feats(self._latent_chans),
                     kernel_size=1,
                     stride=1,
                 ),
             )
         if self._mean_var_style == "linear":
             return FCNet(
-                in_feats=process_num_feats(self._num_feats * self._num_chans),  # type: ignore
-                out_feats=process_num_feats(self._num_feats * self._num_chans),  # type: ignore
+                in_feats=process_num_feats(self._latent_feats),  # type: ignore
+                out_feats=process_num_feats(self._latent_feats),  # type: ignore
             )
 
         msg = f"mean_var_style '{self._mean_var_style}' not recognised. Choose"
@@ -239,14 +238,18 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
             The logarithm of the variance.
 
         """
-        featueres = flatten(features, start_dim=1)
-        mean, logvar = self._mean_net(featueres), self._var_net(featueres)
-        mean = unflatten(mean, dim=1, sizes=features.shape[1:])
-        logvar = unflatten(logvar, dim=1, sizes=features.shape[1:])
+        restore_shape = features.shape[1:]
+        features = flatten(features, start_dim=1)
+        mean, logvar = self.mean_net(features), self.var_net(features)
+
+        # Restore shapes
+        features = unflatten(features, dim=1, sizes=restore_shape)
+        mean = unflatten(mean, dim=1, sizes=restore_shape)
+        logvar = unflatten(logvar, dim=1, sizes=restore_shape)
 
         return mean, logvar
 
-    def get_features(self, means: Tensor, logvar: Tensor, feats: Tensor) -> Tensor:
+    def get_features(self, means: Tensor, logvar: Tensor) -> Tensor:
         """Get the features using the reparam trick.
 
         Parameters
@@ -254,9 +257,7 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
         means : Tensor
             The feature means.
         logvar : Tensor
-            The log variance
-        feats : Tensor
-            The encoder features.
+            The log variance.
 
         Returns
         -------
@@ -264,7 +265,7 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
             The feature dist.
 
         """
-        return means + (randn_like(feats) * (0.5 * logvar).exp())
+        return means + (randn_like(means) * (0.5 * logvar).exp())
 
     @staticmethod
     def kl_divergence(means: Tensor, log_var: Tensor) -> Tensor:
@@ -306,7 +307,7 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
 
             mean, log_var = self._mean_var_funcs[self._mean_var_style](encoder_feats)
 
-            feats = self.get_features(mean, log_var, encoder_feats)
+            feats = self.get_features(mean, log_var)
 
             if self.training is True:
                 return feats, self.kl_divergence(mean, log_var)
@@ -375,12 +376,12 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
         return decoded
 
 
-def _features_size(
+def _latent_sizes(
     start_features: int,
     num_blocks: int,
     input_dims: Union[Tuple[int, int], None],
     max_feats: Optional[int] = None,
-) -> Union[Tuple[int, int], Tuple[None, int]]:
+) -> Tuple[int, int]:
     """Get the size of the features produced by the encoder.
 
     Parameters
@@ -396,11 +397,12 @@ def _features_size(
 
     Returns
     -------
-    features_size : int
-        The total number of output features for the mean and std nets.
-    out_chans : int
-        The number of output channels.
-
+    latent_chans : int
+        The number of channels the image-like representation has after it is
+        encoded.
+    latent_feats : int
+        The total number of features in the latent space after encoding. If
+        the mean and var nets are linear, this is the number of channels.
 
     Raises
     ------
@@ -410,29 +412,28 @@ def _features_size(
 
 
     """
-    out_chans = start_features
+    latent_chans = start_features
     for _ in range(num_blocks - 1):
         if max_feats is None:
-            out_chans *= 2
+            latent_chans *= 2
         else:
-            out_chans = min(max_feats, out_chans * 2)
+            latent_chans = min(max_feats, latent_chans * 2)
 
     if input_dims is None:
-        return None, out_chans
+        latent_feats = latent_chans
+    else:
+        in_height, in_width = input_dims
+        factor = 2 ** (num_blocks - 1)
 
-    in_height, in_width = input_dims
-    factor = 2 ** (num_blocks - 1)
+        out_height = in_height / factor
+        out_width = in_width / factor
 
-    out_height = in_height / factor
-    out_width = in_width / factor
+        if (out_height % 1 != 0) or (out_width % 1 != 0):
+            msg = f"Image dims '{(in_height, in_width)}' can't be halved {num_blocks - 1} times."
+            raise ValueError(msg)
 
-    if (out_height % 1 != 0) or (out_width % 1 != 0):
-        msg = f"Image dims '{(in_height, in_width)}' can't be halved {num_blocks - 1} times."
-        raise ValueError(msg)
+        latent_feats = int(out_height) * int(out_width) * latent_chans
+        if latent_feats == 0:
+            raise ValueError(f"{input_dims} too small for number of layers.")
 
-    features_size = out_chans * int(out_height) * int(out_width)
-
-    if features_size == 0:
-        raise ValueError(f"{input_dims} too small for number of layers.")
-
-    return features_size, out_chans
+    return latent_chans, latent_feats
