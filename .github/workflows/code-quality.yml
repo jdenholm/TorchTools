@@ -27,7 +27,6 @@ jobs:
         run: |
           conda install python=${{ matrix.python-version }} --name base
 
-
       - uses: actions/checkout@v3
       - name: Install dependencies
         run: |
