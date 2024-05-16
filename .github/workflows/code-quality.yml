@@ -38,7 +38,7 @@ jobs:
 
       - name: Lint with Pylint
         run: |
-          pip install -r requirements.txt ; pylint $(git ls-files src/) --disable=duplicate-code
+          pip install -r requirements-dev.txt ; pylint $(git ls-files src/) --disable=duplicate-code
 
       # - name: Lint with Mypy
       #   run: |
