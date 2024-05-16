@@ -18,14 +18,17 @@ jobs:
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
+          auto-activate-base: true
           python-version: ${{ matrix.python-version }}
-          conda-channels: anaconda, conda-forge, defaults
+          channels: anaconda, conda-forge, defaults
       - name: Install Python with conda
         run: |
           conda install python=${{ matrix.python-version }} --name base
+    steps:
+      - uses: actions/checkout@v3
       - name: Install TorchTools
         run : |
-          ls
+          pip install .
 
 # jobs:
 #   build:
