@@ -19,7 +19,9 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
+        update-conda: true
         python-version: ${{ matrix.python_version }}
+        conda-channels: anaconda, conda-forge, defaults
 
     - name: Add conda to system path
       run: |
