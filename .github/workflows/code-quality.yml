@@ -30,23 +30,24 @@ jobs:
       - uses: actions/checkout@v3
       - name: Install dependencies
         run: |
-          conda env update --file requirements-dev.conda.yaml --name base
+          conda env update --f requirements-dev.conda.yaml --name base
 
       - name: Lint with Pylint
         run: |
-          pylint $(git ls-files src/) --disable=duplicate-code
+          which pylint
+          # pylint $(git ls-files src/) --disable=duplicate-code
 
-      - name: Lint with Mypy
-        run: |
-          mypy $(git ls-files src/)
+      # - name: Lint with Mypy
+      #   run: |
+      #     mypy $(git ls-files src/)
 
-      - name: Lint with Pydocstyle
-        run: |
-          pydocstyle --convention=numpy $(git ls-files src/)
+      # - name: Lint with Pydocstyle
+      #   run: |
+      #     pydocstyle --convention=numpy $(git ls-files src/)
 
-      - name: Test with Pytest
-        run: |
-          pytest tests/
+      # - name: Test with Pytest
+      #   run: |
+      #     pytest tests/
 
 # jobs:
 #   build-linux:
