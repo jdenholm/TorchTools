@@ -23,9 +23,9 @@ jobs:
       - name: Install Python with conda
         run: |
           conda install python=${{ matrix.python-version }} --name base
-    - name: Install TorchTools
-      run : |
-        pip install .
+      - name: Install TorchTools
+        run : |
+          pip install .
 
 # jobs:
 #   build:
