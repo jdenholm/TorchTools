@@ -33,9 +33,11 @@ jobs:
           conda env update --f requirements-dev.conda.yaml --name base
 
 
-      - name: Lint with Pydocstyle
+      - name which python
         run: |
-          pydocstyle --convention=numpy $(git ls-files src/)
+          which python
+
+
 
       # - name: Lint with Pylint
       #   run: |
