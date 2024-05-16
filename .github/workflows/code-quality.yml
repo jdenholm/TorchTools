@@ -9,7 +9,7 @@ on:
 
 jobs:
   code-quality:
-    name: Code quality: (${{ matrix.python-version }}, ${{ matrix.os }})
+    name: Code quality (${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -47,8 +47,6 @@ jobs:
       - name: Test with Pytest
         run: |
           pytest tests/
-
-
 
 # jobs:
 #   build-linux:
