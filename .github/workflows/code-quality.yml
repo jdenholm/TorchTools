@@ -35,7 +35,7 @@ jobs:
 
       - name: find pylint
         run: |
-          pylint --help
+          python -m pylint --help
 
       # - name: Lint with Pylint
       #   run: |
