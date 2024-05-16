@@ -1,8 +1,8 @@
 """Test the contents of ``VAE2d``."""
 
-from torch.nn import Module, Conv2d, LeakyReLU, BatchNorm2d
+from torch.nn import Module, Conv2d, LeakyReLU, BatchNorm2d, Sequential
 
-from torch_tools import VAE2d
+from torch_tools import VAE2d, FCNet
 from torch_tools.models._blocks_2d import DownBlock, ConvBlock, ConvResBlock
 from torch_tools.models._blocks_2d import ResidualBlock, DoubleConvBlock
 from torch_tools.models._blocks_2d import UpBlock
@@ -371,3 +371,37 @@ def test_vae_2d_decoder_contents_with_conv_res_blocks():
 
         in_chans //= 2
         out_chans //= 2
+
+
+def test_vae_contents_with_linear_mean_var():
+    """Test the contents of the model with linear mean and var nets."""
+    model = VAE2d(
+        in_chans=3,
+        out_chans=3,
+        start_features=8,
+        input_dims=(64, 64),
+        block_style="conv_res",
+        lr_slope=0.123,
+        num_layers=3,
+        mean_var_nets="linear",
+    )
+
+    assert isinstance(model.mean_net, FCNet)
+
+
+def test_vae_contents_with_conv_mean_var():
+    """Test the contents of the model with linear mean and var nets."""
+    model = VAE2d(
+        in_chans=3,
+        out_chans=3,
+        start_features=8,
+        input_dims=None,
+        block_style="conv_res",
+        lr_slope=0.123,
+        num_layers=3,
+        mean_var_nets="conv",
+    )
+
+    assert isinstance(model.mean_net, Sequential)
+    assert isinstance(model.mean_net[0], DoubleConvBlock)
+    assert isinstance(model.mean_net[1], Conv2d)
