@@ -35,7 +35,7 @@ jobs:
 
       - name: find pylint
         run: |
-          python -m pylint --help
+          conda list -n base
 
       # - name: Lint with Pylint
       #   run: |
