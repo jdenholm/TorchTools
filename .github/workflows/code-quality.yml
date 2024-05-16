@@ -33,9 +33,9 @@ jobs:
           conda env update --f requirements-dev.conda.yaml --name base
 
 
-      - name: pip list
+      - name: find pylint
         run: |
-          pip freeze
+          pylint --help
 
       # - name: Lint with Pylint
       #   run: |
