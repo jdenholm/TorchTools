@@ -32,10 +32,14 @@ jobs:
         run: |
           conda env update --f requirements-dev.conda.yaml --name base
 
-      - name: Lint with Pylint
+
+      - name: pip list
         run: |
-          which pylint
-          # pylint $(git ls-files src/) --disable=duplicate-code
+          pip freeze
+
+      # - name: Lint with Pylint
+      #   run: |
+      #     pylint $(git ls-files src/) --disable=duplicate-code
 
       # - name: Lint with Mypy
       #   run: |
