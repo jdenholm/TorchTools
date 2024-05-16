@@ -19,9 +19,9 @@ jobs:
         with:
           auto-update-conda: true
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - name: Install Python with conda
         run: |
-          conda install ${{ matrix.python-version }} --name base
+          conda install python=${{ matrix.python-version }} --name base
 
 
 # jobs:
