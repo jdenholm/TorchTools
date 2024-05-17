@@ -17,17 +17,18 @@ jobs:
         os: ["ubuntu-latest"]
         python-version: ["3.9", "3.10", "3.11"]
     steps:
+      - uses: actions/checkout@v2
       - uses: conda-incubator/setup-miniconda@v3
         with:
           auto-update-conda: true
-          auto-activate-base: true
+          environment-file: requirements-dev.conda.yaml
+          auto-activate-base: false
           python-version: ${{ matrix.python-version }}
           channels: anaconda, conda-forge, defaults
-      - name: Install Python with conda
-        run: |
-          conda install python=${{ matrix.python-version }} --name base
+      # - name: Install Python with conda
+      #   run: |
+      #     conda install python=${{ matrix.python-version }} --name base
 
-      - uses: actions/checkout@v3
       - name: Install dependencies
         run: |
           conda env update --f requirements-dev.conda.yaml --name base
@@ -38,7 +39,7 @@ jobs:
 
       - name: Lint with Pylint
         run: |
-          $CONDA/bin/pylint
+          python -m pylint --version
 
       # - name: Lint with Mypy
       #   run: |
