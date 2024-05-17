@@ -28,7 +28,6 @@ jobs:
           conda install python=${{ matrix.python-version }} --name base
 
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v2
       - name: Install dependencies
         run: |
           conda env update --f requirements-dev.conda.yaml --name base
@@ -39,7 +38,7 @@ jobs:
 
       - name: Lint with Pylint
         run: |
-          which python
+          $CONDA/bin/pylint
 
       # - name: Lint with Mypy
       #   run: |
