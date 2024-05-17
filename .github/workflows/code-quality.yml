@@ -35,7 +35,11 @@ jobs:
       - name: Lint with Pylint
         shell: bash -l {0}
         run: |
+<<<<<<< HEAD
           python -m pylint $(git ls-files src/) --disable=duplicate-code
+=======
+          python -m pylint $(git ls-files src/)
+>>>>>>> db5f3e7babd1542bb4a65b2fe36546135ba536fc
 
       - name: Lint with Mypy
         shell: bash -l {0}
