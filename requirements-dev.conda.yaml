@@ -5,4 +5,17 @@ dependencies:
   - python
   - pip
   - pip:
-    - -r requirements-dev.txt
+    - sphinx
+    - sphinx_rtd_theme
+    - ipykernel
+    - scikit-learn
+    - pandas
+    - matplotlib
+    - palmerpenguins
+    - black
+    - black-nb
+    - mypy>=0.98
+    - pytest
+    - pydocstyle
+    - pylint
+    - -e .
