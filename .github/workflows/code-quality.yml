@@ -29,15 +29,13 @@ jobs:
       #   run: |
       #     conda install python=${{ matrix.python-version }} --name base
 
-      - name: Install dependencies
-        run: |
-          conda env update --f requirements-dev.conda.yaml --name base
-
       - name: env list
+        shell: bash -l {0}
         run: |
           conda list
 
       - name: Lint with Pylint
+        shell: bash -l {0}
         run: |
           python -m pylint --version
 
