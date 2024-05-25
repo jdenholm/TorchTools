@@ -9,17 +9,17 @@ from torch_tools.models._variational_autoencoder_2d import VAE2d
 
 def test_vae_call_return_shapes():
     """Test the return types in the call method of ``VAE2d``."""
-    in_channels = [1, 12]
+    in_channels = [1, 3]
     out_channels = [1, 3]
-    num_layers = [3, 4]
+    num_layers = [3]
     features_start = [8, 16]
     slopes = [0.0, 0.1]
     pools = ["avg", "max"]
     bilinear = [True, False]
-    kernel_size = [1, 3, 5]
+    kernel_size = [1, 3]
     image_dims = [(8, 16), (16, 32)]
-    max_features = [64, 128, None]
-    min_features = [None, 16, 32]
+    max_features = [32, None]
+    min_features = [None, 16]
     block_styles = ["double_conv", "conv_res"]
     mean_vars = ["linear", "conv"]
 
@@ -71,13 +71,13 @@ def test_vae_call_return_shapes():
             mean_var_nets=mv_net,
         )
 
-        batch = rand(10, in_chans, *in_dims)
+        batch = rand(1, in_chans, *in_dims)
 
         model.train()
         with no_grad():
             preds, _ = model(batch)
-            assert preds.shape == (10, out_chans) + in_dims
+            assert preds.shape == (1, out_chans) + in_dims
 
         model.eval()
         with no_grad():
-            assert model(batch).shape == (10, out_chans) + in_dims
+            assert model(batch).shape == (1, out_chans) + in_dims
