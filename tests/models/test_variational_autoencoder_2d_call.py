@@ -7,7 +7,7 @@ from torch import rand, no_grad  # pylint: disable=no-name-in-module
 from torch_tools.models._variational_autoencoder_2d import VAE2d
 
 
-def test_vae_call_return_shapes():
+def test_vae_call_return_shapes():  # pylint: disable=too-many-locals
     """Test the return types in the call method of ``VAE2d``."""
     in_channels = [1, 3]
     out_channels = [1, 3]
