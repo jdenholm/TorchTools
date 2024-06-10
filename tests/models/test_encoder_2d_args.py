@@ -477,3 +477,15 @@ def test_start_feats_does_not_exceed_max_feats():
         lr_slope=0.1,
         kernel_size=3,
     )
+
+    # Should break if ``start_features`` > ``max_feats``
+    with pytest.raises(ValueError):
+        _ = Encoder2d(
+            in_chans=8,
+            start_features=32,
+            max_feats=16,
+            num_blocks=4,
+            pool_style="max",
+            lr_slope=0.1,
+            kernel_size=3,
+        )
