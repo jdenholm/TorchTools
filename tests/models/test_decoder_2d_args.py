@@ -442,13 +442,13 @@ def test_in_chans_is_more_than_min_up_feats():
     """Make sure ``in_chans`` is more than ``min_up_feats``."""
     # Should work if ``in_chans`` >= ``min_up_feats``.
     _ = Decoder2d(
-        in_chans=8,
+        in_chans=32,
         out_chans=3,
         num_blocks=3,
         bilinear=True,
         lr_slope=0.666,
         kernel_size=3,
-        min_up_feats=32,
+        min_up_feats=8,
     )
 
     _ = Decoder2d(
