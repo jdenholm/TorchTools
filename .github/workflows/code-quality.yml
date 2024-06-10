@@ -6,14 +6,14 @@ on:
   pull_request:
     branches: [ dev ]
 
-concurrency:
-  max: 3
+
 
 
 jobs:
   code-quality:
     name: Code quality (${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    concurrency: 1
     timeout-minutes: 30
     strategy:
       fail-fast: false
