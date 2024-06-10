@@ -6,9 +6,11 @@ on:
   pull_request:
     branches: [ dev ]
 
+concurrency:
+  max: 3
+
 
 jobs:
-  concurrency: 3
   code-quality:
     name: Code quality (${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
