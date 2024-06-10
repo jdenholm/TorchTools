@@ -16,6 +16,7 @@ jobs:
     timeout-minutes: 30
     strategy:
       fail-fast: false
+      max-parallel: 1
       matrix:
         os: ["ubuntu-latest"]
         python-version: ["3.9", "3.10", "3.11"]
