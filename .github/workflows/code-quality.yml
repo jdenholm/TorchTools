@@ -8,6 +8,7 @@ on:
 
 
 jobs:
+  concurrency: 3
   code-quality:
     name: Code quality (${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
