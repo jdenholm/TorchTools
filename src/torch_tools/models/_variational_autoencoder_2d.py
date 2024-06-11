@@ -291,7 +291,7 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
         self,
         batch: Tensor,
         frozen_encoder: bool,
-    ) -> Union[Tensor, Tuple[Tensor, Tensor]]:
+    ) -> Tuple[Tensor, Tensor]:
         """Encode the inputs in ``batch``.
 
         Parameters
@@ -301,6 +301,13 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
         frozen_encoder : bool
             Shoould the encoder's weights be frozen, or not?
 
+        Returns
+        -------
+        feats : Tensor
+            The encoded features.
+        Tensor
+            The KL divergence between the features and N(0, 1).
+
         """
         with set_grad_enabled(not frozen_encoder):
             encoder_feats = self.encoder(batch)
@@ -309,10 +316,7 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
 
             feats = self.get_features(mean, log_var)
 
-            if self.training is True:
-                return feats, self.kl_divergence(mean, log_var)
-
-            return feats
+        return feats, self.kl_divergence(mean, log_var)
 
     def decode(
         self,
@@ -356,24 +360,17 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
 
         Returns
         -------
-        Union[Tensor, Tuple[Tensor, Tensor]]
-            Either the decoded "image-like" object, if the model is in
-            eval mode, or both the decoded image and the kl divergence
-            between the latent vector and N(0, 1) if the model is in training
-            mode.
+        decoded : Tensor
+            The predicted version of ``batch``.
+        kl_div : Tensor
+            The KL divergence between ``features`` and N(0, 1).
 
         """
-        if self.training is True:
-            features, kl_div = self.encode(batch, frozen_encoder)
-        else:
-            features = self.encode(batch, frozen_encoder)
+        features, kl_div = self.encode(batch, frozen_encoder)
 
         decoded = self.decode(features, frozen_decoder)
 
-        if self.training is True:
-            return decoded, kl_div
-
-        return decoded
+        return decoded, kl_div
 
 
 def _latent_sizes(
