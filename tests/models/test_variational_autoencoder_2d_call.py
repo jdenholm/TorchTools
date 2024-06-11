@@ -1,7 +1,5 @@
 """Test the call behaviour of ``VAE2d``."""
 
-from gc import collect
-
 from itertools import product
 
 from torch import rand, no_grad  # pylint: disable=no-name-in-module
@@ -57,8 +55,6 @@ def test_vae_call_return_shapes():  # pylint: disable=too-many-locals
         mv_net,
     ) in iterator:
 
-        collect()
-
         model = VAE2d(
             in_chans=in_chans,
             out_chans=out_chans,
@@ -79,9 +75,12 @@ def test_vae_call_return_shapes():  # pylint: disable=too-many-locals
 
         model.train()
         with no_grad():
-            preds, _ = model(batch)
+            preds, kl_div = model(batch)
             assert preds.shape == (1, out_chans) + in_dims
+            assert kl_div.numel() == 1
 
         model.eval()
         with no_grad():
-            assert model(batch).shape == (1, out_chans) + in_dims
+            preds, kl_div = model(batch)
+            assert preds.shape == (1, out_chans) + in_dims
+            assert kl_div.numel() == 1
