@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 30
     strategy:
       fail-fast: false
-      max-parallel: 1
+      max-parallel: 3
       matrix:
         os: ["macos-latest"]
         python-version: ["3.9", "3.10", "3.11"]
