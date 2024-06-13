@@ -1,4 +1,5 @@
 """Test for the arguments of ``VAE2d``."""
+
 import pytest
 
 from torch_tools.models._variational_autoencoder_2d import VAE2d
@@ -269,7 +270,7 @@ def test_kernel_size_argument_values():
 def test_max_down_size_argument_types():
     """Test the types accepted by the ``max_down_feats`` argument."""
     # Should work with positive ints or None
-    _ = VAE2d(in_chans=1, out_chans=3, input_dims=(16, 16), max_down_feats=16)
+    _ = VAE2d(in_chans=1, out_chans=3, input_dims=(16, 16), max_down_feats=64)
     _ = VAE2d(
         in_chans=1,
         out_chans=3,
@@ -298,7 +299,7 @@ def test_max_down_size_argument_types():
 def test_max_down_size_argument_values():
     """Test the values accepted by the ``max_down_feats`` argument."""
     # Should work with positive ints or None
-    _ = VAE2d(in_chans=1, out_chans=3, input_dims=(16, 16), max_down_feats=16)
+    _ = VAE2d(in_chans=1, out_chans=3, input_dims=(16, 16), max_down_feats=64)
     _ = VAE2d(
         in_chans=1,
         out_chans=3,
@@ -384,4 +385,58 @@ def test_block_style_argument_values():
             out_chans=3,
             input_dims=(16, 16),
             block_style=666,
+        )
+
+
+def test_mean_var_nets_argument_style_arg_values():
+    """Test the values accepted by the ``"mean_var_nets"`` arg."""
+    # Should work with allowed values
+    _ = VAE2d(
+        in_chans=16,
+        out_chans=3,
+        mean_var_nets="linear",
+        input_dims=(16, 16),
+        start_features=16,
+        max_down_feats=16,
+    )
+    _ = VAE2d(
+        in_chans=16,
+        out_chans=3,
+        mean_var_nets="conv",
+        input_dims=None,
+        start_features=16,
+        max_down_feats=16,
+    )
+
+    # Should break with other options
+    with pytest.raises(ValueError):
+        _ = VAE2d(
+            in_chans=16,
+            out_chans=3,
+            mean_var_nets="Gandalf",
+            input_dims=(16, 16),
+            start_features=16,
+            max_down_feats=16,
+        )
+
+    # Should break if input_dims is specificed with conv mean var nets
+    with pytest.raises(ValueError):
+        _ = VAE2d(
+            in_chans=16,
+            out_chans=3,
+            mean_var_nets="conv",
+            input_dims=(16, 16),
+            start_features=16,
+            max_down_feats=16,
+        )
+
+    # Should break if input_dims is not specificed with linear mean var nets
+    with pytest.raises(ValueError):
+        _ = VAE2d(
+            in_chans=16,
+            out_chans=3,
+            mean_var_nets="linear",
+            input_dims=None,
+            start_features=16,
+            max_down_feats=16,
         )

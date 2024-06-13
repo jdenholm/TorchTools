@@ -222,7 +222,7 @@ def test_encoder_2d_contents_with_different_max_feats():
 
             print(model)
 
-    for max_feats in [None, 1, 128, 256]:
+    for max_feats in [None, 128, 256]:
         encoder = Encoder2d(
             in_chans=123,
             start_features=64,

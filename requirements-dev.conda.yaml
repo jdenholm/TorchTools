@@ -2,7 +2,7 @@ name: torch-tools
 channels:
   - main
 dependencies:
-  - python<=3.12
+  - python
   - pip
   - pip:
     - sphinx
@@ -18,4 +18,4 @@ dependencies:
     - pytest
     - pydocstyle
     - pylint
-    - "-e ."
+    - -e .
