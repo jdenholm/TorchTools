@@ -6,34 +6,34 @@ on:
       - main
 
 jobs:
-  build:
-
-    strategy:
-      matrix:
-        python_version: ["3.10"]
-        os: ["ubuntu-latest"]
-
-    name: ${{ matrix.os }}
+  code-quality:
+    name: Publish docs (${{ matrix.python-version }}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        os: ["ubuntu-latest"]
+        python-version: ["3.10"]
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python_version }}
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: torch-tools
+          auto-update-conda: true
+          environment-file: requirements-dev.conda.yaml
+          auto-activate-base: false
+          python-version: ${{ matrix.python-version }}
+          channels: anaconda, conda-forge, defaults
 
-    - name: Create conda env
-      run: |
-        conda env update --file requirements-dev.conda.yaml --name base
 
-    - name: Print python version
-      run: |
-        python --version
+      - name: Print python version
+        shell: bash -l {0}
+        run: |
+          python --version
 
-    - name: Update docs
-      run : |
-        ./.build_docs.sh
+      - name: Update docs
+        shell: bash -l {0}
+        run: |
+          ./.build_docs.sh

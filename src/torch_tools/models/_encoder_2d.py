@@ -1,4 +1,5 @@
 """Two-dimensional convolutional encoder moder."""
+
 from typing import List, Optional
 
 from torch.nn import Sequential, Module
@@ -96,6 +97,8 @@ class Encoder2d(Sequential):
                 process_optional_feats_arg(max_feats),
             ),
         )
+
+        _start_feats_size_check(start_features, max_feats)
 
     def _get_single_block(
         self,
@@ -200,3 +203,25 @@ class Encoder2d(Sequential):
             )
             chans *= 2
         return blocks
+
+
+def _start_feats_size_check(start_feats: int, max_feats: Optional[int] = None):
+    """Check ``start_feats`` does not exceed ``max_feats``, if supplied.
+
+    Parameters
+    ----------
+    start_feats : int
+        The number of features the first block should produce.
+    max_feats : int, optional
+        Maximum number of down features requested.
+
+    Raises
+    ------
+    ValueError
+        If ``start_feats`` is greater than ``max_feats``.
+
+    """
+    if (max_feats is not None) and (start_feats > max_feats):
+        msg = f"'start_features' '{start_feats}' cannot exceed "
+        msg += f"'max_feats' '{max_feats}'."
+        raise ValueError(msg)

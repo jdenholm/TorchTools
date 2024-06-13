@@ -1,4 +1,5 @@
 """Tests for functions in `torch_tools.models._argument_processing`."""
+
 import pytest
 
 
@@ -281,10 +282,11 @@ def test_process_hidden_sizes_argument_values():
 
 def test_process_input_dims_arg_types():
     """Test ``process_input_dims`` argument type."""
-    # Should work with Tuple[int, int]
+    # Should work with Tuple[int, int] or None
     _ = ap.process_input_dims((10, 10))
+    _ = ap.process_input_dims(None)
 
-    # Should break with non-tuple
+    # Should break with non-tuple or non-None
     with pytest.raises(TypeError):
         _ = ap.process_input_dims([1, 2])
 

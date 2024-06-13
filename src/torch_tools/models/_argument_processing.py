@@ -1,4 +1,5 @@
 """Functions for processing arguments to models and blocks."""
+
 from typing import Tuple, Union, Optional
 
 
@@ -298,18 +299,20 @@ def process_hidden_sizes(
     return hidden_sizes
 
 
-def process_input_dims(input_dims: Tuple[int, int]):
+def process_input_dims(
+    input_dims: Union[Tuple[int, int], None]
+) -> Union[None, Tuple[int, int]]:
     """Process the ``input_dims`` arguments.
 
     Parameters
     ----------
-    input_dims : Tuple[int, int]
+    input_dims : Tuple[int, int] or None
         Tuple of two ints.
 
     Raises
     ------
     TypeError
-        If ``input_dims`` is not a tuple.
+        If ``input_dims`` is not a tuple or ``None``.
     RuntimeError
         If ``input_dims`` is not of length two.
     TypeError
@@ -319,6 +322,9 @@ def process_input_dims(input_dims: Tuple[int, int]):
 
 
     """
+    if input_dims is None:
+        return input_dims
+
     if not isinstance(input_dims, tuple):
         msg = f"Input dims should be tuple, got '{type(input_dims)}'."
         raise TypeError(msg)
