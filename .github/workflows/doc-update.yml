@@ -15,27 +15,16 @@ jobs:
 
     name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    # steps:
-    # - uses: actions/checkout@v4
-    # - name: Set up Python
-    #   uses: actions/setup-python@v2
-    #   with:
-    #     python-version: ${{ matrix.python_version }}
-    # - name: Add conda to system path
-    #   run: |
-    #     # $CONDA is an environment variable pointing to the root of the miniconda directory
-    #     echo $CONDA/bin >> $GITHUB_PATH
     steps:
-      - uses: actions/checkout@v4
-      - uses: conda-incubator/setup-miniconda@v3
-        with:
-          activate-environment: torch-tools
-          auto-update-conda: true
-          environment-file: requirements-dev.conda.yaml
-          auto-activate-base: false
-          python-version: ${{ matrix.python-version }}
-          channels: anaconda, conda-forge, defaults
-
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python_version }}
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
 
     - name: Create conda env
       run: |
