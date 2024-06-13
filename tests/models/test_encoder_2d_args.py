@@ -365,10 +365,10 @@ def test_kernel_size_argument_values():
 def test_max_feats_arg_types():
     """Test the types accepted by the ``max_feats`` argument."""
     # Should work with ints or None
-    for max_feats in [1, None]:
+    for max_feats in [32, None]:
         _ = Encoder2d(
             in_chans=32,
-            start_features=64,
+            start_features=32,
             num_blocks=4,
             pool_style="max",
             lr_slope=0.1,
@@ -393,10 +393,10 @@ def test_max_feats_arg_types():
 def test_max_feats_arg_values():
     """Test the values accepted by the ``max_feats`` argument."""
     # Should work with positive ints or None
-    for max_feats in [1, 2, 3, None]:
+    for max_feats in [32, 64, None]:
         _ = Encoder2d(
             in_chans=32,
-            start_features=64,
+            start_features=32,
             num_blocks=4,
             pool_style="max",
             lr_slope=0.1,
@@ -453,4 +453,39 @@ def test_block_style_arg_values():
             lr_slope=0.1,
             kernel_size=3,
             block_style="Gandalf",
+        )
+
+
+def test_start_feats_does_not_exceed_max_feats():
+    """Make sure ``start_feats`` isn't more than ``max_feats``."""
+    # Should work if ``start_features`` <= ``max_feats``
+    _ = Encoder2d(
+        in_chans=8,
+        start_features=16,
+        max_feats=32,
+        num_blocks=4,
+        pool_style="max",
+        lr_slope=0.1,
+        kernel_size=3,
+    )
+    _ = Encoder2d(
+        in_chans=8,
+        start_features=32,
+        max_feats=32,
+        num_blocks=4,
+        pool_style="max",
+        lr_slope=0.1,
+        kernel_size=3,
+    )
+
+    # Should break if ``start_features`` > ``max_feats``
+    with pytest.raises(ValueError):
+        _ = Encoder2d(
+            in_chans=8,
+            start_features=32,
+            max_feats=16,
+            num_blocks=4,
+            pool_style="max",
+            lr_slope=0.1,
+            kernel_size=3,
         )

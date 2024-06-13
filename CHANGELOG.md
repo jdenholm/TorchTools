@@ -1,3 +1,9 @@
+## Version 0.11.4
+  - Made changes to ``VAE2d``:
+    - Added the option to have the mean and variance nets be CNNs, rather than MLPs.
+    - Started returning the KL divergence during training and validation.
+    - Added extra tests accordingly.
+
 ## Version 0.10.3
   - Added the option to freeze the encoder in the forward pass of ``SimpleConvNet2d``.
 

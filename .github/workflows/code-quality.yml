@@ -6,41 +6,52 @@ on:
   pull_request:
     branches: [ dev ]
 
+
+
+
 jobs:
-  build-linux:
-    runs-on: ubuntu-latest
-
+  code-quality:
+    name: Code quality (${{ matrix.python-version }}, ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        os: ["macos-latest"]
+        python-version: ["3.9", "3.10", "3.11"]
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.10'
-    - name: Add conda to system path
-      run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
+      - uses: actions/checkout@v4
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          activate-environment: torch-tools
+          auto-update-conda: true
+          environment-file: requirements-dev.conda.yaml
+          auto-activate-base: false
+          python-version: ${{ matrix.python-version }}
+          channels: anaconda, conda-forge, defaults
 
-    - name: Install dependencies
-      run: |
-        conda env update --file requirements-dev.conda.yaml --name base
+      - name: env list
+        shell: bash -l {0}
+        run: |
+          conda list
 
-    - name: Print python version
-      run: |
-        python --version
+      - name: Lint with Pylint
+        shell: bash -l {0}
+        run: |
+          python -m pylint $(git ls-files src/) --disable=duplicate-code
 
-    - name: Lint with Pylint
-      run: |
-        pylint $(git ls-files src/) --disable=duplicate-code
+      - name: Lint with Mypy
+        shell: bash -l {0}
+        run: |
+          python -m mypy $(git ls-files src/)
 
-    - name: Lint with Mypy
-      run: |
-        mypy $(git ls-files src/)
+      - name: Lint with Pydocstyle
+        shell: bash -l {0}
+        run: |
+          python -m pydocstyle --convention=numpy $(git ls-files src/)
 
-    - name: Lint with Pydocstyle
-      run: |
-        pydocstyle --convention=numpy $(git ls-files src/)
-
-    - name: Test with Pytest
-      run: |
-        pytest tests/
+      - name: Test with Pytest
+        shell: bash -l {0}
+        run: |
+          python -m pytest tests/

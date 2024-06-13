@@ -436,3 +436,39 @@ def test_decoder_2d_block_style_arg_values():
                 kernel_size=3,
                 block_style=block_style,
             )
+
+
+def test_in_chans_is_more_than_min_up_feats():
+    """Make sure ``in_chans`` is more than ``min_up_feats``."""
+    # Should work if ``in_chans`` >= ``min_up_feats``.
+    _ = Decoder2d(
+        in_chans=32,
+        out_chans=3,
+        num_blocks=3,
+        bilinear=True,
+        lr_slope=0.666,
+        kernel_size=3,
+        min_up_feats=8,
+    )
+
+    _ = Decoder2d(
+        in_chans=16,
+        out_chans=3,
+        num_blocks=3,
+        bilinear=True,
+        lr_slope=0.666,
+        kernel_size=3,
+        min_up_feats=16,
+    )
+
+    # Should break if ``in_chans`` < ``min_up_feats``.
+    with pytest.raises(ValueError):
+        _ = Decoder2d(
+            in_chans=8,
+            out_chans=3,
+            num_blocks=3,
+            bilinear=True,
+            lr_slope=0.666,
+            kernel_size=3,
+            min_up_feats=16,
+        )

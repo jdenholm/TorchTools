@@ -1,4 +1,5 @@
 """Utilities for getting 2D convolutional encoder backbones."""
+
 from typing import Tuple
 
 from torchvision import models  # type: ignore
@@ -49,6 +50,7 @@ def get_backbone(
         encoder style selected.
 
     """
+    # pylint: disable=possibly-used-before-assignment
     _check_encoder_option_is_a_string(option)
     option = option.lower()
     _check_encoder_option_is_allowed(option)

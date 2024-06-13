@@ -1,4 +1,5 @@
 """Two-dimensional decoder model."""
+
 from typing import List, Optional
 
 from torch.nn import Sequential, Conv2d
@@ -87,6 +88,8 @@ class Decoder2d(Sequential):
                 stride=1,
             ),
         )
+
+        _in_chans_size_check(in_chans, min_up_feats)
 
     @staticmethod
     def _channel_size_check(
@@ -188,3 +191,25 @@ class Decoder2d(Sequential):
             )
             chans //= 2
         return blocks
+
+
+def _in_chans_size_check(in_chans: int, min_feats: Optional[int] = None):
+    """Make sure ``in_chans`` isn't less than ``min_feats``.
+
+    Parameters
+    ----------
+    in_chans : int
+        Number of input channels.
+    min_feats : int, optional
+        The minimum number of output features the model can produce.
+
+    Raises
+    ------
+    ValueError
+        If ``in_chans`` is less than ``min_feats``.
+
+    """
+    if (min_feats is not None) and (in_chans < min_feats):
+        msg = f"'in_chans' '{in_chans}' must not be less than 'min_up_feats' "
+        msg += f"'{min_feats}'."
+        raise ValueError(msg)
