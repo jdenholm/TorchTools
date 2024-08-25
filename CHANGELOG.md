@@ -1,3 +1,6 @@
+## Version0.11.1
+  - Updated the ``UNet``'s docstring.
+
 ## Version 0.11.0
   - Made changes to ``VAE2d``:
     - Added the option to have the mean and variance nets be CNNs, rather than MLPs.
