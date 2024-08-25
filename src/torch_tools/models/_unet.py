@@ -1,4 +1,5 @@
 """UNet model for semantic segmentation."""
+
 from typing import List
 from torch import Tensor
 
@@ -25,7 +26,7 @@ from torch_tools.models._blocks_2d import (
 
 
 class UNet(Module):
-    """UNet model for semantic segmentation.
+    """UNet for two-spatial-dimensional (image-like) semantic segmentation.
 
     Parameters
     ----------
