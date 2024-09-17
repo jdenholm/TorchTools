@@ -1,4 +1,5 @@
 """Tests for the call methods of blocks in `torch_tools.models._blocks_2d`."""
+
 from itertools import product
 
 
@@ -17,6 +18,7 @@ def test_conv_block_call_return_shapes():
     leaky_relus = [True, False]
     negative_slopes = [0.0, 0.1]
     kernels = [3, 5, 7]
+    dropouts = [0.0, 0.25]
 
     arg_iter = product(
         in_channels,
@@ -25,9 +27,10 @@ def test_conv_block_call_return_shapes():
         leaky_relus,
         negative_slopes,
         kernels,
+        dropouts,
     )
 
-    for in_chans, out_chans, bnorm, leaky, slope, kernel_size in arg_iter:
+    for in_chans, out_chans, bnorm, leaky, slope, kernel_size, drop in arg_iter:
         block = ConvBlock(
             in_chans=in_chans,
             out_chans=out_chans,
@@ -35,6 +38,7 @@ def test_conv_block_call_return_shapes():
             leaky_relu=leaky,
             lr_slope=slope,
             kernel_size=kernel_size,
+            dropout=drop,
         )
 
         assert block(rand(10, in_chans, 50, 100)).shape == (10, out_chans, 50, 100)
