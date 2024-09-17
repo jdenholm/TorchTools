@@ -1,8 +1,10 @@
 """Test the contents of the blocks in `torch_tools.models._blocks_2d`."""
+
 from itertools import product
 
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU, Upsample, ReLU
 from torch.nn import MaxPool2d, AvgPool2d, ConvTranspose2d, Sequential
+from torch.nn import Dropout2d
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
 from torch_tools.models._blocks_2d import ResidualBlock, DownBlock
@@ -110,6 +112,64 @@ def test_conv_block_contents_with_no_batchnorm_or_leaky_relu():
 
     # Check the layers are in the right order
     assert isinstance(block[0], Conv2d), "1st layer should be conv 2d."
+
+
+def test_conv_block_contents_with_dropout():
+    """Test the contents of the conv block with dropout."""
+    # Test with dropout only
+    block = ConvBlock(
+        in_chans=123,
+        out_chans=321,
+        batch_norm=False,
+        leaky_relu=False,
+        lr_slope=0.12345,
+        dropout=0.123,
+    )
+
+    assert len(block) == 2
+    assert isinstance(block[0], Conv2d)
+    assert isinstance(block[1], Dropout2d)
+    assert block[0].in_channels == 123
+    assert block[0].out_channels == 321
+    assert block[1].p == 0.123
+
+    # Test with dropout and batchnorm
+    block = ConvBlock(
+        in_chans=123,
+        out_chans=321,
+        batch_norm=True,
+        leaky_relu=False,
+        lr_slope=0.12345,
+        dropout=0.321,
+    )
+
+    assert len(block) == 3
+    assert isinstance(block[0], Conv2d)
+    assert isinstance(block[1], BatchNorm2d)
+    assert isinstance(block[2], Dropout2d)
+    assert block[0].in_channels == 123
+    assert block[0].out_channels == 321
+    assert block[2].p == 0.321
+
+    # Test with dropout and batchnorm and leaky relu
+    block = ConvBlock(
+        in_chans=123,
+        out_chans=321,
+        batch_norm=True,
+        leaky_relu=True,
+        lr_slope=0.12345,
+        dropout=0.321,
+    )
+
+    assert len(block) == 4
+    assert isinstance(block[0], Conv2d)
+    assert isinstance(block[1], BatchNorm2d)
+    assert isinstance(block[2], LeakyReLU)
+    assert isinstance(block[3], Dropout2d)
+    assert block[0].in_channels == 123
+    assert block[0].out_channels == 321
+    assert block[2].negative_slope == 0.12345
+    assert block[3].p == 0.321
 
 
 def test_conv_block_contents_with_different_kernel_sizes():
