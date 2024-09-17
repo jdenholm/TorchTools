@@ -1,10 +1,11 @@
 """Two-dimensional convolutional blocks."""
+
 from typing import List
 
 from torch import Tensor, cat  # pylint: disable=no-name-in-module
 from torch.nn import Module, Conv2d, BatchNorm2d, LeakyReLU, Sequential, ReLU
 from torch.nn import ConvTranspose2d, Upsample
-from torch.nn import MaxPool2d, AvgPool2d
+from torch.nn import MaxPool2d, AvgPool2d, Dropout2d
 
 from torch.nn.functional import pad
 
@@ -16,6 +17,7 @@ from torch_tools.models._argument_processing import (
     process_boolean_arg,
     process_str_arg,
     process_2d_block_style_arg,
+    process_dropout_prob,
 )
 
 from torch_tools.torch_utils import disable_biases
@@ -41,6 +43,8 @@ class ConvBlock(Sequential):
         Should we include a ``LeakyReLU`` layer?
     lr_slope : float, optional
         The negative slope to use in the ``LeakyReLU`` (use 0.0 for ``ReLU``).
+    dropout : float, optional
+        The dropout to apply at the output of the block.
 
     """
 
@@ -52,6 +56,7 @@ class ConvBlock(Sequential):
         batch_norm: bool = True,
         leaky_relu: bool = True,
         lr_slope: float = 0.1,
+        dropout: float = 0.0,
     ):
         """Build `SingleConvBlock`."""
         super().__init__(
@@ -62,6 +67,7 @@ class ConvBlock(Sequential):
                 process_boolean_arg(batch_norm),
                 process_boolean_arg(leaky_relu),
                 process_negative_slope_arg(lr_slope),
+                process_dropout_prob(dropout),
             )
         )
 
@@ -73,6 +79,7 @@ class ConvBlock(Sequential):
         batch_norm: bool,
         leaky_relu: bool,
         lr_slope: float,
+        dropout: float,
     ) -> List[Module]:
         """Stack the block's layers in a `Sequential`.
 
@@ -103,6 +110,9 @@ class ConvBlock(Sequential):
         if leaky_relu is True:
             layers.append(LeakyReLU(lr_slope))
 
+        if dropout != 0.0:
+            layers.append(Dropout2d(p=dropout))
+
         return layers
 
 
@@ -129,6 +139,7 @@ class DoubleConvBlock(Sequential):
         out_chans: int,
         lr_slope: float,
         kernel_size: int = 3,
+        dropout: float = 0.25,
     ):
         """Build `DoubleConvBlock`."""
         super().__init__(
@@ -139,6 +150,7 @@ class DoubleConvBlock(Sequential):
                 leaky_relu=True,
                 lr_slope=process_negative_slope_arg(lr_slope),
                 kernel_size=process_2d_kernel_size(kernel_size),
+                dropout=0.0,
             ),
             ConvBlock(
                 process_num_feats(out_chans),
@@ -147,6 +159,7 @@ class DoubleConvBlock(Sequential):
                 leaky_relu=True,
                 lr_slope=process_negative_slope_arg(lr_slope),
                 kernel_size=process_2d_kernel_size(kernel_size),
+                dropout=process_dropout_prob(dropout),
             ),
         )
 
@@ -174,6 +187,7 @@ class ResidualBlock(Module):
             batch_norm=True,
             leaky_relu=True,
             lr_slope=0.0,
+            dropout=0.0,
         )
         self.second_conv = ConvBlock(
             in_chans,
@@ -181,6 +195,7 @@ class ResidualBlock(Module):
             kernel_size=process_2d_kernel_size(kernel_size),
             batch_norm=True,
             leaky_relu=False,
+            dropout=0.0,
         )
 
         self.relu = ReLU()
@@ -221,7 +236,9 @@ class ConvResBlock(Sequential):
         The negative slope to use in the leaky relu layers.
     kernel_size : int
         Size of the square convolutional kernel to use.
-
+    dropout : float, optional
+        The dropout probability to apply at the output of
+        the block.
 
     """
 
@@ -231,6 +248,7 @@ class ConvResBlock(Sequential):
         out_chans: int,
         lr_slope: float,
         kernel_size: int = 3,
+        dropout: float = 0.25,
     ):
         """Build ``ConvResBlock``."""
         super().__init__(
@@ -241,11 +259,13 @@ class ConvResBlock(Sequential):
                 batch_norm=process_boolean_arg(True),
                 leaky_relu=process_boolean_arg(True),
                 lr_slope=process_negative_slope_arg(lr_slope),
+                dropout=0.0,
             ),
             ResidualBlock(
                 process_num_feats(out_chans),
                 kernel_size=process_2d_kernel_size(kernel_size),
             ),
+            Dropout2d(p=process_dropout_prob(dropout)) if dropout != 0.0 else None,
         )
 
 
@@ -268,6 +288,8 @@ class DownBlock(Sequential):
     block_style : str, optional
         Encoding block style. See
         ``torch_tools.models._blocks_2d._conv_blocks`` for options.
+    dropout : float, optional
+        The dropout probablity to apply at the block's output.
 
     """
 
@@ -279,6 +301,7 @@ class DownBlock(Sequential):
         lr_slope: float,
         kernel_size: int = 3,
         block_style: str = "double_conv",
+        dropout: float = 0.25,
     ):
         """Build `DownBlock`."""
         super().__init__(
@@ -292,6 +315,7 @@ class DownBlock(Sequential):
                 out_chans=process_num_feats(out_chans),
                 lr_slope=process_negative_slope_arg(lr_slope),
                 kernel_size=process_2d_kernel_size(kernel_size),
+                dropout=process_dropout_prob(dropout),
             ),
         )
 
@@ -328,6 +352,7 @@ class UpBlock(Sequential):
         lr_slope: float,
         block_style: str = "double_conv",
         kernel_size: int = 3,
+        dropout: float = 0.25,
     ):
         """Build `UpBlock`."""
         super().__init__(
@@ -340,6 +365,7 @@ class UpBlock(Sequential):
                 process_num_feats(out_chans),
                 lr_slope=process_negative_slope_arg(lr_slope),
                 kernel_size=process_2d_kernel_size(kernel_size),
+                dropout=process_dropout_prob(dropout),
             ),
         )
 
@@ -396,6 +422,8 @@ class UNetUpBlock(Module):
         layers, Should be an odd, positive, int.
     block_style : str
         Style of the convolutional block: ``"double_conv"`` or ``"conv_res"``.
+    dropout : float, optional
+        The dropout probability to apply at the block's output.
 
     """
 
@@ -407,6 +435,7 @@ class UNetUpBlock(Module):
         lr_slope: float,
         kernel_size: int = 3,
         block_style: str = "double_conv",
+        dropout: float = 0.25,
     ):
         """Build `UNetUpBlock`."""
         super().__init__()
@@ -421,6 +450,7 @@ class UNetUpBlock(Module):
                 self._out_chans,
                 lr_slope=lr_slope,
                 kernel_size=process_2d_kernel_size(kernel_size),
+                dropout=process_dropout_prob(dropout),
             )
         else:
             self.conv_block = ConvResBlock(
@@ -428,6 +458,7 @@ class UNetUpBlock(Module):
                 self._out_chans,
                 lr_slope,
                 kernel_size,
+                dropout=process_dropout_prob(dropout),
             )
 
     @staticmethod
