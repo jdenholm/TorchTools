@@ -50,15 +50,23 @@ def test_double_conv_block_call_return_shapes():
     out_channels = [3, 123, 321]
     lr_slopes = [0.0, 0.1, 0.2]
     kernel_sizes = [1, 3, 5]
+    dropouts = [0.0, 0.1]
 
-    arg_iter = product(in_channels, out_channels, lr_slopes, kernel_sizes)
+    arg_iter = product(
+        in_channels,
+        out_channels,
+        lr_slopes,
+        kernel_sizes,
+        dropouts,
+    )
 
-    for in_chans, out_chans, slope, kernel_size in arg_iter:
+    for in_chans, out_chans, slope, kernel_size, drop in arg_iter:
         block = DoubleConvBlock(
             in_chans=in_chans,
             out_chans=out_chans,
             lr_slope=slope,
             kernel_size=kernel_size,
+            dropout=drop,
         )
         assert block(rand(10, in_chans, 50, 100)).shape == (10, out_chans, 50, 100)
 
