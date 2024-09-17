@@ -131,6 +131,18 @@ def test_conv_block_lr_slope_argument_types():
         _ = ConvBlock(in_chans=2, out_chans=1, lr_slope=1j)
 
 
+def test_conv_block_2d_dropout_arg_types():
+    """Test the types accepted by the ``dropout`` argument."""
+    # Should work with float
+    _ = ConvBlock(in_chans=3, out_chans=3, dropout=0.5)
+
+    # Should break with non-float
+    with pytest.raises(TypeError):
+        _ = ConvBlock(in_chans=3, out_chans=3, dropout=1)
+    with pytest.raises(TypeError):
+        _ = ConvBlock(in_chans=3, out_chans=3, dropout=0.5j)
+
+
 def test_double_conv_block_in_chans_types():
     """Test the types accepted by the `in_chans` argument."""
     # Should work with ints of one or more
