@@ -233,6 +233,69 @@ def test_double_conv_block_contents_with_different_kernel_sizes():
         assert block[1][0].kernel_size == (kernel_size, kernel_size)
 
 
+def test_double_conv_block_contents_without_dropout():
+    """Test the contents of the double conv block without dropout."""
+    block = DoubleConvBlock(
+        in_chans=12,
+        out_chans=21,
+        lr_slope=0.1,
+        kernel_size=3,
+        dropout=0.0,
+    )
+
+    assert isinstance(block[0], ConvBlock)
+    assert len(block[0]) == 3
+    assert isinstance(block[0][0], Conv2d)
+    assert isinstance(block[0][1], BatchNorm2d)
+    assert isinstance(block[0][2], LeakyReLU)
+    assert block[0][0].in_channels == 12
+    assert block[0][0].out_channels == 21
+    assert block[0][1].num_features == 21
+    assert block[0][2].negative_slope == 0.1
+
+    assert isinstance(block[1], ConvBlock)
+    assert len(block[1]) == 3
+    assert isinstance(block[0][0], Conv2d)
+    assert isinstance(block[0][1], BatchNorm2d)
+    assert isinstance(block[0][2], LeakyReLU)
+    assert block[1][0].in_channels == 21
+    assert block[1][0].out_channels == 21
+    assert block[1][1].num_features == 21
+    assert block[1][2].negative_slope == 0.1
+
+
+def test_double_conv_block_contents_with_dropout():
+    """Test the contents of the double conv block with dropout."""
+    block = DoubleConvBlock(
+        in_chans=12,
+        out_chans=21,
+        lr_slope=0.1,
+        kernel_size=3,
+        dropout=0.12345,
+    )
+
+    assert isinstance(block[0], ConvBlock)
+    assert len(block[0]) == 3
+    assert isinstance(block[0][0], Conv2d)
+    assert isinstance(block[0][1], BatchNorm2d)
+    assert isinstance(block[0][2], LeakyReLU)
+    assert block[0][0].in_channels == 12
+    assert block[0][0].out_channels == 21
+    assert block[0][1].num_features == 21
+    assert block[0][2].negative_slope == 0.1
+
+    assert isinstance(block[1], ConvBlock)
+    assert len(block[1]) == 4
+    assert isinstance(block[0][0], Conv2d)
+    assert isinstance(block[0][1], BatchNorm2d)
+    assert isinstance(block[0][2], LeakyReLU)
+    assert block[1][0].in_channels == 21
+    assert block[1][0].out_channels == 21
+    assert block[1][1].num_features == 21
+    assert block[1][2].negative_slope == 0.1
+    assert block[1][3].p == 0.12345
+
+
 def test_residual_block_first_conv_contents():
     """The the contents of the first conv block."""
     block = ResidualBlock(in_chans=123)
