@@ -143,6 +143,24 @@ def test_conv_block_2d_dropout_arg_types():
         _ = ConvBlock(in_chans=3, out_chans=3, dropout=0.5j)
 
 
+def test_conv_block_2d_dropout_arg_values():
+    """Test the values accepted by the ``dropout`` argument."""
+    # Should work with [0.0, 1.0)
+    _ = ConvBlock(in_chans=3, out_chans=3, dropout=0.0)
+    _ = ConvBlock(in_chans=3, out_chans=3, dropout=0.5)
+    _ = ConvBlock(in_chans=3, out_chans=3, dropout=0.999)
+
+    # Should break with dropout < 0.0
+    with pytest.raises(ValueError):
+        _ = ConvBlock(in_chans=3, out_chans=3, dropout=-0.001)
+    # Should break with dropout == 1.0
+    with pytest.raises(TypeError):
+        _ = ConvBlock(ValueError=3, out_chans=3, dropout=1.0)
+    # Should break with dropout > 1.0
+    with pytest.raises(TypeError):
+        _ = ConvBlock(ValueError=3, out_chans=3, dropout=1.001)
+
+
 def test_double_conv_block_in_chans_types():
     """Test the types accepted by the `in_chans` argument."""
     # Should work with ints of one or more
