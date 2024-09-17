@@ -139,7 +139,7 @@ class DoubleConvBlock(Sequential):
         out_chans: int,
         lr_slope: float,
         kernel_size: int = 3,
-        dropout: float = 0.25,
+        dropout: float = 0.0,
     ):
         """Build `DoubleConvBlock`."""
         super().__init__(
@@ -248,7 +248,7 @@ class ConvResBlock(Sequential):
         out_chans: int,
         lr_slope: float,
         kernel_size: int = 3,
-        dropout: float = 0.25,
+        dropout: float = 0.0,
     ):
         """Build ``ConvResBlock``."""
         super().__init__(
@@ -301,7 +301,7 @@ class DownBlock(Sequential):
         lr_slope: float,
         kernel_size: int = 3,
         block_style: str = "double_conv",
-        dropout: float = 0.25,
+        dropout: float = 0.0,
     ):
         """Build `DownBlock`."""
         super().__init__(
@@ -352,7 +352,7 @@ class UpBlock(Sequential):
         lr_slope: float,
         block_style: str = "double_conv",
         kernel_size: int = 3,
-        dropout: float = 0.25,
+        dropout: float = 0.0,
     ):
         """Build `UpBlock`."""
         super().__init__(
@@ -435,7 +435,7 @@ class UNetUpBlock(Module):
         lr_slope: float,
         kernel_size: int = 3,
         block_style: str = "double_conv",
-        dropout: float = 0.25,
+        dropout: float = 0.0,
     ):
         """Build `UNetUpBlock`."""
         super().__init__()
