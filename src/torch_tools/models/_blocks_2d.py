@@ -248,10 +248,40 @@ class ConvResBlock(Sequential):
         out_chans: int,
         lr_slope: float,
         kernel_size: int = 3,
-        dropout: float = 0.0,
+        dropout: float = 0.123,
     ):
         """Build ``ConvResBlock``."""
         super().__init__(
+            *self._layers(
+                in_chans,
+                out_chans,
+                lr_slope,
+                kernel_size,
+                dropout,
+            )
+        )
+
+    @staticmethod
+    def _layers(
+        in_chans: int,
+        out_chans: int,
+        lr_slope: float,
+        kernel_size: int,
+        dropout: float,
+    ) -> List[Module]:
+        """List the layers in the block.
+
+        Parameters
+        ----------
+        See class-level docstring.
+
+        Returns
+        -------
+        layers : List[Module]
+            A list of the layers in the model.
+
+        """
+        layers = [
             ConvBlock(
                 process_num_feats(in_chans),
                 process_num_feats(out_chans),
@@ -265,8 +295,12 @@ class ConvResBlock(Sequential):
                 process_num_feats(out_chans),
                 kernel_size=process_2d_kernel_size(kernel_size),
             ),
-            Dropout2d(p=process_dropout_prob(dropout)) if dropout != 0.0 else None,
-        )
+        ]
+
+        if process_dropout_prob(dropout) != 0.0:
+            layers.append(Dropout2d(p=process_dropout_prob(dropout)))
+
+        return layers
 
 
 class DownBlock(Sequential):
