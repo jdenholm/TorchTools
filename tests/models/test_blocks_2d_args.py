@@ -154,11 +154,11 @@ def test_conv_block_2d_dropout_arg_values():
     with pytest.raises(ValueError):
         _ = ConvBlock(in_chans=3, out_chans=3, dropout=-0.001)
     # Should break with dropout == 1.0
-    with pytest.raises(TypeError):
-        _ = ConvBlock(ValueError=3, out_chans=3, dropout=1.0)
+    with pytest.raises(ValueError):
+        _ = ConvBlock(in_chans=3, out_chans=3, dropout=1.0)
     # Should break with dropout > 1.0
-    with pytest.raises(TypeError):
-        _ = ConvBlock(ValueError=3, out_chans=3, dropout=1.001)
+    with pytest.raises(ValueError):
+        _ = ConvBlock(in_chans=3, out_chans=3, dropout=1.001)
 
 
 def test_double_conv_block_in_chans_types():
@@ -381,6 +381,58 @@ def test_double_conv_kernel_size_argument_values():
             out_chans=2,
             lr_slope=0.0,
             kernel_size=-1,
+        )
+
+
+def test_double_conv_block_dropout_arg_types():
+    """Test the types accepted by the ``dropout`` argument."""
+    # Should work with floats
+    _ = DoubleConvBlock(in_chans=123, out_chans=321, dropout=0.0, lr_slope=0.1)
+    _ = DoubleConvBlock(in_chans=123, out_chans=321, dropout=0.5, lr_slope=0.1)
+    _ = DoubleConvBlock(in_chans=13, out_chans=32, dropout=0.999, lr_slope=0.1)
+
+    # Should break with any other type
+    with pytest.raises(TypeError):
+        _ = DoubleConvBlock(in_chans=1, out_chans=3, dropout=1, lr_slope=0.1)
+    with pytest.raises(TypeError):
+        _ = DoubleConvBlock(
+            in_chans=1,
+            out_chans=3,
+            dropout=0.5j,
+            lr_slope=0.1,
+        )
+
+
+def test_double_conv_block_dropout_arg_values():
+    """Test the values accepted by the ``dropout`` argument."""
+    # Should work with floats on [0.0,1.0)
+    _ = DoubleConvBlock(in_chans=123, out_chans=321, dropout=0.0, lr_slope=0.1)
+    _ = DoubleConvBlock(in_chans=123, out_chans=321, dropout=0.5, lr_slope=0.1)
+    _ = DoubleConvBlock(in_chans=13, out_chans=32, dropout=0.999, lr_slope=0.1)
+
+    # Should break with dropout < 0.0
+    with pytest.raises(ValueError):
+        _ = DoubleConvBlock(
+            in_chans=1,
+            out_chans=3,
+            dropout=-0.001,
+            lr_slope=0.1,
+        )
+    # Should break with dropout == 1.0
+    with pytest.raises(ValueError):
+        _ = DoubleConvBlock(
+            in_chans=1,
+            out_chans=3,
+            dropout=1.0,
+            lr_slope=0.1,
+        )
+    # Should break with dropout > 1.0
+    with pytest.raises(ValueError):
+        _ = DoubleConvBlock(
+            in_chans=1,
+            out_chans=3,
+            dropout=1.001,
+            lr_slope=0.1,
         )
 
 
