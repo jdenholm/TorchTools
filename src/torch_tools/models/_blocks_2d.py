@@ -248,7 +248,7 @@ class ConvResBlock(Sequential):
         out_chans: int,
         lr_slope: float,
         kernel_size: int = 3,
-        dropout: float = 0.123,
+        dropout: float = 0.0,
     ):
         """Build ``ConvResBlock``."""
         super().__init__(
