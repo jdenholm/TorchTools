@@ -616,6 +616,64 @@ def test_conv_res_block_kernel_size_arg_values():
         _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, kernel_size=-1)
 
 
+def test_conv_res_block_dropout_arg_types():
+    """Test the types accepted by the ``dropout`` argument."""
+    # Should work with floats
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, dropout=0.123)
+
+    # Should break with any other dtype
+    with pytest.raises(TypeError):
+        _ = ConvResBlock(
+            in_chans=1,
+            out_chans=3,
+            lr_slope=0.1,
+            dropout=1,
+        )
+
+    with pytest.raises(TypeError):
+        _ = ConvResBlock(
+            in_chans=1,
+            out_chans=3,
+            lr_slope=0.1,
+            dropout=0.5j,
+        )
+
+
+def test_conv_res_block_dropout_arg_values():
+    """Test the values accepted by the ``dropout`` argument."""
+    # Should work with floats on [0.0, 1.0)
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, dropout=0.0)
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, dropout=0.5)
+    _ = ConvResBlock(in_chans=1, out_chans=3, lr_slope=0.1, dropout=0.999)
+
+    # Should break with dropout < 0.0
+    with pytest.raises(ValueError):
+        _ = ConvResBlock(
+            in_chans=1,
+            out_chans=3,
+            lr_slope=0.1,
+            dropout=-0.001,
+        )
+
+    # Should break with dropout == 1.0
+    with pytest.raises(ValueError):
+        _ = ConvResBlock(
+            in_chans=1,
+            out_chans=3,
+            lr_slope=0.1,
+            dropout=1.0,
+        )
+
+    # Should break with dropout > 1.0
+    with pytest.raises(ValueError):
+        _ = ConvResBlock(
+            in_chans=1,
+            out_chans=3,
+            lr_slope=0.1,
+            dropout=1.001,
+        )
+
+
 def test_unet_up_block_in_chans_arg_types():
     """Test the types accepted by the `in_chans` argument."""
     # Should work with ints of two or more
