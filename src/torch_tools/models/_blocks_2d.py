@@ -130,6 +130,8 @@ class DoubleConvBlock(Sequential):
     kernel_size : int
         The size of the kernel to use in the ``ConvBlock``s. Should be odd,
         positive integers.
+    dropout : float, optional
+        Dropout probabilit to apply at the block's output.
 
     """
 
