@@ -376,20 +376,30 @@ def test_conv_res_block_first_conv_contents():
     out_channels = [2, 5, 9]
     lr_slopes = [0.1, 0.2]
     kernel_sizes = [1, 3]
+    dropouts = [0.0, 0.5]
 
-    iterator = product(in_channels, out_channels, lr_slopes, kernel_sizes)
+    iterator = product(
+        in_channels,
+        out_channels,
+        lr_slopes,
+        kernel_sizes,
+        dropouts,
+    )
 
-    for in_chans, out_chans, lr_slope, kernel_size in iterator:
+    for in_chans, out_chans, lr_slope, kernel_size, drop in iterator:
         block = ConvResBlock(
             in_chans=in_chans,
             out_chans=out_chans,
             lr_slope=lr_slope,
             kernel_size=kernel_size,
+            dropout=drop,
         )
 
         first_conv = block[0]
 
         assert isinstance(first_conv, ConvBlock)
+
+        assert len(first_conv) == 3
 
         assert isinstance(first_conv[0], Conv2d)
         assert isinstance(first_conv[1], BatchNorm2d)
@@ -402,7 +412,7 @@ def test_conv_res_block_first_conv_contents():
         assert first_conv[2].negative_slope == lr_slope
 
 
-def test_conv_res_block_res_block_contents():
+def test_conv_res_block_res_block_contents_without_dropout():
     """Test the contents of the residual block."""
     in_channels = [2, 5, 9]
     out_channels = [2, 5, 9]
@@ -438,6 +448,23 @@ def test_conv_res_block_res_block_contents():
         assert res_block.second_conv[0].in_channels == out_chans
         assert res_block.second_conv[0].out_channels == out_chans
         assert res_block.second_conv[1].num_features == out_chans
+
+
+def test_conv_res_contents_with_dropout():
+    """Test the contents of ``ConvResBlock`` with dropout."""
+    block = ConvResBlock(
+        in_chans=3,
+        out_chans=3,
+        lr_slope=0.0,
+        kernel_size=3,
+        dropout=0.12345,
+    )
+
+    first_block = block[0]
+    assert len(first_block) == 3
+
+    assert isinstance(block[2], Dropout2d)
+    assert block[2].p == 0.12345
 
 
 def test_down_block_contents_with_double_conv():
