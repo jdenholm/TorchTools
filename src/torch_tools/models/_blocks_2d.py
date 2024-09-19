@@ -145,6 +145,36 @@ class DoubleConvBlock(Sequential):
     ):
         """Build `DoubleConvBlock`."""
         super().__init__(
+            *self._list_layers(
+                in_chans=in_chans,
+                out_chans=out_chans,
+                lr_slope=lr_slope,
+                kernel_size=kernel_size,
+                dropout=dropout,
+            )
+        )
+
+    @staticmethod
+    def _list_layers(
+        in_chans: int,
+        out_chans: int,
+        lr_slope: float,
+        kernel_size: int,
+        dropout: float,
+    ) -> List[Module]:
+        """List the layers making up the block.
+
+        Parameters
+        ----------
+        See class doctring.
+
+        Returns
+        -------
+        layers : List[Module]
+            List of layers making up the block.
+
+        """
+        layers = [
             ConvBlock(
                 process_num_feats(in_chans),
                 process_num_feats(out_chans),
@@ -161,9 +191,14 @@ class DoubleConvBlock(Sequential):
                 leaky_relu=True,
                 lr_slope=process_negative_slope_arg(lr_slope),
                 kernel_size=process_2d_kernel_size(kernel_size),
-                dropout=process_dropout_prob(dropout),
+                dropout=0.0,
             ),
-        )
+        ]
+
+        if process_dropout_prob(dropout) != 0.0:
+            layers.append(Dropout2d(p=process_dropout_prob(dropout)))
+
+        return layers
 
 
 class ResidualBlock(Module):
