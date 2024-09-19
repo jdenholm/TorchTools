@@ -285,7 +285,7 @@ def test_double_conv_block_contents_with_dropout():
     assert block[0][2].negative_slope == 0.1
 
     assert isinstance(block[1], ConvBlock)
-    assert len(block[1]) == 4
+    assert len(block[1]) == 3
     assert isinstance(block[0][0], Conv2d)
     assert isinstance(block[0][1], BatchNorm2d)
     assert isinstance(block[0][2], LeakyReLU)
@@ -293,7 +293,9 @@ def test_double_conv_block_contents_with_dropout():
     assert block[1][0].out_channels == 21
     assert block[1][1].num_features == 21
     assert block[1][2].negative_slope == 0.1
-    assert block[1][3].p == 0.12345
+
+    assert isinstance(block[2], Dropout2d)
+    assert block[2].p == 0.12345
 
 
 def test_residual_block_first_conv_contents():
@@ -464,8 +466,11 @@ def test_conv_res_contents_with_dropout():
     assert len(first_block) == 3
 
     # Check there are not dropouts in the residual block
-    checks = block[1].apply(lambda x: isinstance(x, Dropout2d))
-    assert not any(checks)
+    any_drop = False
+    for _, layer in block[1].named_children():
+        any_drop |= isinstance(layer, Dropout2d)
+
+    assert not any_drop
 
     assert isinstance(block[2], Dropout2d)
     assert block[2].p == 0.12345
