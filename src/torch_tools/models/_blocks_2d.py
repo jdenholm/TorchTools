@@ -174,7 +174,7 @@ class DoubleConvBlock(Sequential):
             List of layers making up the block.
 
         """
-        layers = [
+        layers: List[Module] = [
             ConvBlock(
                 process_num_feats(in_chans),
                 process_num_feats(out_chans),
