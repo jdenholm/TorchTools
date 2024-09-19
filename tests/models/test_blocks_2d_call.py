@@ -123,15 +123,30 @@ def test_down_block_call_return_shapes():
     lr_slopes = [0.0, 0.1]
     kernel_sizes = [1, 3, 5]
     block_styles = ["double_conv", "conv_res"]
+    dropouts = [0.0, 0.123]
 
     iterator = product(
-        in_channels, out_channels, pools, lr_slopes, kernel_sizes, block_styles
+        in_channels,
+        out_channels,
+        pools,
+        lr_slopes,
+        kernel_sizes,
+        block_styles,
+        dropouts,
     )
 
-    for ins, outs, pool, slope, size, block_style in iterator:
+    for ins, outs, pool, slope, size, block_style, drop in iterator:
         batch = rand(10, ins, 50, 100)
 
-        block = DownBlock(ins, outs, pool, slope, size, block_style)
+        block = DownBlock(
+            in_chans=ins,
+            out_chans=outs,
+            pool=pool,
+            lr_slope=slope,
+            kernel_size=size,
+            block_style=block_style,
+            dropout=drop,
+        )
 
         assert block(batch).shape == (10, outs, 25, 50)
 
