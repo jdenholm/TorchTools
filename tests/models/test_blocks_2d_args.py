@@ -997,6 +997,55 @@ def test_down_block_dropout_arg_types():
         )
 
 
+def test_down_block_dropout_arg_values():
+    """Test the values accepted by the dropout arg."""
+    # Should work with [0.0, 1.0)
+    _ = DownBlock(
+        in_chans=1,
+        out_chans=1,
+        pool="avg",
+        lr_slope=0.1,
+        dropout=0.0,
+    )
+    _ = DownBlock(
+        in_chans=1,
+        out_chans=1,
+        pool="avg",
+        lr_slope=0.1,
+        dropout=0.999,
+    )
+
+    # Should break with dropout < 0.0
+    with pytest.raises(ValueError):
+        _ = DownBlock(
+            in_chans=1,
+            out_chans=1,
+            pool="avg",
+            lr_slope=0.1,
+            dropout=-0.001,
+        )
+
+    # Should break with dropout == 1.0
+    with pytest.raises(ValueError):
+        _ = DownBlock(
+            in_chans=1,
+            out_chans=1,
+            pool="avg",
+            lr_slope=0.1,
+            dropout=1.0,
+        )
+
+    # Should break with dropout > 1.0
+    with pytest.raises(ValueError):
+        _ = DownBlock(
+            in_chans=1,
+            out_chans=1,
+            pool="avg",
+            lr_slope=0.1,
+            dropout=1.0001,
+        )
+
+
 def test_up_block_in_chans_arg_type():
     """Test the types accepted by the `in_chans` arg."""
     # Should work with ints of one or more
