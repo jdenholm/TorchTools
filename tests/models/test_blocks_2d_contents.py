@@ -463,6 +463,10 @@ def test_conv_res_contents_with_dropout():
     first_block = block[0]
     assert len(first_block) == 3
 
+    # Check there are not dropouts in the residual block
+    checks = block[1].apply(lambda x: isinstance(x, Dropout2d))
+    assert not any(checks)
+
     assert isinstance(block[2], Dropout2d)
     assert block[2].p == 0.12345
 
