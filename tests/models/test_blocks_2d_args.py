@@ -1213,6 +1213,61 @@ def test_up_block_block_style_arg_values():
         )
 
 
+def test_upblock_dropout_argument_types():
+    """Test the types accepted by the dropout argument."""
+    # Should work with floats
+    _ = UpBlock(
+        in_chans=1,
+        out_chans=2,
+        bilinear=False,
+        lr_slope=0.1,
+        dropout=0.5,
+    )
+
+    # Should break with any other type
+    with pytest.raises(TypeError):
+        _ = UpBlock(
+            in_chans=1,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            dropout=1,
+        )
+
+    with pytest.raises(TypeError):
+        _ = UpBlock(
+            in_chans=1,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            dropout=0.5j,
+        )
+
+
+def test_upblock_dropout_argument_values():
+    """Test the types accepted by the dropout argument."""
+    # Should work with floats on [0.0, 1.0)
+    for value in [0.0, 0.5, 0.999]:
+        _ = UpBlock(
+            in_chans=1,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            dropout=value,
+        )
+
+    # Should break with any other values
+    for value in [-0.001, 1.0, 1.001]:
+        with pytest.raises(ValueError):
+            _ = UpBlock(
+                in_chans=1,
+                out_chans=2,
+                bilinear=False,
+                lr_slope=0.1,
+                dropout=value,
+            )
+
+
 def test_unet_up_block_kernel_size_argument_types():
     """Test the types accepted by the ``kernel_size`` argument."""
     # Should work with positive, odd int.
