@@ -412,6 +412,8 @@ class UpBlock(Sequential):
         ``torch_tools.models._blocks_2d._conv_blocks`` for options.
     kernel_size : int, optional
         Size of the covolutional kernel. Must be an odd, positive, int.
+    dropout : float, optional
+        The dropout probability to apply at the block's output.
 
     """
 
