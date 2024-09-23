@@ -1,4 +1,5 @@
 """Main dataset object for `torch_tools`."""
+
 from typing import Sequence, Union, Optional, Tuple
 from pathlib import Path
 
@@ -15,6 +16,7 @@ from torch_tools.datasets._base_dataset import _BaseDataset
 
 
 # pylint: disable=too-many-arguments, too-few-public-methods
+# pylint: disable=too-many-positional-arguments
 
 
 class DataSet(_BaseDataset):
