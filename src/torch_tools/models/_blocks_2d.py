@@ -22,7 +22,7 @@ from torch_tools.models._argument_processing import (
 
 from torch_tools.torch_utils import disable_biases
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,too-many-positional-arguments
 
 
 class ConvBlock(Sequential):
