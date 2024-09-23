@@ -69,7 +69,7 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
 
     """
 
-    def __init__(  # pylint: disable=too-many-arguments
+    def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         in_chans: int,
         out_chans: int,
