@@ -22,7 +22,7 @@ from torch_tools.models._blocks_2d import (
 )
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-positional-arguments
 
 
 class UNet(Module):
