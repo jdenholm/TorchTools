@@ -1,4 +1,5 @@
 """Synthetic dataset object."""
+
 from typing import Tuple, Optional, Dict, Callable, List
 
 from torch import from_numpy, Tensor  # pylint: disable=no-name-in-module
@@ -56,7 +57,8 @@ class ShapesDataset(Dataset):
 
     """
 
-    def __init__(  # pylint: disable=too-many-arguments
+    # pylint: disable=too-many-positional-arguments,too-many-arguments
+    def __init__(
         self,
         spot_prob: float = 0.5,
         square_prob: float = 0.5,
