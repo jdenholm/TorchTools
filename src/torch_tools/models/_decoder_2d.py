@@ -13,7 +13,7 @@ from torch_tools.models._argument_processing import process_2d_kernel_size
 from torch_tools.models._argument_processing import process_optional_feats_arg
 from torch_tools.models._argument_processing import process_2d_block_style_arg
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,too-many-positional-arguments
 
 
 class Decoder2d(Sequential):
