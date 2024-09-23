@@ -740,6 +740,47 @@ def test_up_block_with_conv_res_block():
     assert block[1][1].second_conv[1].num_features == 321
 
 
+def test_upblock_contents_with_dropout():
+    """Test the contents of ``UpBlock`` with different dropout options."""
+    # Test with double conv
+    for dropout in [0.0, 0.5]:
+        block = UpBlock(
+            in_chans=1,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            block_style="double_conv",
+            dropout=dropout,
+        )
+
+        assert len(block) == 2
+
+        assert isinstance(block[1], DoubleConvBlock)
+        assert len(block[1]) == 3 if dropout != 0.0 else 2
+
+        if dropout != 0.0:
+            assert isinstance(block[1][2], Dropout2d)
+
+    # Test with conv residual block
+    for dropout in [0.0, 0.5]:
+        block = UpBlock(
+            in_chans=1,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            block_style="conv_res",
+            dropout=dropout,
+        )
+
+        assert len(block) == 2
+
+        assert isinstance(block[1], ConvResBlock)
+        assert len(block[1]) == 3 if dropout != 0.0 else 2
+
+        if dropout != 0.0:
+            assert isinstance(block[1][2], Dropout2d)
+
+
 def test_up_block_contents_with_different_kernel_sizes():
     """Test the contnents of the ``UpBlock`` with different kernel sizes."""
     sizes = [1, 3, 5, 7]
