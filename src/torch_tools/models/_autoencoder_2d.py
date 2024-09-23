@@ -17,7 +17,7 @@ from torch_tools.models._argument_processing import (
     process_2d_block_style_arg,
 )
 
-# pylint:disable=too-many-arguments
+# pylint:disable=too-many-arguments, too-many-positional-arguments
 
 
 class AutoEncoder2d(Module):
