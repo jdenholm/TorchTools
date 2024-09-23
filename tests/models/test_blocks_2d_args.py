@@ -1348,3 +1348,79 @@ def test_unet_up_block_block_style_arg_values():
                 kernel_size=3,
                 block_style=block_style,
             )
+
+
+def test_unet_upblock_dropout_arg_type():
+    """Test the types accepted by the ``dropout`` argument."""
+    # Should work with floats
+    _ = UNetUpBlock(
+        in_chans=4,
+        out_chans=2,
+        bilinear=False,
+        lr_slope=0.1,
+        kernel_size=3,
+        block_style="conv_res",
+        dropout=0.0,
+    )
+
+    _ = UNetUpBlock(
+        in_chans=4,
+        out_chans=2,
+        bilinear=False,
+        lr_slope=0.1,
+        kernel_size=3,
+        block_style="conv_res",
+        dropout=0.0,
+    )
+
+    # Should break with non-float
+    with pytest.raises(TypeError):
+        _ = UNetUpBlock(
+            in_chans=4,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            kernel_size=3,
+            block_style="conv_res",
+            dropout=1,
+        )
+
+    with pytest.raises(TypeError):
+        _ = UNetUpBlock(
+            in_chans=4,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            kernel_size=3,
+            block_style="conv_res",
+            dropout=0.5j,
+        )
+
+
+def test_unet_upblock_dropout_arg_values():
+    """Test the types accepted by the ``dropout`` argument."""
+    # Should work with floats on [0.0, 1.0)
+    dropouts = [0.0, 0.5, 0.999]
+    for dropout in dropouts:
+        _ = UNetUpBlock(
+            in_chans=4,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            kernel_size=3,
+            block_style="conv_res",
+            dropout=dropout,
+        )
+
+    # Should break with any other float
+    for dropout in [-0.0001, 1.0, 1.0001]:
+        with pytest.raises(ValueError):
+            _ = UNetUpBlock(
+                in_chans=4,
+                out_chans=2,
+                bilinear=False,
+                lr_slope=0.1,
+                kernel_size=3,
+                block_style="conv_res",
+                dropout=dropout,
+            )
