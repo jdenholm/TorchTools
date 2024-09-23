@@ -935,3 +935,36 @@ def test_unet_up_block_contents_with_different_kernel_sizes():
 
         assert up_block.conv_block[0][0].kernel_size == (size, size)
         assert up_block.conv_block[1][0].kernel_size == (size, size)
+
+
+def test_unet_upblock_contents_with_dropout():
+    """Test the contents of the ``UNetUpBlock`` with dropout."""
+    # Test with double conv block
+    for dropout in [0.0, 0.5]:
+        up_block = UNetUpBlock(
+            in_chans=64,
+            out_chans=128,
+            bilinear=False,
+            lr_slope=0.12345,
+            block_style="double_conv",
+            dropout=dropout,
+        )
+
+        assert len(up_block.conv_block) == 3 if dropout != 0.0 else 2
+        if dropout != 0.0:
+            assert isinstance(up_block.conv_block[2], Dropout2d)
+
+    # Test with conv residual block
+    for dropout in [0.0, 0.5]:
+        up_block = UNetUpBlock(
+            in_chans=64,
+            out_chans=128,
+            bilinear=False,
+            lr_slope=0.12345,
+            block_style="conv_res",
+            dropout=dropout,
+        )
+
+        assert len(up_block.conv_block) == 3 if dropout != 0.0 else 2
+        if dropout != 0.0:
+            assert isinstance(up_block.conv_block[2], Dropout2d)
