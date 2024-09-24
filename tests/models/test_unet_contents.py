@@ -494,3 +494,19 @@ def test_unet_first_conv_contents_with_dropout():
         if dropout != 0.0:
             assert isinstance(model.in_conv[2], Dropout2d)
             assert model.in_conv[2].p == dropout
+
+    for dropout in [0.0, 0.12345]:
+
+        model = UNet(
+            in_chans=1,
+            out_chans=2,
+            block_style="conv_res",
+            dropout=dropout,
+        )
+
+        assert isinstance(model.in_conv, ConvResBlock)
+        assert len(model.in_conv) == 3 if dropout != 0.0 else 2
+
+        if dropout != 0.0:
+            assert isinstance(model.in_conv[2], Dropout2d)
+            assert model.in_conv[2].p == dropout
