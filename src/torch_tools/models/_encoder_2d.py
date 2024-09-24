@@ -16,6 +16,7 @@ from torch_tools.models._argument_processing import (
     process_2d_kernel_size,
     process_optional_feats_arg,
     process_2d_block_style_arg,
+    process_dropout_prob,
 )
 
 # pylint: disable=too-many-arguments,too-many-positional-arguments
@@ -49,8 +50,8 @@ class Encoder2d(Sequential):
         doubled. Optionally supplying ``max_features`` places a limit on this.
     block_style : str, optional
         Style of encoding block to use: ``"conv_block"`` or ``"conv_res"``.
-
-
+    dropout : float, optional
+        The dropout probability to apply at the output of each block.
 
     Examples
     --------
@@ -77,6 +78,7 @@ class Encoder2d(Sequential):
         kernel_size: int,
         max_feats: Optional[int] = None,
         block_style: str = "double_conv",
+        dropout: float = 0.0,
     ):
         """Build `Encoder`."""
         super().__init__(
@@ -86,6 +88,7 @@ class Encoder2d(Sequential):
                 process_negative_slope_arg(lr_slope),
                 process_2d_kernel_size(kernel_size),
                 process_2d_block_style_arg(block_style),
+                process_dropout_prob(dropout),
             ),
             *self._get_blocks(
                 process_num_feats(start_features),
@@ -94,6 +97,7 @@ class Encoder2d(Sequential):
                 process_negative_slope_arg(lr_slope),
                 process_2d_kernel_size(kernel_size),
                 process_2d_block_style_arg(block_style),
+                process_dropout_prob(dropout),
                 process_optional_feats_arg(max_feats),
             ),
         )
@@ -107,6 +111,7 @@ class Encoder2d(Sequential):
         negative_slope: float,
         kernel_size: int,
         block_style: str,
+        dropout: float,
     ) -> Module:
         """Get the first convolutional block.
 
@@ -122,6 +127,8 @@ class Encoder2d(Sequential):
             Length of the square convolutional kernel.
         block_style : str
             What kind of block should we use (see class docstring)?
+        dropout : float, optional
+            Dropout probability to apply at the output.
 
         Returns
         -------
@@ -135,13 +142,15 @@ class Encoder2d(Sequential):
                 start_features,
                 negative_slope,
                 kernel_size=kernel_size,
+                dropout=dropout,
             )
         else:
             block = ConvResBlock(
                 in_chans,
                 start_features,
                 negative_slope,
-                kernel_size,
+                kernel_size=kernel_size,
+                dropout=dropout,
             )
 
         return block
@@ -154,6 +163,7 @@ class Encoder2d(Sequential):
         lr_slope: float,
         kernel_size: int,
         block_style: str,
+        dropout: float,
         max_feats: Optional[int] = None,
     ) -> List[DownBlock]:
         """Get the encoding layers in a sequential.
@@ -173,6 +183,8 @@ class Encoder2d(Sequential):
             layers. Should be a positive, odd, int.
         block_style : str
             The style of the encoding block to use.
+        dropout : float
+            Dropout probability to apply at each block's output.
         max_feats : int, optional
             Optional limit on the maximum number of features the down blocks
             can produce.
@@ -199,6 +211,7 @@ class Encoder2d(Sequential):
                     lr_slope,
                     block_style=block_style,
                     kernel_size=kernel_size,
+                    dropout=dropout,
                 )
             )
             chans *= 2
