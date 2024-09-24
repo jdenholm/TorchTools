@@ -533,3 +533,27 @@ def test_unet_down_blocks_contents_with_dropout():
             if dropout != 0.0:
                 assert isinstance(block[1][2], Dropout2d)
                 assert block[1][2].p == dropout
+
+
+def test_unet_up_blocks_with_dropout():
+    """Test the contents of the up blocks with dropout."""
+    blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
+
+    for block_type, dropout in product(blocks.keys(), [0.0, 0.12345]):
+
+        model = UNet(
+            in_chans=1,
+            out_chans=2,
+            block_style=block_type,
+            dropout=dropout,
+        )
+
+        for block in model.up_blocks:
+
+            assert isinstance(block, UNetUpBlock)
+            assert isinstance(block.conv_block, blocks[block_type])
+
+            assert len(block.conv_block) == 3 if dropout != 0.0 else 2
+            if dropout != 0.0:
+                assert isinstance(block.conv_block[2], Dropout2d)
+                assert block.conv_block[2].p == dropout
