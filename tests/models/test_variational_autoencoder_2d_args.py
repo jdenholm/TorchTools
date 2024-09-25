@@ -440,3 +440,31 @@ def test_mean_var_nets_argument_style_arg_values():
             start_features=16,
             max_down_feats=16,
         )
+
+
+def test_dropout_argument_types():
+    """Test the types accepted by the dropout argument."""
+    # Should work with floats
+    for dropout in [0.0, 0.5]:
+        _ = VAE2d(
+            in_chans=16,
+            out_chans=3,
+            mean_var_nets="linear",
+            input_dims=(16, 16),
+            start_features=16,
+            max_down_feats=16,
+            dropout=dropout,
+        )
+
+    # Should break with any other type
+    for dropout in [1, 0.5j]:
+        with pytest.raises(TypeError):
+            _ = VAE2d(
+                in_chans=16,
+                out_chans=3,
+                mean_var_nets="linear",
+                input_dims=(16, 16),
+                start_features=16,
+                max_down_feats=16,
+                dropout=dropout,
+            )
