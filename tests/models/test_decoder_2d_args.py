@@ -472,3 +472,59 @@ def test_in_chans_is_more_than_min_up_feats():
             kernel_size=3,
             min_up_feats=16,
         )
+
+
+def test_dropout_arg_types():
+    """Test the types accepted by the dropout argument."""
+    # Should work with floats
+    for dropout in [0.0, 0.5]:
+        _ = Decoder2d(
+            in_chans=8,
+            out_chans=3,
+            num_blocks=3,
+            bilinear=True,
+            lr_slope=0.666,
+            kernel_size=3,
+            dropout=dropout,
+        )
+
+    # Should break with any other type
+    for dropout in [1, 0.5j]:
+        with pytest.raises(TypeError):
+            _ = Decoder2d(
+                in_chans=8,
+                out_chans=3,
+                num_blocks=3,
+                bilinear=True,
+                lr_slope=0.666,
+                kernel_size=3,
+                dropout=dropout,
+            )
+
+
+def test_dropout_arg_values():
+    """Test the values accepted by the dropout argument."""
+    # Should work with floats on [0.0, 1.0)
+    for dropout in [0.0, 0.5, 0.999]:
+        _ = Decoder2d(
+            in_chans=8,
+            out_chans=3,
+            num_blocks=3,
+            bilinear=True,
+            lr_slope=0.666,
+            kernel_size=3,
+            dropout=dropout,
+        )
+
+    # Should break with any other value
+    for dropout in [-0.01, 1.0, 1.01]:
+        with pytest.raises(ValueError):
+            _ = Decoder2d(
+                in_chans=8,
+                out_chans=3,
+                num_blocks=3,
+                bilinear=True,
+                lr_slope=0.666,
+                kernel_size=3,
+                dropout=dropout,
+            )
