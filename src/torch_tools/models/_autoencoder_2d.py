@@ -15,6 +15,7 @@ from torch_tools.models._argument_processing import (
     process_boolean_arg,
     process_2d_kernel_size,
     process_2d_block_style_arg,
+    process_dropout_prob,
 )
 
 # pylint:disable=too-many-arguments, too-many-positional-arguments
@@ -47,6 +48,9 @@ class AutoEncoder2d(Module):
     block_style : str, optional
         Style of convolutional blocks to use in the encoding and decoding
         blocks.  Use either ``"double_conv"`` or ``"conv_res"``.
+    dropout : float, optional
+        The dropout probability to apply at the output of the convolutional
+        blocks.
 
 
     Notes
@@ -97,6 +101,7 @@ class AutoEncoder2d(Module):
         bilinear: bool = False,
         kernel_size: int = 3,
         block_style: str = "double_conv",
+        dropout: float = 0.25,
     ):
         """Build ``EncoderDecoder2d``."""
         super().__init__()
@@ -109,6 +114,7 @@ class AutoEncoder2d(Module):
             process_negative_slope_arg(lr_slope),
             process_2d_kernel_size(kernel_size),
             block_style=process_2d_block_style_arg(block_style),
+            dropout=process_dropout_prob(dropout),
         )
 
         self.decoder = Decoder2d(
@@ -119,6 +125,7 @@ class AutoEncoder2d(Module):
             process_negative_slope_arg(lr_slope),
             process_2d_kernel_size(kernel_size),
             block_style=process_2d_block_style_arg(block_style),
+            dropout=process_dropout_prob(dropout),
         )
 
     def forward(
