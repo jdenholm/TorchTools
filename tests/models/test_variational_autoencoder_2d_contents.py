@@ -444,3 +444,32 @@ def test_vae_encoder_contents_with_dropout():
             if dropout != 0.0:
                 assert isinstance(block[1][2], Dropout2d)
                 assert block[1][2].p == dropout
+
+
+def test_vae_decoder_contents_with_dropout():
+    """Test the contents of the decoder with dropout."""
+    blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
+
+    for block_style, dropout in product(blocks.keys(), [0.0, 0.666]):
+
+        decoder = VAE2d(
+            in_chans=3,
+            out_chans=3,
+            start_features=8,
+            input_dims=(64, 64),
+            block_style=block_style,
+            lr_slope=0.123,
+            num_layers=3,
+            mean_var_nets="linear",
+            dropout=dropout,
+        ).decoder
+
+        for block in list(decoder.children())[:-1]:
+
+            assert isinstance(block, UpBlock)
+            assert isinstance(block[1], blocks[block_style])
+
+            assert len(block[1]) == 3 if dropout != 0.0 else 2
+            if dropout != 0.0:
+                assert isinstance(block[1][2], Dropout2d)
+                assert block[1][2].p == dropout
