@@ -462,6 +462,7 @@ def test_encoder_contents_with_dropout():
             assert isinstance(first_block[2], Dropout2d)
             assert first_block[2].p == dropout
 
+        # Test the down blocks
         for down_block in list(encoder.children())[1:]:
 
             assert isinstance(down_block, DownBlock)
@@ -471,3 +472,27 @@ def test_encoder_contents_with_dropout():
             if dropout != 0.0:
                 assert isinstance(down_block[1][2], Dropout2d)
                 assert down_block[1][2].p == dropout
+
+
+def test_decoder_contents_with_dropout():
+    """Test the contents of the decoder with dropout."""
+    blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
+
+    for block_style, dropout in product(blocks.keys(), [0.0, 0.666]):
+
+        decoder = AutoEncoder2d(
+            in_chans=3,
+            out_chans=3,
+            block_style=block_style,
+            dropout=dropout,
+        ).decoder
+
+        for up_block in list(decoder.children())[:-1]:
+
+            assert isinstance(up_block, UpBlock)
+            assert isinstance(up_block[1], blocks[block_style])
+            assert len(up_block[1]) == 3 if dropout != 0.0 else 2
+
+            if dropout != 0.0:
+                assert isinstance(up_block[1][2], Dropout2d)
+                assert up_block[1][2].p == dropout
