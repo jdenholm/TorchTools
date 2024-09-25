@@ -26,6 +26,7 @@ from torch_tools.models._argument_processing import (
     process_2d_kernel_size,
     process_input_dims,
     process_optional_feats_arg,
+    process_dropout_prob,
 )
 from torch_tools.models._blocks_2d import DoubleConvBlock
 
@@ -66,6 +67,8 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
     mean_var_net : str
         The style of the networks for which learn the mean and variances:
         ``"linear"`` or ``"conv"``.
+    dropout : float, optional
+        Dropout probability to apply at the output of the convolutional blocks.
 
     """
 
@@ -84,6 +87,7 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
         min_up_feats: Optional[int] = None,
         block_style: str = "double_conv",
         mean_var_nets: str = "linear",
+        dropout: float = 0.25,
     ):
         """Build ``VAE2d``."""
         super().__init__()
@@ -96,6 +100,7 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
             kernel_size=process_2d_kernel_size(kernel_size),
             max_feats=process_optional_feats_arg(max_down_feats),
             block_style=block_style,
+            dropout=process_dropout_prob(dropout),
         )
 
         self._latent_chans, self._latent_feats = _latent_sizes(
@@ -126,6 +131,7 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
             kernel_size=kernel_size,
             min_up_feats=min_up_feats,
             block_style=block_style,
+            dropout=process_dropout_prob(dropout),
         )
 
     def _input_dim_mean_var_net_check(
