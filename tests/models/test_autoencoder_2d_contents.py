@@ -1,6 +1,9 @@
 """Test the contents of ``torch_tools.AutoEncoder2d``."""
+
+from itertools import product
+
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU, AvgPool2d, MaxPool2d
-from torch.nn import ConvTranspose2d, Sequential, Upsample, Module
+from torch.nn import ConvTranspose2d, Sequential, Upsample, Module, Dropout2d
 
 from torch_tools import AutoEncoder2d
 from torch_tools.models._blocks_2d import DoubleConvBlock, ConvBlock, DownBlock
@@ -31,7 +34,7 @@ def test_encoder_double_conv_contents():
 
     assert isinstance(encoder[0], DoubleConvBlock)
 
-    first_conv, second_conv = encoder[0]
+    first_conv, second_conv = encoder[0][0], encoder[0][1]
     assert isinstance(first_conv, ConvBlock)
     assert isinstance(first_conv[0], Conv2d)
     assert isinstance(first_conv[1], BatchNorm2d)
@@ -69,7 +72,7 @@ def test_encoder_down_block_contents_with_avg_pool():
         assert isinstance(down_block[1], DoubleConvBlock)
         assert isinstance(down_block[1][1], ConvBlock)
 
-        first_conv, second_conv = down_block[1]
+        first_conv, second_conv = down_block[1][0], down_block[1][1]
 
         assert isinstance(first_conv[0], Conv2d)
         assert isinstance(first_conv[1], BatchNorm2d)
@@ -108,7 +111,7 @@ def test_encoder_down_block_contents_with_max_pool():
         assert isinstance(down_block[1], DoubleConvBlock)
         assert isinstance(down_block[1][1], ConvBlock)
 
-        first_conv, second_conv = down_block[1]
+        first_conv, second_conv = down_block[1][0], down_block[1][1]
 
         assert isinstance(first_conv[0], Conv2d)
         assert isinstance(first_conv[1], BatchNorm2d)
@@ -165,7 +168,7 @@ def test_decoder_up_block_contents_with_conv_transpose():
 
         assert isinstance(up_block[1], DoubleConvBlock)
 
-        first_conv, second_conv = up_block[1]
+        first_conv, second_conv = up_block[1][0], up_block[1][1]
 
         assert isinstance(first_conv, ConvBlock)
         assert isinstance(first_conv[0], Conv2d)
@@ -212,7 +215,7 @@ def test_decoder_up_block_contents_with_bilinear_interpolation():
 
         assert isinstance(up_block[1], DoubleConvBlock)
 
-        first_conv, second_conv = up_block[1]
+        first_conv, second_conv = up_block[1][0], up_block[1][1]
 
         assert isinstance(first_conv, ConvBlock)
         assert isinstance(first_conv[0], Conv2d)
@@ -435,3 +438,36 @@ def test_decoder_contents_with_conv_res_block():
 
         in_chans //= 2
         out_chans //= 2
+
+
+def test_encoder_contents_with_dropout():
+    """Test the contents of the encoder with dropout."""
+    blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
+
+    for block_style, dropout in product(blocks.keys(), [0.0, 0.666]):
+
+        encoder = AutoEncoder2d(
+            in_chans=3,
+            out_chans=3,
+            block_style=block_style,
+            dropout=dropout,
+        ).encoder
+
+        # Test the first block of the encoder
+        first_block = encoder[0]
+        assert isinstance(first_block, blocks[block_style])
+        assert len(first_block) == 3 if dropout != 0.0 else 2
+
+        if dropout != 0.0:
+            assert isinstance(first_block[2], Dropout2d)
+            assert first_block[2].p == dropout
+
+        for down_block in list(encoder.children())[1:]:
+
+            assert isinstance(down_block, DownBlock)
+            assert isinstance(down_block[1], blocks[block_style])
+            assert len(down_block[1]) == 3 if dropout != 0.0 else 2
+
+            if dropout != 0.0:
+                assert isinstance(down_block[1][2], Dropout2d)
+                assert down_block[1][2].p == dropout
