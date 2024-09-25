@@ -468,3 +468,31 @@ def test_dropout_argument_types():
                 max_down_feats=16,
                 dropout=dropout,
             )
+
+
+def test_dropout_argument_values():
+    """Test the values accepted by the dropout argument."""
+    # Should work with floats on [0.0, 1.0)
+    for dropout in [0.0, 0.999]:
+        _ = VAE2d(
+            in_chans=16,
+            out_chans=3,
+            mean_var_nets="linear",
+            input_dims=(16, 16),
+            start_features=16,
+            max_down_feats=16,
+            dropout=dropout,
+        )
+
+    # Should break with any other type
+    for dropout in [-0.001, 1.0, 1.001]:
+        with pytest.raises(ValueError):
+            _ = VAE2d(
+                in_chans=16,
+                out_chans=3,
+                mean_var_nets="linear",
+                input_dims=(16, 16),
+                start_features=16,
+                max_down_feats=16,
+                dropout=dropout,
+            )
