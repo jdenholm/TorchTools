@@ -489,3 +489,63 @@ def test_start_feats_does_not_exceed_max_feats():
             lr_slope=0.1,
             kernel_size=3,
         )
+
+
+def test_dropout_argument_type():
+    """Test the types accepted by the dropout arg."""
+    # Should work with floats
+    for dropout in [0.0, 0.5]:
+        _ = Encoder2d(
+            in_chans=8,
+            start_features=16,
+            max_feats=32,
+            num_blocks=4,
+            pool_style="max",
+            lr_slope=0.1,
+            kernel_size=3,
+            dropout=dropout,
+        )
+
+    # Should break with other types
+    for dropout in [1, 0.5j]:
+        with pytest.raises(TypeError):
+            _ = Encoder2d(
+                in_chans=8,
+                start_features=16,
+                max_feats=32,
+                num_blocks=4,
+                pool_style="max",
+                lr_slope=0.1,
+                kernel_size=3,
+                dropout=dropout,
+            )
+
+
+def test_dropout_argument_values():
+    """Test the values accepted by the dropout arg."""
+    # Should work with floats on [0.0, 1.0)
+    for dropout in [0.0, 0.5]:
+        _ = Encoder2d(
+            in_chans=8,
+            start_features=16,
+            max_feats=32,
+            num_blocks=4,
+            pool_style="max",
+            lr_slope=0.1,
+            kernel_size=3,
+            dropout=dropout,
+        )
+
+    # Should break with other values
+    for dropout in [-0.001, 1.0, 1.001]:
+        with pytest.raises(ValueError):
+            _ = Encoder2d(
+                in_chans=8,
+                start_features=16,
+                max_feats=32,
+                num_blocks=4,
+                pool_style="max",
+                lr_slope=0.1,
+                kernel_size=3,
+                dropout=dropout,
+            )

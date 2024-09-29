@@ -22,6 +22,7 @@ def test_vae_call_return_shapes():  # pylint: disable=too-many-locals
     min_features = [None, 16]
     block_styles = ["double_conv", "conv_res"]
     mean_vars = ["linear", "conv"]
+    dropout = [0.0, 0.666]
 
     iterator = product(
         in_channels,
@@ -37,6 +38,7 @@ def test_vae_call_return_shapes():  # pylint: disable=too-many-locals
         min_features,
         block_styles,
         mean_vars,
+        dropout,
     )
 
     for (
@@ -53,6 +55,7 @@ def test_vae_call_return_shapes():  # pylint: disable=too-many-locals
         min_feats,
         block,
         mv_net,
+        drop,
     ) in iterator:
 
         model = VAE2d(
@@ -69,6 +72,7 @@ def test_vae_call_return_shapes():  # pylint: disable=too-many-locals
             min_up_feats=min_feats,
             block_style=block,
             mean_var_nets=mv_net,
+            dropout=drop,
         )
 
         batch = rand(1, in_chans, *in_dims)

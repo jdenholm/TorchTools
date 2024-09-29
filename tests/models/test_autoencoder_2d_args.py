@@ -1,4 +1,5 @@
 """Tests for the arguments of ``torch_tools.AutoEncoder2d``."""
+
 import pytest
 
 from torch_tools import AutoEncoder2d
@@ -204,3 +205,27 @@ def test_block_style_argument_values():
     # Should break with any other value
     with pytest.raises(ValueError):
         _ = AutoEncoder2d(in_chans=3, out_chans=3, block_style="Gandalf")
+
+
+def test_dropout_argument_types():
+    """Test the types accepted by the dropout argument."""
+    # Should work with floats
+    for dropout in [0.0, 0.5]:
+        _ = AutoEncoder2d(in_chans=3, out_chans=3, dropout=dropout)
+
+    # Should break with any other type
+    for dropout in [1, 0.5j]:
+        with pytest.raises(TypeError):
+            _ = AutoEncoder2d(in_chans=3, out_chans=3, dropout=dropout)
+
+
+def test_dropout_argument_values():
+    """Test the values accepted by the dropout argument."""
+    # Should work with floats on [0.0, 1.0)
+    for dropout in [0.0, 0.999]:
+        _ = AutoEncoder2d(in_chans=3, out_chans=3, dropout=dropout)
+
+    # Should break with any other value
+    for dropout in [-0.001, 1.0, 1.001]:
+        with pytest.raises(ValueError):
+            _ = AutoEncoder2d(in_chans=3, out_chans=3, dropout=dropout)

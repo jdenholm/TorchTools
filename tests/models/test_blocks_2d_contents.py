@@ -1,8 +1,10 @@
 """Test the contents of the blocks in `torch_tools.models._blocks_2d`."""
+
 from itertools import product
 
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU, Upsample, ReLU
 from torch.nn import MaxPool2d, AvgPool2d, ConvTranspose2d, Sequential
+from torch.nn import Dropout2d
 
 from torch_tools.models._blocks_2d import ConvBlock, DoubleConvBlock
 from torch_tools.models._blocks_2d import ResidualBlock, DownBlock
@@ -112,6 +114,64 @@ def test_conv_block_contents_with_no_batchnorm_or_leaky_relu():
     assert isinstance(block[0], Conv2d), "1st layer should be conv 2d."
 
 
+def test_conv_block_contents_with_dropout():
+    """Test the contents of the conv block with dropout."""
+    # Test with dropout only
+    block = ConvBlock(
+        in_chans=123,
+        out_chans=321,
+        batch_norm=False,
+        leaky_relu=False,
+        lr_slope=0.12345,
+        dropout=0.123,
+    )
+
+    assert len(block) == 2
+    assert isinstance(block[0], Conv2d)
+    assert isinstance(block[1], Dropout2d)
+    assert block[0].in_channels == 123
+    assert block[0].out_channels == 321
+    assert block[1].p == 0.123
+
+    # Test with dropout and batchnorm
+    block = ConvBlock(
+        in_chans=123,
+        out_chans=321,
+        batch_norm=True,
+        leaky_relu=False,
+        lr_slope=0.12345,
+        dropout=0.321,
+    )
+
+    assert len(block) == 3
+    assert isinstance(block[0], Conv2d)
+    assert isinstance(block[1], BatchNorm2d)
+    assert isinstance(block[2], Dropout2d)
+    assert block[0].in_channels == 123
+    assert block[0].out_channels == 321
+    assert block[2].p == 0.321
+
+    # Test with dropout and batchnorm and leaky relu
+    block = ConvBlock(
+        in_chans=123,
+        out_chans=321,
+        batch_norm=True,
+        leaky_relu=True,
+        lr_slope=0.12345,
+        dropout=0.321,
+    )
+
+    assert len(block) == 4
+    assert isinstance(block[0], Conv2d)
+    assert isinstance(block[1], BatchNorm2d)
+    assert isinstance(block[2], LeakyReLU)
+    assert isinstance(block[3], Dropout2d)
+    assert block[0].in_channels == 123
+    assert block[0].out_channels == 321
+    assert block[2].negative_slope == 0.12345
+    assert block[3].p == 0.321
+
+
 def test_conv_block_contents_with_different_kernel_sizes():
     """Test the contents of ``ConvBlock`` with different kernel sizes."""
     block = ConvBlock(in_chans=3, out_chans=3, kernel_size=1)
@@ -171,6 +231,71 @@ def test_double_conv_block_contents_with_different_kernel_sizes():
         )
         assert block[0][0].kernel_size == (kernel_size, kernel_size)
         assert block[1][0].kernel_size == (kernel_size, kernel_size)
+
+
+def test_double_conv_block_contents_without_dropout():
+    """Test the contents of the double conv block without dropout."""
+    block = DoubleConvBlock(
+        in_chans=12,
+        out_chans=21,
+        lr_slope=0.1,
+        kernel_size=3,
+        dropout=0.0,
+    )
+
+    assert isinstance(block[0], ConvBlock)
+    assert len(block[0]) == 3
+    assert isinstance(block[0][0], Conv2d)
+    assert isinstance(block[0][1], BatchNorm2d)
+    assert isinstance(block[0][2], LeakyReLU)
+    assert block[0][0].in_channels == 12
+    assert block[0][0].out_channels == 21
+    assert block[0][1].num_features == 21
+    assert block[0][2].negative_slope == 0.1
+
+    assert isinstance(block[1], ConvBlock)
+    assert len(block[1]) == 3
+    assert isinstance(block[0][0], Conv2d)
+    assert isinstance(block[0][1], BatchNorm2d)
+    assert isinstance(block[0][2], LeakyReLU)
+    assert block[1][0].in_channels == 21
+    assert block[1][0].out_channels == 21
+    assert block[1][1].num_features == 21
+    assert block[1][2].negative_slope == 0.1
+
+
+def test_double_conv_block_contents_with_dropout():
+    """Test the contents of the double conv block with dropout."""
+    block = DoubleConvBlock(
+        in_chans=12,
+        out_chans=21,
+        lr_slope=0.1,
+        kernel_size=3,
+        dropout=0.12345,
+    )
+
+    assert isinstance(block[0], ConvBlock)
+    assert len(block[0]) == 3
+    assert isinstance(block[0][0], Conv2d)
+    assert isinstance(block[0][1], BatchNorm2d)
+    assert isinstance(block[0][2], LeakyReLU)
+    assert block[0][0].in_channels == 12
+    assert block[0][0].out_channels == 21
+    assert block[0][1].num_features == 21
+    assert block[0][2].negative_slope == 0.1
+
+    assert isinstance(block[1], ConvBlock)
+    assert len(block[1]) == 3
+    assert isinstance(block[0][0], Conv2d)
+    assert isinstance(block[0][1], BatchNorm2d)
+    assert isinstance(block[0][2], LeakyReLU)
+    assert block[1][0].in_channels == 21
+    assert block[1][0].out_channels == 21
+    assert block[1][1].num_features == 21
+    assert block[1][2].negative_slope == 0.1
+
+    assert isinstance(block[2], Dropout2d)
+    assert block[2].p == 0.12345
 
 
 def test_residual_block_first_conv_contents():
@@ -253,20 +378,30 @@ def test_conv_res_block_first_conv_contents():
     out_channels = [2, 5, 9]
     lr_slopes = [0.1, 0.2]
     kernel_sizes = [1, 3]
+    dropouts = [0.0, 0.5]
 
-    iterator = product(in_channels, out_channels, lr_slopes, kernel_sizes)
+    iterator = product(
+        in_channels,
+        out_channels,
+        lr_slopes,
+        kernel_sizes,
+        dropouts,
+    )
 
-    for in_chans, out_chans, lr_slope, kernel_size in iterator:
+    for in_chans, out_chans, lr_slope, kernel_size, drop in iterator:
         block = ConvResBlock(
             in_chans=in_chans,
             out_chans=out_chans,
             lr_slope=lr_slope,
             kernel_size=kernel_size,
+            dropout=drop,
         )
 
         first_conv = block[0]
 
         assert isinstance(first_conv, ConvBlock)
+
+        assert len(first_conv) == 3
 
         assert isinstance(first_conv[0], Conv2d)
         assert isinstance(first_conv[1], BatchNorm2d)
@@ -279,7 +414,7 @@ def test_conv_res_block_first_conv_contents():
         assert first_conv[2].negative_slope == lr_slope
 
 
-def test_conv_res_block_res_block_contents():
+def test_conv_res_block_res_block_contents_without_dropout():
     """Test the contents of the residual block."""
     in_channels = [2, 5, 9]
     out_channels = [2, 5, 9]
@@ -317,6 +452,30 @@ def test_conv_res_block_res_block_contents():
         assert res_block.second_conv[1].num_features == out_chans
 
 
+def test_conv_res_contents_with_dropout():
+    """Test the contents of ``ConvResBlock`` with dropout."""
+    block = ConvResBlock(
+        in_chans=3,
+        out_chans=3,
+        lr_slope=0.0,
+        kernel_size=3,
+        dropout=0.12345,
+    )
+
+    first_block = block[0]
+    assert len(first_block) == 3
+
+    # Check there are not dropouts in the residual block
+    any_drop = False
+    for _, layer in block[1].named_children():
+        any_drop |= isinstance(layer, Dropout2d)
+
+    assert not any_drop
+
+    assert isinstance(block[2], Dropout2d)
+    assert block[2].p == 0.12345
+
+
 def test_down_block_contents_with_double_conv():
     """Test the conents of ``DownBlock`` with the double conv block style."""
     in_channels = [3, 6]
@@ -324,18 +483,15 @@ def test_down_block_contents_with_double_conv():
     pools = ["max", "avg"]
     lr_slopes = [0.0, 0.1]
     kernel_sizes = [1, 3]
+    dropouts = [0.0, 0.5]
 
     iterator = product(
-        in_channels,
-        out_channels,
-        pools,
-        lr_slopes,
-        kernel_sizes,
+        in_channels, out_channels, pools, lr_slopes, kernel_sizes, dropouts
     )
 
     pool_layers = {"avg": AvgPool2d, "max": MaxPool2d}
 
-    for in_chans, out_chans, pool, slope, kernel in iterator:
+    for in_chans, out_chans, pool, slope, kernel, drop in iterator:
         block = DownBlock(
             in_chans=in_chans,
             out_chans=out_chans,
@@ -343,14 +499,16 @@ def test_down_block_contents_with_double_conv():
             lr_slope=slope,
             kernel_size=kernel,
             block_style="double_conv",
+            dropout=drop,
         )
 
         assert isinstance(block[0], pool_layers[pool])
-
         assert isinstance(block[1], DoubleConvBlock)
 
         # Test the first conv block of the double conv block
         assert isinstance(block[1][0], ConvBlock)
+
+        assert len(block[1][0]) == 3
         assert isinstance(block[1][0][0], Conv2d)
         assert isinstance(block[1][0][1], BatchNorm2d)
         assert isinstance(block[1][0][2], LeakyReLU)
@@ -362,6 +520,8 @@ def test_down_block_contents_with_double_conv():
 
         # Test the second conv block of the double conv block
         assert isinstance(block[1][1], ConvBlock)
+
+        assert len(block[1][1]) == 3
         assert isinstance(block[1][1][0], Conv2d)
         assert isinstance(block[1][1][1], BatchNorm2d)
         assert isinstance(block[1][1][2], LeakyReLU)
@@ -371,6 +531,12 @@ def test_down_block_contents_with_double_conv():
         assert block[1][1][1].num_features == out_chans
         assert block[1][1][2].negative_slope == slope
 
+        # Test the dropout contents
+        assert len(block[1]) == 2 if drop == 0.0 else 3
+        if drop != 0.0:
+            assert isinstance(block[1][2], Dropout2d)
+            assert block[1][2].p == drop
+
 
 def test_down_block_contents_with_conv_residual():
     """Test the conents of ``DownBlock`` with the double conv residual style."""
@@ -379,6 +545,7 @@ def test_down_block_contents_with_conv_residual():
     pools = ["max", "avg"]
     lr_slopes = [0.0, 0.1]
     kernel_sizes = [1, 3]
+    dropout = [0.0, 0.5]
 
     iterator = product(
         in_channels,
@@ -386,11 +553,12 @@ def test_down_block_contents_with_conv_residual():
         pools,
         lr_slopes,
         kernel_sizes,
+        dropout,
     )
 
     pool_layers = {"avg": AvgPool2d, "max": MaxPool2d}
 
-    for in_chans, out_chans, pool, slope, kernel in iterator:
+    for in_chans, out_chans, pool, slope, kernel, drop in iterator:
         block = DownBlock(
             in_chans=in_chans,
             out_chans=out_chans,
@@ -398,6 +566,7 @@ def test_down_block_contents_with_conv_residual():
             lr_slope=slope,
             kernel_size=kernel,
             block_style="conv_res",
+            dropout=drop,
         )
 
         assert isinstance(block[0], pool_layers[pool])
@@ -439,6 +608,12 @@ def test_down_block_contents_with_conv_residual():
         assert block[1][1].second_conv[1].num_features == out_chans
 
         assert isinstance(block[1][1].relu, ReLU)
+
+        # Test the dropout contents
+        assert len(block[1]) == 2 if drop == 0.0 else 3
+        if drop != 0.0:
+            assert isinstance(block[1][2], Dropout2d)
+            assert block[1][2].p == drop
 
 
 def test_up_block_upsample_contents_with_bilinear_false():
@@ -563,6 +738,47 @@ def test_up_block_with_conv_res_block():
     assert block[1][1].second_conv[0].in_channels == 321
     assert block[1][1].second_conv[0].out_channels == 321
     assert block[1][1].second_conv[1].num_features == 321
+
+
+def test_upblock_contents_with_dropout():
+    """Test the contents of ``UpBlock`` with different dropout options."""
+    # Test with double conv
+    for dropout in [0.0, 0.5]:
+        block = UpBlock(
+            in_chans=1,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            block_style="double_conv",
+            dropout=dropout,
+        )
+
+        assert len(block) == 2
+
+        assert isinstance(block[1], DoubleConvBlock)
+        assert len(block[1]) == 3 if dropout != 0.0 else 2
+
+        if dropout != 0.0:
+            assert isinstance(block[1][2], Dropout2d)
+
+    # Test with conv residual block
+    for dropout in [0.0, 0.5]:
+        block = UpBlock(
+            in_chans=1,
+            out_chans=2,
+            bilinear=False,
+            lr_slope=0.1,
+            block_style="conv_res",
+            dropout=dropout,
+        )
+
+        assert len(block) == 2
+
+        assert isinstance(block[1], ConvResBlock)
+        assert len(block[1]) == 3 if dropout != 0.0 else 2
+
+        if dropout != 0.0:
+            assert isinstance(block[1][2], Dropout2d)
 
 
 def test_up_block_contents_with_different_kernel_sizes():
@@ -719,3 +935,36 @@ def test_unet_up_block_contents_with_different_kernel_sizes():
 
         assert up_block.conv_block[0][0].kernel_size == (size, size)
         assert up_block.conv_block[1][0].kernel_size == (size, size)
+
+
+def test_unet_upblock_contents_with_dropout():
+    """Test the contents of the ``UNetUpBlock`` with dropout."""
+    # Test with double conv block
+    for dropout in [0.0, 0.5]:
+        up_block = UNetUpBlock(
+            in_chans=64,
+            out_chans=128,
+            bilinear=False,
+            lr_slope=0.12345,
+            block_style="double_conv",
+            dropout=dropout,
+        )
+
+        assert len(up_block.conv_block) == 3 if dropout != 0.0 else 2
+        if dropout != 0.0:
+            assert isinstance(up_block.conv_block[2], Dropout2d)
+
+    # Test with conv residual block
+    for dropout in [0.0, 0.5]:
+        up_block = UNetUpBlock(
+            in_chans=64,
+            out_chans=128,
+            bilinear=False,
+            lr_slope=0.12345,
+            block_style="conv_res",
+            dropout=dropout,
+        )
+
+        assert len(up_block.conv_block) == 3 if dropout != 0.0 else 2
+        if dropout != 0.0:
+            assert isinstance(up_block.conv_block[2], Dropout2d)

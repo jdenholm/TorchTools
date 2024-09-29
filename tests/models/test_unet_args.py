@@ -1,4 +1,5 @@
 """Test the arguments of the UNet model."""
+
 import pytest
 
 
@@ -202,3 +203,29 @@ def test_unet_block_style_argument_values():
     for bad_style in ["Denathor", 666]:
         with pytest.raises(ValueError):
             _ = UNet(in_chans=1, out_chans=1, block_style=bad_style)
+
+
+def test_unet_dropout_argument_types():
+    """Test the types accepted by the dropout argument."""
+    # Should work with floats
+    _ = UNet(in_chans=1, out_chans=1, dropout=0.0)
+    _ = UNet(in_chans=1, out_chans=1, dropout=0.5)
+
+    # Should break with any other type
+    with pytest.raises(TypeError):
+        _ = UNet(in_chans=1, out_chans=1, dropout=1)
+
+    with pytest.raises(TypeError):
+        _ = UNet(in_chans=1, out_chans=1, dropout=0.5j)
+
+
+def test_unet_dropout_argument_values():
+    """Test the types accepted by the dropout argument."""
+    # Should work with floats on [0.0, 1.0)
+    for dropout in [0.0, 0.5, 0.999]:
+        _ = UNet(in_chans=1, out_chans=1, dropout=dropout)
+
+    # Should break with any other values
+    for dropout in [-0.001, 1.0, 1.001]:
+        with pytest.raises(ValueError):
+            _ = UNet(in_chans=1, out_chans=1, dropout=dropout)

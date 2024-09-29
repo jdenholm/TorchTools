@@ -1,4 +1,5 @@
 """One dimensional neural network blocks."""
+
 from typing import List
 
 from torch.nn import Module, Sequential, Linear, BatchNorm1d, Dropout
@@ -9,7 +10,7 @@ from torch_tools.models._argument_processing import process_boolean_arg
 from torch_tools.models._argument_processing import process_dropout_prob
 from torch_tools.models._argument_processing import process_negative_slope_arg
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-positional-arguments
 
 
 class DenseBlock(Sequential):

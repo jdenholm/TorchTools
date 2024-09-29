@@ -1,7 +1,9 @@
 """Test the contents of `torch_tools.models._encoder_2d.Encoder2d`."""
 
+from itertools import product
+
 from torch.nn import Conv2d, BatchNorm2d, LeakyReLU, MaxPool2d, AvgPool2d
-from torch.nn import Module
+from torch.nn import Module, Dropout2d
 
 from torch_tools import Encoder2d
 
@@ -326,3 +328,38 @@ def test_encoder_2d_contents_with_conv_res_blocks():
 
         in_chans *= 2
         out_chans *= 2
+
+
+def test_encoder_2d_contents_with_dropout():
+    """Test the contents of the encoder with dropout."""
+    blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
+
+    for dropout, block_style in product([0.0, 0.12345], blocks.keys()):
+
+        encoder = Encoder2d(
+            in_chans=123,
+            start_features=64,
+            num_blocks=5,
+            pool_style="max",
+            lr_slope=0.666,
+            kernel_size=3,
+            block_style=block_style,
+            dropout=dropout,
+        )
+
+        # Test the first conv block
+        assert isinstance(encoder[0], blocks[block_style])
+        assert len(encoder[0]) == 3 if dropout != 0.0 else 2
+        if dropout != 0.0:
+            assert isinstance(encoder[0][2], Dropout2d)
+            assert encoder[0][2].p == dropout
+
+        # Test the down blocks
+        for block in list(encoder.children())[1:]:
+
+            assert isinstance(block, DownBlock)
+            assert isinstance(block[1], blocks[block_style])
+            assert len(block[1]) == 3 if dropout != 0.0 else 2
+            if dropout != 0.0:
+                assert isinstance(block[1][2], Dropout2d)
+                assert block[1][2].p == dropout
