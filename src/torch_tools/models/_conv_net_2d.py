@@ -1,4 +1,5 @@
 """2D CNN model which wraps Torchvision's ResNet and VGG models."""
+
 from typing import Dict, Any, Optional
 
 from torch import Tensor, set_grad_enabled
@@ -9,7 +10,7 @@ from torch_tools.models._torchvision_encoder_backbones_2d import get_backbone
 from torch_tools.models._adaptive_pools_2d import get_adaptive_pool
 from torch_tools.models._fc_net import FCNet
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-positional-arguments
 
 
 class ConvNet2d(Module):

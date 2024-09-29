@@ -1,4 +1,5 @@
 """Tests for the ``UNet``call method."""
+
 from itertools import product
 
 from torch import rand  # pylint:disable=no-name-in-module
@@ -17,8 +18,9 @@ def test_unet_call():
     pools = ["avg", "max"]
     bilinear = [True, False]
     lr_slope = [0.0, 0.1]
-    kernel_size = [3, 5]
+    kernel_size = [1, 3]
     blocks = ["conv_res", "double_conv"]
+    dropout = [0.0, 0.5]
 
     iterator = product(
         in_chans,
@@ -30,9 +32,10 @@ def test_unet_call():
         lr_slope,
         kernel_size,
         blocks,
+        dropout,
     )
 
-    for ins, outs, feats, layers, pool, bilin, slope, size, style in iterator:
+    for ins, outs, feats, layers, pool, bilin, slope, size, style, drop in iterator:
         model = UNet(
             in_chans=ins,
             out_chans=outs,
@@ -43,6 +46,7 @@ def test_unet_call():
             lr_slope=slope,
             kernel_size=size,
             block_style=style,
+            dropout=drop,
         )
 
         assert model(rand(10, ins, 25, 50)).shape == (10, outs, 25, 50)

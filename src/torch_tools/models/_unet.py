@@ -12,6 +12,7 @@ from torch_tools.models._argument_processing import (
     process_negative_slope_arg,
     process_2d_block_style_arg,
     process_boolean_arg,
+    process_dropout_prob,
 )
 
 from torch_tools.models._blocks_2d import (
@@ -22,7 +23,7 @@ from torch_tools.models._blocks_2d import (
 )
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-positional-arguments
 
 
 class UNet(Module):
@@ -53,6 +54,9 @@ class UNet(Module):
     block_style : str
         Type of convolutional blocks to use: ``"double_conv"`` or
         ``"conv_res"``.
+    dropout : float, optional
+        The dropout probability to apply at the output of each convolutional
+        block.
 
 
     Examples
@@ -82,6 +86,7 @@ class UNet(Module):
         lr_slope: float = 0.1,
         kernel_size: int = 3,
         block_style: str = "double_conv",
+        dropout: float = 0.25,
     ):
         """Build `UNet`."""
         super().__init__()
@@ -92,6 +97,7 @@ class UNet(Module):
             process_negative_slope_arg(lr_slope),
             process_2d_kernel_size(kernel_size),
             process_2d_block_style_arg(block_style),
+            process_dropout_prob(dropout),
         )
 
         self.down_blocks = self._get_down_blocks(
@@ -101,6 +107,7 @@ class UNet(Module):
             process_negative_slope_arg(lr_slope),
             process_2d_kernel_size(kernel_size),
             process_2d_block_style_arg(block_style),
+            process_dropout_prob(dropout),
         )
 
         self.up_blocks = self._get_up_blocks(
@@ -110,6 +117,7 @@ class UNet(Module):
             process_negative_slope_arg(lr_slope),
             process_2d_kernel_size(kernel_size),
             process_2d_block_style_arg(block_style),
+            process_dropout_prob(dropout),
         )
 
         self.out_conv = Conv2d(
@@ -126,6 +134,7 @@ class UNet(Module):
         lr_slope: float,
         kernel_size: int,
         block_style: str,
+        dropout: float,
     ) -> Module:
         """Return the UNet's input block.
 
@@ -141,6 +150,8 @@ class UNet(Module):
             Length of the square convolutional kernel.
         block_style : str
             The style of the block.
+        dropout : float
+            The dropout probability to apply at the block's output.
 
         Returns
         -------
@@ -154,6 +165,7 @@ class UNet(Module):
                 out_chans=features_start,
                 lr_slope=lr_slope,
                 kernel_size=kernel_size,
+                dropout=dropout,
             )
         else:
             block = ConvResBlock(
@@ -161,6 +173,7 @@ class UNet(Module):
                 out_chans=features_start,
                 lr_slope=lr_slope,
                 kernel_size=kernel_size,
+                dropout=dropout,
             )
 
         return block
@@ -173,6 +186,7 @@ class UNet(Module):
         lr_slope: float,
         kernel_size: int,
         block_style: str,
+        dropout: float,
     ) -> ModuleList:
         """Stack the downsampling blocks in a `ModuleList`.
 
@@ -192,6 +206,8 @@ class UNet(Module):
             ``Conv2d`` layers. Should be a positive, odd, int.
         block_style : str
             Type of convolutional block to use.
+        dropout : float
+            The dropout probability to apply at the output of each block.
 
         Returns
         -------
@@ -210,6 +226,7 @@ class UNet(Module):
                     lr_slope,
                     kernel_size=kernel_size,
                     block_style=block_style,
+                    dropout=dropout,
                 )
             )
             chans *= 2
@@ -224,6 +241,7 @@ class UNet(Module):
         lr_slope: float,
         kernel_size: int,
         block_style: str,
+        dropout: float,
     ) -> ModuleList:
         """Stack the upsampling blocks in a ``ModuleList``.
 
@@ -243,6 +261,8 @@ class UNet(Module):
             ``Conv2d`` layers. Should be a positive, odd, int.
         block_style : str
             Style of convolutional blocks to use.
+        dropout : float
+            Dropout probability to apply at the output of each block.
 
         Returns
         -------
@@ -261,6 +281,7 @@ class UNet(Module):
                     lr_slope,
                     kernel_size=kernel_size,
                     block_style=block_style,
+                    dropout=dropout,
                 )
             )
             chans //= 2
