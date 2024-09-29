@@ -1,4 +1,5 @@
 """A fully connected neural network model."""
+
 from typing import Optional, Tuple, Union, List
 
 from torch.nn import Module, Sequential
@@ -7,7 +8,7 @@ from torch_tools.models._blocks_1d import DenseBlock, InputBlock
 
 from torch_tools.models._argument_processing import process_hidden_sizes
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments, too-many-positional-arguments
 
 
 class FCNet(Sequential):

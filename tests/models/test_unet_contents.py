@@ -1,8 +1,11 @@
 """Test the contents of the ``UNet``."""
+
 from itertools import product
 
 from torch.nn import Module, LeakyReLU, Conv2d, AvgPool2d, MaxPool2d
 from torch.nn import ConvTranspose2d, Sequential, Upsample, BatchNorm2d
+from torch.nn import Dropout2d
+
 
 from torch_tools import UNet
 from torch_tools.models._blocks_2d import (
@@ -472,3 +475,85 @@ def test_unet_up_blocks_contents_with_conv_res_blocks():
 
         in_chans //= 2
         out_chans //= 2
+
+
+def test_unet_first_conv_contents_with_dropout():
+    """Test the contents of the first conv block with and without dropout."""
+    for dropout in [0.0, 0.12345]:
+
+        model = UNet(
+            in_chans=1,
+            out_chans=2,
+            block_style="double_conv",
+            dropout=dropout,
+        )
+
+        assert isinstance(model.in_conv, DoubleConvBlock)
+        assert len(model.in_conv) == 3 if dropout != 0.0 else 2
+
+        if dropout != 0.0:
+            assert isinstance(model.in_conv[2], Dropout2d)
+            assert model.in_conv[2].p == dropout
+
+    for dropout in [0.0, 0.12345]:
+
+        model = UNet(
+            in_chans=1,
+            out_chans=2,
+            block_style="conv_res",
+            dropout=dropout,
+        )
+
+        assert isinstance(model.in_conv, ConvResBlock)
+        assert len(model.in_conv) == 3 if dropout != 0.0 else 2
+
+        if dropout != 0.0:
+            assert isinstance(model.in_conv[2], Dropout2d)
+            assert model.in_conv[2].p == dropout
+
+
+def test_unet_down_blocks_contents_with_dropout():
+    """Test the contents of the down blocks with dropout."""
+    blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
+
+    for block_type, dropout in product(blocks.keys(), [0.0, 0.12345]):
+
+        model = UNet(
+            in_chans=1,
+            out_chans=2,
+            block_style=block_type,
+            dropout=dropout,
+        )
+
+        for block in model.down_blocks:
+
+            assert isinstance(block[1], blocks[block_type])
+            assert len(block[1]) == 3 if dropout != 0.0 else 2
+
+            if dropout != 0.0:
+                assert isinstance(block[1][2], Dropout2d)
+                assert block[1][2].p == dropout
+
+
+def test_unet_up_blocks_with_dropout():
+    """Test the contents of the up blocks with dropout."""
+    blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
+
+    for block_type, dropout in product(blocks.keys(), [0.0, 0.12345]):
+
+        model = UNet(
+            in_chans=1,
+            out_chans=2,
+            block_style=block_type,
+            dropout=dropout,
+        )
+
+        for block in model.up_blocks:
+
+            assert isinstance(block, UNetUpBlock)
+            assert isinstance(block.conv_block, blocks[block_type])
+
+            assert len(block.conv_block) == 3 if dropout != 0.0 else 2
+            if dropout != 0.0:
+                assert isinstance(block.conv_block[2], Dropout2d)
+                assert block.conv_block[2].p == dropout

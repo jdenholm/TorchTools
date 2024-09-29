@@ -1,4 +1,8 @@
-## Version0.11.1
+## Version 0.12.0
+  - Added dropout option to all of the 2d conv blocks.
+  - Added dropout to ``UNet``, ``AutoEncoder2d`` and ``VAE2d``.
+
+## Version 0.11.1
   - Updated the ``UNet``'s docstring.
 
 ## Version 0.11.0

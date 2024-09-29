@@ -1,6 +1,9 @@
 """Test the contents of ``VAE2d``."""
 
+from itertools import product
+
 from torch.nn import Module, Conv2d, LeakyReLU, BatchNorm2d, Sequential
+from torch.nn import Dropout2d
 
 from torch_tools import VAE2d, FCNet
 from torch_tools.models._blocks_2d import DownBlock, ConvBlock, ConvResBlock
@@ -13,22 +16,22 @@ def test_number_of_blocks_in_encoder_and_decoder():
     model = VAE2d(
         in_chans=3,
         out_chans=3,
-        input_dims=(256, 256),
-        num_layers=7,
+        input_dims=(64, 64),
+        num_layers=5,
         start_features=8,
     )
-    assert len(model.encoder) == 7
-    assert len(model.decoder) == 7
+    assert len(model.encoder) == 5
+    assert len(model.decoder) == 5
 
     model = VAE2d(
         in_chans=3,
         out_chans=3,
-        input_dims=(512, 512),
-        num_layers=8,
+        input_dims=(64, 64),
+        num_layers=3,
         start_features=8,
     )
-    assert len(model.encoder) == 8
-    assert len(model.decoder) == 8
+    assert len(model.encoder) == 3
+    assert len(model.decoder) == 3
 
 
 def test_mean_net_in_feats():
@@ -37,12 +40,12 @@ def test_mean_net_in_feats():
     model = VAE2d(
         in_chans=3,
         out_chans=3,
-        input_dims=(256, 256),
-        num_layers=7,
+        input_dims=(32, 32),
+        num_layers=4,
         start_features=8,
     )
 
-    assert model.mean_net[0][0].in_features == 8192
+    assert model.mean_net[0][0].in_features == 1024
 
 
 def test_std_net_in_feats():
@@ -51,12 +54,12 @@ def test_std_net_in_feats():
     model = VAE2d(
         in_chans=3,
         out_chans=3,
-        input_dims=(256, 256),
-        num_layers=7,
+        input_dims=(32, 32),
+        num_layers=3,
         start_features=8,
     )
 
-    assert model.var_net[0][0].in_features == 8192
+    assert model.var_net[0][0].in_features == 2048
 
 
 def test_mean_net_out_feats():
@@ -65,12 +68,12 @@ def test_mean_net_out_feats():
     model = VAE2d(
         in_chans=3,
         out_chans=3,
-        input_dims=(256, 256),
-        num_layers=7,
+        input_dims=(64, 64),
+        num_layers=6,
         start_features=8,
     )
 
-    assert model.mean_net[0][0].out_features == 8192
+    assert model.mean_net[0][0].out_features == 1024
 
 
 def test_mean_net_out_feats_with_max_down_feats():
@@ -94,12 +97,12 @@ def test_std_net_out_feats():
     model = VAE2d(
         in_chans=3,
         out_chans=3,
-        input_dims=(256, 256),
-        num_layers=7,
+        input_dims=(32, 32),
+        num_layers=5,
         start_features=8,
     )
 
-    assert model.var_net[0][0].out_features == 8192
+    assert model.var_net[0][0].out_features == 512
 
 
 def test_std_net_out_feats_with_max_down_feats():
@@ -135,11 +138,11 @@ def test_vae_2d_contents_with_different_max_feats():
 
             print(model)
 
-    for max_feats in [None, 128, 256]:
+    for max_feats in [None, 32, 64]:
         model = VAE2d(
             in_chans=3,
             out_chans=3,
-            start_features=64,
+            start_features=16,
             input_dims=(64, 64),
             num_layers=5,
             lr_slope=0.666,
@@ -172,7 +175,7 @@ def test_vae_2d_contents_with_different_min_up_feats():
         model = VAE2d(
             in_chans=3,
             out_chans=3,
-            start_features=64,
+            start_features=32,
             input_dims=(64, 64),
             num_layers=5,
             lr_slope=0.666,
@@ -188,15 +191,15 @@ def test_vae_2d_encoder_contents_with_conv_res_blocks():
     model = VAE2d(
         in_chans=3,
         out_chans=3,
-        start_features=32,
-        input_dims=(64, 64),
+        start_features=8,
+        input_dims=(32, 32),
         block_style="conv_res",
         lr_slope=0.123,
     )
 
     encoder = model.encoder
 
-    in_chans, out_chans = 32, 64
+    in_chans, out_chans = 8, 16
 
     for block in list(encoder.children())[1:]:
         assert isinstance(block, DownBlock)
@@ -240,15 +243,15 @@ def test_vae_2d_encoder_contents_with_double_conv_blocks():
     model = VAE2d(
         in_chans=3,
         out_chans=3,
-        start_features=32,
-        input_dims=(64, 64),
+        start_features=16,
+        input_dims=(32, 32),
         block_style="double_conv",
         lr_slope=0.123,
     )
 
     encoder = model.encoder
 
-    in_chans, out_chans = 32, 64
+    in_chans, out_chans = 16, 32
 
     for block in list(encoder.children())[1:]:
         assert isinstance(block, DownBlock)
@@ -282,8 +285,8 @@ def test_vae_2d_decoder_contents_with_double_conv_blocks():
     model = VAE2d(
         in_chans=3,
         out_chans=3,
-        start_features=32,
-        input_dims=(64, 64),
+        start_features=8,
+        input_dims=(32, 32),
         block_style="double_conv",
         lr_slope=0.123,
         num_layers=3,
@@ -291,7 +294,7 @@ def test_vae_2d_decoder_contents_with_double_conv_blocks():
 
     decoder = model.decoder
 
-    in_chans, out_chans = 32 * (2**2), 32 * (2**1)
+    in_chans, out_chans = 8 * (2**2), 8 * (2**1)
 
     for block in list(decoder.children())[:-1]:
         assert isinstance(block, UpBlock)
@@ -325,8 +328,8 @@ def test_vae_2d_decoder_contents_with_conv_res_blocks():
     model = VAE2d(
         in_chans=3,
         out_chans=3,
-        start_features=32,
-        input_dims=(64, 64),
+        start_features=8,
+        input_dims=(32, 32),
         block_style="conv_res",
         lr_slope=0.123,
         num_layers=3,
@@ -334,7 +337,7 @@ def test_vae_2d_decoder_contents_with_conv_res_blocks():
 
     decoder = model.decoder
 
-    in_chans, out_chans = 32 * (2**2), 32 * (2**1)
+    in_chans, out_chans = 8 * (2**2), 8 * (2**1)
 
     for block in list(decoder.children())[:-1]:
         assert isinstance(block, UpBlock)
@@ -405,3 +408,68 @@ def test_vae_contents_with_conv_mean_var():
     assert isinstance(model.mean_net, Sequential)
     assert isinstance(model.mean_net[0], DoubleConvBlock)
     assert isinstance(model.mean_net[1], Conv2d)
+
+
+def test_vae_encoder_contents_with_dropout():
+    """Test the contents of the encoder with dropout."""
+    blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
+
+    for block_style, dropout in product(blocks.keys(), [0.0, 0.666]):
+
+        encoder = VAE2d(
+            in_chans=3,
+            out_chans=3,
+            start_features=8,
+            input_dims=(64, 64),
+            block_style=block_style,
+            lr_slope=0.123,
+            num_layers=3,
+            mean_var_nets="linear",
+            dropout=dropout,
+        ).encoder
+
+        # Test the first conv block
+        assert isinstance(encoder[0], blocks[block_style])
+        assert len(encoder[0]) == 3 if dropout != 0.0 else 2
+        if dropout != 0.0:
+            assert isinstance(encoder[0][2], Dropout2d)
+            assert encoder[0][2].p == dropout
+
+        # Test the down blocks
+        for block in list(encoder.children())[1:]:
+
+            assert isinstance(block, DownBlock)
+            assert isinstance(block[1], blocks[block_style])
+            assert len(block[1]) == 3 if dropout != 0.0 else 2
+            if dropout != 0.0:
+                assert isinstance(block[1][2], Dropout2d)
+                assert block[1][2].p == dropout
+
+
+def test_vae_decoder_contents_with_dropout():
+    """Test the contents of the decoder with dropout."""
+    blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
+
+    for block_style, dropout in product(blocks.keys(), [0.0, 0.666]):
+
+        decoder = VAE2d(
+            in_chans=3,
+            out_chans=3,
+            start_features=8,
+            input_dims=(64, 64),
+            block_style=block_style,
+            lr_slope=0.123,
+            num_layers=3,
+            mean_var_nets="linear",
+            dropout=dropout,
+        ).decoder
+
+        for block in list(decoder.children())[:-1]:
+
+            assert isinstance(block, UpBlock)
+            assert isinstance(block[1], blocks[block_style])
+
+            assert len(block[1]) == 3 if dropout != 0.0 else 2
+            if dropout != 0.0:
+                assert isinstance(block[1][2], Dropout2d)
+                assert block[1][2].p == dropout

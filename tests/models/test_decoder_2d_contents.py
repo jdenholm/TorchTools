@@ -1,7 +1,9 @@
 """Tests for the contents of `torch_tools.models._decoder_2d.Decoder_2d`."""
 
+from itertools import product
+
 from torch.nn import Conv2d, ConvTranspose2d, Sequential, Upsample
-from torch.nn import BatchNorm2d, LeakyReLU
+from torch.nn import BatchNorm2d, LeakyReLU, Dropout2d
 
 from torch_tools import Decoder2d
 from torch_tools.models._blocks_2d import UpBlock, DoubleConvBlock, ConvBlock
@@ -435,3 +437,31 @@ def test_contents_with_double_conv_res_block():
 
         in_chans //= 2
         out_chans //= 2
+
+
+def test_contents_with_dropout():
+    """Test the contents of the decoder with dropout."""
+    blocks = {"double_conv": DoubleConvBlock, "conv_res": ConvResBlock}
+
+    for block_style, dropout in product(blocks.keys(), [0.0, 0.654321]):
+
+        model = Decoder2d(
+            32,
+            1,
+            4,
+            True,
+            0.321,
+            3,
+            block_style=block_style,
+            dropout=dropout,
+        )
+
+        for block in list(model.children())[:-1]:
+
+            assert isinstance(block, UpBlock)
+            assert isinstance(block[1], blocks[block_style])
+
+            assert len(block[1]) == 3 if dropout != 0.0 else 2
+            if dropout != 0.0:
+                assert isinstance(block[1][2], Dropout2d)
+                assert block[1][2].p == dropout

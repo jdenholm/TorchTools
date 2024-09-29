@@ -12,8 +12,9 @@ from torch_tools.models._argument_processing import process_negative_slope_arg
 from torch_tools.models._argument_processing import process_2d_kernel_size
 from torch_tools.models._argument_processing import process_optional_feats_arg
 from torch_tools.models._argument_processing import process_2d_block_style_arg
+from torch_tools.models._argument_processing import process_dropout_prob
 
-# pylint: disable=too-many-arguments
+# pylint: disable=too-many-arguments,too-many-positional-arguments
 
 
 class Decoder2d(Sequential):
@@ -40,6 +41,8 @@ class Decoder2d(Sequential):
         produce.
     block_style : str, optional
         Style of decoding block to use: ``"conv_block"`` or ``"conv_res"``.
+    dropout : float, optional
+        Dropout probability to apply at the output of each block.
 
     Examples
     --------
@@ -65,6 +68,7 @@ class Decoder2d(Sequential):
         kernel_size: int,
         min_up_feats: Optional[int] = None,
         block_style: str = "double_conv",
+        dropout: float = 0.0,
     ):
         """Build `Decoder`."""
         super().__init__(
@@ -75,6 +79,7 @@ class Decoder2d(Sequential):
                 process_negative_slope_arg(lr_slope),
                 process_2d_kernel_size(kernel_size),
                 process_2d_block_style_arg(block_style),
+                process_dropout_prob(dropout),
                 min_feats=process_optional_feats_arg(min_up_feats),
             ),
             Conv2d(
@@ -140,6 +145,7 @@ class Decoder2d(Sequential):
         lr_slope: float,
         kernel_size: int,
         block_style: str,
+        dropout: float,
         min_feats: Optional[int] = None,
     ) -> List[UpBlock]:
         """Get the upsampling blocks in a ``Sequential``.
@@ -160,6 +166,8 @@ class Decoder2d(Sequential):
             layers. Should be an odd, positive, int.
         block_style : str
             Style of decoding block to use. See class docstring.
+        dropout : float
+            Dropout probability to apply at the output of each block.
         min_feats : int, optional
             Min number of out feats the up-sampling layers can produce.
 
@@ -187,6 +195,7 @@ class Decoder2d(Sequential):
                     lr_slope,
                     kernel_size=kernel_size,
                     block_style=block_style,
+                    dropout=dropout,
                 )
             )
             chans //= 2
