@@ -143,6 +143,7 @@ class DataSet(_BaseDataset):
             `x_item` mapped to a tensor.
 
         """
+        # type: ignore
         return self._x_tfms(x_item) if self._x_tfms is not None else x_item
 
     def _apply_target_transforms(
@@ -161,6 +162,7 @@ class DataSet(_BaseDataset):
             `y_item` mapped to a tensor.
 
         """
+        # type: ignore
         return self._y_tfms(y_item) if self._y_tfms is not None else y_item
 
     def _apply_both_tfms(
