@@ -14,7 +14,7 @@ dependencies:
     - palmerpenguins
     - black
     - black-nb
-    - mypy>=0.98
+    - mypy
     - pytest
     - pydocstyle
     - pylint
