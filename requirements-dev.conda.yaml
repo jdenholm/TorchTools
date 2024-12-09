@@ -1,6 +1,6 @@
 name: torch-tools
 channels:
-  - main
+  - conda-forge
 dependencies:
   - python<3.13
   - pip
