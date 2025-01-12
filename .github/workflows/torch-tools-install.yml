@@ -24,16 +24,16 @@ jobs:
 
       - name: Install Python with conda
         run: |
-          conda install python=${{ matrix.python-version }} --name torch-tools
+          conda create -n testing python=${{ matrix.python-version }}
 
       - uses: actions/checkout@v4
       - name: Torch versions
         run: |
-          conda activate torch-tools; pip index versions torch
+          conda activate testing; pip index versions torch
 
       - name: Install TorchTools
         run: |
-          conda activate torch-tools; python -m pip install .
+          conda activate testing; python -m pip install .
 
       # - uses: actions/checkout@v4
       # - name: Torch versions
