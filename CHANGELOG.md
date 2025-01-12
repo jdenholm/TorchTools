@@ -1,6 +1,7 @@
 ## Version 0.13.0
   - Added deterministic prediction function to ``VAE2d``.
   - Updated ``VAE2d`` demo.
+  - Typo tweaks.
 
 ## Version 0.12.0
   - Added dropout option to all of the 2d conv blocks.
