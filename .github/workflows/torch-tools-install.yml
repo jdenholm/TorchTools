@@ -29,12 +29,12 @@ jobs:
       - uses: actions/checkout@v4
       - name: Torch versions
         run: |
-          pip index versions torch
+          pip3 index versions torch
 
       - uses: actions/checkout@v4
       - name: Install TorchTools
         run : |
-          pip install .
+          pip3 install .
 
 # jobs:
 #   build:
