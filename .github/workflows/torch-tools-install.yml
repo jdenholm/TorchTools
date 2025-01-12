@@ -17,23 +17,24 @@ jobs:
     steps:
       - uses: conda-incubator/setup-miniconda@v3
         with:
-          auto-update-conda: false
-          auto-activate-base: true
+          auto-update-conda: true
+          activate-environment: test-install
+          auto-activate-base: false
           python-version: ${{ matrix.python-version }}
           channels: anaconda, defaults
 
-      - name: Install Python with conda
-        run: |
-          conda create -n testing python=${{ matrix.python-version }}
+      # - name: Install Python with conda
+      #   run: |
+      #     conda create -n testing python=${{ matrix.python-version }}
 
       - uses: actions/checkout@v4
       - name: Torch versions
         run: |
-          conda init --all; conda activate testing; pip index versions torch
+          pip index versions torch
 
       - name: Install TorchTools
         run: |
-          conda init --all; conda activate testing; python -m pip install .
+          python -m pip install .
 
       # - uses: actions/checkout@v4
       # - name: Torch versions
