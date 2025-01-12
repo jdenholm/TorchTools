@@ -20,7 +20,7 @@ jobs:
           auto-update-conda: true
           auto-activate-base: true
           python-version: ${{ matrix.python-version }}
-          channels: anaconda, conda-forge, defaults
+          channels: anaconda, defaults
 
       - name: Install Python with conda
         run: |
