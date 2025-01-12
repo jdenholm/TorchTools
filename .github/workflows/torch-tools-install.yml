@@ -24,7 +24,7 @@ jobs:
 
       - name: Install Python with conda
         run: |
-          conda create -n testing python=${{ matrix.python-version }}
+          conda create -n testing python=${{ matrix.python-version }}; conda init --all
 
       - uses: actions/checkout@v4
       - name: Torch versions
