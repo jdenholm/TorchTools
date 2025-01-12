@@ -21,11 +21,13 @@ jobs:
           auto-activate-base: true
           python-version: ${{ matrix.python-version }}
           channels: anaconda, conda-forge, defaults
+
       - name: Install Python with conda
         run: |
           conda install python=${{ matrix.python-version }} --name base
 
-      - name Torch versions
+      - uses: actions/checkout@v4
+      - name: Torch versions
         run: |
           pip index versions torch
 
