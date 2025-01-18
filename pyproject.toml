@@ -13,7 +13,7 @@ authors = [
 readme = "README.md"
 license = {file = "LICENSE.md"}
 
-dependencies = ["torch>=2.2", "torchvision", "scikit-image"]
+dependencies = ["torch", "torchvision", "scikit-image"]
 
 
 [project.urls]
