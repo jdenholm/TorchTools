@@ -25,4 +25,4 @@ jobs:
       - name: Install TorchTools
         shell: bash -l {0}
         run : |
-          pip install git+https://github.com/jdenholm/TorchTools.git@dev
+          pip install git+https://github.com/jdenholm/TorchTools.git@${{ github.head_ref }}
