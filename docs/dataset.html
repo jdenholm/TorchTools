@@ -1,21 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DataSet &mdash; TorchTools 0.2.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>DataSet &mdash; TorchTools 0.13.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=30f05f40" />
+
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
+      <script src="_static/documentation_options.js?v=dc0df7c6"></script>
+      <script src="_static/doctools.js?v=92e14aea"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -50,9 +50,17 @@
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._encoder_2d">Encoder2d</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._decoder_2d">Decoder2d</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._autoencoder_2d">AutoEncoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._variational_autoencoder_2d">VAE2d</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._simple_conv_2d">SimpleConvNet2d</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">DataSet</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#torch_tools.datasets._dataset.DataSet"><code class="docutils literal notranslate"><span class="pre">DataSet</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#module-torch_tools.datasets._shapes_dataset">ShapesDataset</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#torch_tools.datasets._shapes_dataset.ShapesDataset"><code class="docutils literal notranslate"><span class="pre">ShapesDataset</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#torch_tools.datasets._shapes_dataset.ShapesDataset.target_names"><code class="docutils literal notranslate"><span class="pre">ShapesDataset.target_names</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">Misc</a></li>
@@ -86,11 +94,11 @@
            <div itemprop="articleBody">
              
   <section id="module-torch_tools.datasets._dataset">
-<span id="dataset"></span><h1>DataSet<a class="headerlink" href="#module-torch_tools.datasets._dataset" title="Permalink to this heading"></a></h1>
+<span id="dataset"></span><h1>DataSet<a class="headerlink" href="#module-torch_tools.datasets._dataset" title="Link to this heading"></a></h1>
 <p>Main dataset object for <cite>torch_tools</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="torch_tools.datasets._dataset.DataSet">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.datasets._dataset.</span></span><span class="sig-name descname"><span class="pre">DataSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">ndarray</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_tfms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Compose</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_tfms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Compose</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">both_tfms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Compose</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/datasets/_dataset.html#DataSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.datasets._dataset.DataSet" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.datasets._dataset.</span></span><span class="sig-name descname"><span class="pre">DataSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/datasets/_dataset.html#DataSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.datasets._dataset.DataSet" title="Link to this definition"></a></dt>
 <dd><p>Completely custom and highly flexible dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -108,6 +116,10 @@ Each input–target pair will be concatenated along <cite>dim=0</cite>,
 transformed, and sliced apart, in the way one would apply rotations or
 reflections to images and segmentation masks. The dimensionality
 matters!</p></li>
+<li><p><strong>mixup</strong> (<em>bool</em>) – Should we apply mixup augmentation? See the paper:
+<a class="reference external" href="https://arxiv.org/abs/1710.09412">https://arxiv.org/abs/1710.09412</a>. If <code class="docutils literal notranslate"><span class="pre">True</span></code>, we apply mixup, and the
+lambda parameter is sampled from a beta distribution with the
+parameters alpha=beta=0.4.</p></li>
 </ul>
 </dd>
 </dl>
@@ -122,6 +134,60 @@ transforms.</p></li>
 <li><p>Doing inference (just set <cite>targets=None</cite> and it yields inputs only).</p></li>
 </ul>
 </div></blockquote>
+</dd></dl>
+
+</section>
+<section id="module-torch_tools.datasets._shapes_dataset">
+<span id="shapesdataset"></span><h1>ShapesDataset<a class="headerlink" href="#module-torch_tools.datasets._shapes_dataset" title="Link to this heading"></a></h1>
+<p>Synthetic dataset object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="torch_tools.datasets._shapes_dataset.ShapesDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.datasets._shapes_dataset.</span></span><span class="sig-name descname"><span class="pre">ShapesDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/datasets/_shapes_dataset.html#ShapesDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.datasets._shapes_dataset.ShapesDataset" title="Link to this definition"></a></dt>
+<dd><p>Synthetic dataset which produces images withs spots and squares.</p>
+<p><em>Warning</em>—this dataset object is untested.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spot_prob</strong> (<em>float</em><em>, </em><em>optional</em>) – Probability of including spots in the image.</p></li>
+<li><p><strong>square_prob</strong> (<em>float</em><em>, </em><em>optional</em>) – Probability of including sqaures in the image.</p></li>
+<li><p><strong>num_spots</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of spots that will be included in the image.</p></li>
+<li><p><strong>num_squares</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of squares that will be included in the image.</p></li>
+<li><p><strong>length</strong> (<em>int</em><em>, </em><em>optional</em>) – The length of the data set.</p></li>
+<li><p><strong>image_size</strong> (<em>int</em><em>, </em><em>optional</em>) – The length of the square images.</p></li>
+<li><p><strong>input_tfms</strong> (<em>Compose</em><em>, </em><em>optional</em>) – A composition of transforms to apply to the input.</p></li>
+<li><p><strong>target_tfms</strong> (<em>Compose</em><em>, </em><em>optional</em>) – A composition of transforms to apply to the target.</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Integer seed for numpy’s default rng.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The images have white backrounds and the shapes have randomly selected
+RGB colours on [0, 1)^{3}.</p>
+<p>To get the indices of each shape, use, for example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data_set</span> <span class="o">=</span> <span class="n">ShapesDataset</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spot_index</span> <span class="o">=</span> <span class="n">data_set</span><span class="o">.</span><span class="n">target_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;spot&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">star_index</span> <span class="o">=</span> <span class="n">data_set</span><span class="o">.</span><span class="n">target_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;star&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To print the classes as a list, use</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">data_set</span><span class="o">.</span><span class="n">target_names</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py property">
+<dt class="sig sig-object py" id="torch_tools.datasets._shapes_dataset.ShapesDataset.target_names">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">target_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#torch_tools.datasets._shapes_dataset.ShapesDataset.target_names" title="Link to this definition"></a></dt>
+<dd><p>Return a list of target names order by their one-hot indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of the names of the shapes, ordered by their one-hot
+indices.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>List[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>

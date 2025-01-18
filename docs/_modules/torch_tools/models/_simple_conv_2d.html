@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>torch_tools.models._simple_conv_2d &mdash; TorchTools 0.13.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=30f05f40" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
+      <script src="../../../_static/documentation_options.js?v=dc0df7c6"></script>
+      <script src="../../../_static/doctools.js?v=92e14aea"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            TorchTools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">FCNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._conv_net_2d">ConvNet2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._unet">UNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._encoder_2d">Encoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._decoder_2d">Decoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._autoencoder_2d">AutoEncoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._variational_autoencoder_2d">VAE2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._simple_conv_2d">SimpleConvNet2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dataset.html">DataSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dataset.html#module-torch_tools.datasets._shapes_dataset">ShapesDataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc.html">Misc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../torch_utils.html">Torch utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../weight_init.html">Weight initialisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../file_utils.html">File utilities</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">TorchTools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">torch_tools.models._simple_conv_2d</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for torch_tools.models._simple_conv_2d</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;A simple two-dimensional convolutional neural network.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">set_grad_enabled</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sequential</span><span class="p">,</span> <span class="n">Flatten</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._encoder_2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Encoder2d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._adaptive_pools_2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_adaptive_pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._fc_net</span><span class="w"> </span><span class="kn">import</span> <span class="n">FCNet</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._conv_net_2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">_forbidden_args_in_dn_kwargs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._argument_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_num_feats</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._argument_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_2d_kernel_size</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._argument_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_2d_block_style_arg</span>
+
+<span class="c1"># pylint: disable=too-many-arguments, too-many-positional-arguments</span>
+
+
+<div class="viewcode-block" id="SimpleConvNet2d">
+<a class="viewcode-back" href="../../../models.html#torch_tools.models._simple_conv_2d.SimpleConvNet2d">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimpleConvNet2d</span><span class="p">(</span><span class="n">Sequential</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A very simple 2D CNN with an encoder, pool, and fully-connected layer.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_chans : int</span>
+<span class="sd">        The number of input channels.</span>
+<span class="sd">    out_feats : int</span>
+<span class="sd">        The number of output features the fully connected layer should produce.</span>
+<span class="sd">    features_start : int</span>
+<span class="sd">        The number of features the input convolutional block should produce.</span>
+<span class="sd">    num_blocks : int</span>
+<span class="sd">        The number of encoding blocks to use.</span>
+<span class="sd">    downsample_pool : str</span>
+<span class="sd">        The style of downsampling pool to use in the encoder (``&quot;avg&quot;`` or</span>
+<span class="sd">        ``&quot;max&quot;``).</span>
+<span class="sd">    adaptive_pool : str</span>
+<span class="sd">        The style of adaptive pool to use on the encoder&#39;s output (``&quot;avg&quot;``,</span>
+<span class="sd">        ``&quot;max&quot;`` or ``&quot;avg-max-concat&quot;``.)</span>
+<span class="sd">    lr_slope : float</span>
+<span class="sd">        The negative slope to use in the ``LeakyReLU`` layers.</span>
+<span class="sd">    kernel_size : int</span>
+<span class="sd">        The size of the square convolutional kernel to use in the ``Conv2d``</span>
+<span class="sd">        layers. Must be an odd, positive, int.</span>
+<span class="sd">    fc_net_kwargs : Dict[str, Any], optional</span>
+<span class="sd">        Keyword arguments for ``torch_tools.models.fc_net.FCNet`` which serves</span>
+<span class="sd">        as the classification/regression part of the model.</span>
+<span class="sd">    block_style : str, optional</span>
+<span class="sd">        Style of encoding blocks to use: choose from ``&quot;double_conv&quot;`` or</span>
+<span class="sd">        ``conv_res``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from torch_tools import SimpleConvNet2d</span>
+<span class="sd">    &gt;&gt;&gt; SimpleConvNet2d(</span>
+<span class="sd">            in_chans=3,</span>
+<span class="sd">            out_feats=128,</span>
+<span class="sd">            features_start=64,</span>
+<span class="sd">            num_blocks=4,</span>
+<span class="sd">            downsample_pool=&quot;max&quot;,</span>
+<span class="sd">            adaptive_pool=&quot;avg-max-concat&quot;,</span>
+<span class="sd">            lr_slope=0.123,</span>
+<span class="sd">            fc_net_kwards={&quot;hidden_sizes&quot;: (256, 256,)},</span>
+<span class="sd">        )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_chans</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">out_feats</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">features_start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span>
+        <span class="n">num_blocks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">downsample_pool</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span>
+        <span class="n">adaptive_pool</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;avg&quot;</span><span class="p">,</span>
+        <span class="n">lr_slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">kernel_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">fc_net_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">block_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;double_conv&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build ``SimpleConvNet2d``.&quot;&quot;&quot;</span>
+        <span class="n">encoder_feats</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_output_features</span><span class="p">(</span>
+            <span class="n">num_blocks</span><span class="p">,</span>
+            <span class="n">process_num_feats</span><span class="p">(</span><span class="n">features_start</span><span class="p">),</span>
+            <span class="n">adaptive_pool</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">fc_net_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_forbidden_args_in_dn_kwargs</span><span class="p">(</span><span class="n">fc_net_kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dn_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fc_net_kwargs</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">Encoder2d</span><span class="p">(</span>
+                <span class="n">process_num_feats</span><span class="p">(</span><span class="n">in_chans</span><span class="p">),</span>
+                <span class="n">process_num_feats</span><span class="p">(</span><span class="n">features_start</span><span class="p">),</span>
+                <span class="n">num_blocks</span><span class="p">,</span>
+                <span class="n">downsample_pool</span><span class="p">,</span>
+                <span class="n">lr_slope</span><span class="p">,</span>
+                <span class="n">process_2d_kernel_size</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">),</span>
+                <span class="n">block_style</span><span class="o">=</span><span class="n">process_2d_block_style_arg</span><span class="p">(</span><span class="n">block_style</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">get_adaptive_pool</span><span class="p">(</span>
+                <span class="n">option</span><span class="o">=</span><span class="n">adaptive_pool</span><span class="p">,</span>
+                <span class="n">output_size</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">Flatten</span><span class="p">(),</span>
+            <span class="n">FCNet</span><span class="p">(</span>
+                <span class="n">in_feats</span><span class="o">=</span><span class="n">encoder_feats</span><span class="p">,</span>
+                <span class="n">out_feats</span><span class="o">=</span><span class="n">out_feats</span><span class="p">,</span>
+                <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_dn_args</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="c1"># pylint: disable=arguments-renamed</span>
+<div class="viewcode-block" id="SimpleConvNet2d.forward">
+<a class="viewcode-back" href="../../../models.html#torch_tools.models._simple_conv_2d.SimpleConvNet2d.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">frozen_encoder</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pass ``batch`` through the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : Tensor</span>
+<span class="sd">            A mini-batch of inputs.</span>
+<span class="sd">        frozen_encoder : bool, optional</span>
+<span class="sd">            Should the encoder&#39;s weights be frozen (i.e. have no grad) during</span>
+<span class="sd">            the forward pass?</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tensor</span>
+<span class="sd">            The result of passing ``batch`` through the model.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">set_grad_enabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">frozen_encoder</span><span class="p">):</span>
+            <span class="n">encoder_out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">batch</span><span class="p">)</span>
+            <span class="n">pooled</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">](</span><span class="n">encoder_out</span><span class="p">)</span>
+            <span class="n">flat</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">](</span><span class="n">pooled</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">3</span><span class="p">](</span><span class="n">flat</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SimpleConvNet2d.get_features">
+<a class="viewcode-back" href="../../../models.html#torch_tools.models._simple_conv_2d.SimpleConvNet2d.get_features">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the features produced by the encoder and adaptive poool.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : Tensor</span>
+<span class="sd">            A mini-batch of image-like inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tensor</span>
+<span class="sd">            The features for each item in ``batch``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">feats</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">feats</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">](</span><span class="n">feats</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">](</span><span class="n">feats</span><span class="p">)</span></div>
+
+
+    <span class="n">_dn_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;hidden_sizes&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;input_bnorm&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;hidden_bnorm&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;input_dropout&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;hidden_dropout&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;negative_slope&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_num_output_features</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">num_blocks</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">features_start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">adaptive_pool_style</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the number of output features the adaptive pool will produce.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        num_blocks : int</span>
+<span class="sd">            Number of layers argument from the user.</span>
+<span class="sd">        features_start : int</span>
+<span class="sd">            Number of features produced by the first convolutional block.</span>
+<span class="sd">        adaptive_pool_style : str</span>
+<span class="sd">            The user-requested adaptive pool style.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of features the adaptive pooling layer will produce.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">feats</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">num_blocks</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">features_start</span>
+        <span class="k">return</span> <span class="n">feats</span> <span class="o">*</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">adaptive_pool_style</span> <span class="o">==</span> <span class="s2">&quot;avg-max-concat&quot;</span> <span class="k">else</span> <span class="n">feats</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, J. Denholm.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

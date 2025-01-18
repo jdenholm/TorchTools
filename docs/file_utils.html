@@ -1,21 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>File utilities &mdash; TorchTools 0.2.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>File utilities &mdash; TorchTools 0.13.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=30f05f40" />
+
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
+      <script src="_static/documentation_options.js?v=dc0df7c6"></script>
+      <script src="_static/doctools.js?v=92e14aea"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -49,8 +49,10 @@
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._encoder_2d">Encoder2d</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._decoder_2d">Decoder2d</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._autoencoder_2d">AutoEncoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._variational_autoencoder_2d">VAE2d</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._simple_conv_2d">SimpleConvNet2d</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">DataSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html#module-torch_tools.datasets._shapes_dataset">ShapesDataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">Misc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torch_utils.html">Torch utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="weight_init.html">Weight initialisation</a></li>
@@ -87,11 +89,11 @@
              
   <p>File and path utilities.</p>
 <section id="module-torch_tools.file_utils">
-<span id="file-utilities"></span><h1>File utilities<a class="headerlink" href="#module-torch_tools.file_utils" title="Permalink to this heading"></a></h1>
+<span id="file-utilities"></span><h1>File utilities<a class="headerlink" href="#module-torch_tools.file_utils" title="Link to this heading"></a></h1>
 <p>File searching and path utilities.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="torch_tools.file_utils.ls_zipfile">
-<span class="sig-prename descclassname"><span class="pre">torch_tools.file_utils.</span></span><span class="sig-name descname"><span class="pre">ls_zipfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zip_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/torch_tools/file_utils.html#ls_zipfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.file_utils.ls_zipfile" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">torch_tools.file_utils.</span></span><span class="sig-name descname"><span class="pre">ls_zipfile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zip_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/torch_tools/file_utils.html#ls_zipfile"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.file_utils.ls_zipfile" title="Link to this definition"></a></dt>
 <dd><p>List the contents of <code class="docutils literal notranslate"><span class="pre">zip_path</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -112,7 +114,7 @@ name.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="torch_tools.file_utils.traverse_directory_tree">
-<span class="sig-prename descclassname"><span class="pre">torch_tools.file_utils.</span></span><span class="sig-name descname"><span class="pre">traverse_directory_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/torch_tools/file_utils.html#traverse_directory_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.file_utils.traverse_directory_tree" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">torch_tools.file_utils.</span></span><span class="sig-name descname"><span class="pre">traverse_directory_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Path</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/torch_tools/file_utils.html#traverse_directory_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.file_utils.traverse_directory_tree" title="Link to this definition"></a></dt>
 <dd><p>Recursively list all files in <code class="docutils literal notranslate"><span class="pre">directory</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

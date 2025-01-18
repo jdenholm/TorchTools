@@ -1,0 +1,371 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>torch_tools.models._conv_net_2d &mdash; TorchTools 0.13.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=30f05f40" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
+      <script src="../../../_static/documentation_options.js?v=dc0df7c6"></script>
+      <script src="../../../_static/doctools.js?v=92e14aea"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            TorchTools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">FCNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._conv_net_2d">ConvNet2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._unet">UNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._encoder_2d">Encoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._decoder_2d">Decoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._autoencoder_2d">AutoEncoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._variational_autoencoder_2d">VAE2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._simple_conv_2d">SimpleConvNet2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dataset.html">DataSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dataset.html#module-torch_tools.datasets._shapes_dataset">ShapesDataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc.html">Misc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../torch_utils.html">Torch utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../weight_init.html">Weight initialisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../file_utils.html">File utilities</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">TorchTools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">torch_tools.models._conv_net_2d</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for torch_tools.models._conv_net_2d</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;2D CNN model which wraps Torchvision&#39;s ResNet and VGG models.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">set_grad_enabled</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">Module</span><span class="p">,</span> <span class="n">Sequential</span><span class="p">,</span> <span class="n">Flatten</span><span class="p">,</span> <span class="n">Conv2d</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._argument_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">process_num_feats</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._torchvision_encoder_backbones_2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_backbone</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._adaptive_pools_2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_adaptive_pool</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._fc_net</span><span class="w"> </span><span class="kn">import</span> <span class="n">FCNet</span>
+
+<span class="c1"># pylint: disable=too-many-arguments, too-many-positional-arguments</span>
+
+
+<div class="viewcode-block" id="ConvNet2d">
+<a class="viewcode-back" href="../../../models.html#torch_tools.models._conv_net_2d.ConvNet2d">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConvNet2d</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;CNN model which wraps Torchvision&#39;s ResNet, VGG and Mobilenet_v3 models.</span>
+
+<span class="sd">    The model contains:</span>
+<span class="sd">        — An encoder, taken from Torchvision&#39;s ResNet/VGG models.</span>
+
+<span class="sd">        — An adaptive pooling layer.</span>
+
+<span class="sd">        — A fully-connected classification/regression head.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    out_feats : int</span>
+<span class="sd">        The number of output features the model should produce (for example,</span>
+<span class="sd">        the number of classes).</span>
+<span class="sd">    in_channels : int</span>
+<span class="sd">        Number of input channels the model should take. Warning: if you don&#39;t</span>
+<span class="sd">        use three input channels, the first conv layer is overwritten, which</span>
+<span class="sd">        renders freezing the encoder pointless.</span>
+<span class="sd">    encoder_style : str, optional</span>
+<span class="sd">        The encoder option to use. The encoders are loaded from torchvision&#39;s</span>
+<span class="sd">        models. Options include all of torchvision&#39;s VGG, ResNET and MOBILENET</span>
+<span class="sd">        v3 options (i.e. ``&quot;vgg11&quot;``, ``&quot;vgg11_bn&quot;``, ``&quot;resnet18&quot;``,</span>
+<span class="sd">        ``mobilenet_v3_small`` etc.).</span>
+<span class="sd">    pretrained : bool, optional</span>
+<span class="sd">        Determines whether the encoder is initialised with Torchvision&#39;s</span>
+<span class="sd">        pretrained weights. If ``True``, the model will load Torchvision&#39;s most</span>
+<span class="sd">        up-to-date image-net-trained weights.</span>
+<span class="sd">    pool_option : str, optional</span>
+<span class="sd">        The type of adaptive pooling layer to use. Choose from ``&quot;avg&quot;``,</span>
+<span class="sd">        ``&quot;max&quot;`` or ``&quot;avg-max-concat&quot;`` (the latter simply concatenates the</span>
+<span class="sd">        former two). See ``torch_tools.models._adaptive_pools_2d`` for more</span>
+<span class="sd">        info.</span>
+<span class="sd">    fc_net_kwargs : Dict[str, Any], optional</span>
+<span class="sd">        Keyword arguments for</span>
+<span class="sd">        ``torch_tools.models.fc_net.FCNet`` which serves as the</span>
+<span class="sd">        classification/regression part of the model.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from torch_tools import ConvNet2d</span>
+<span class="sd">    &gt;&gt;&gt; model = ConvNet2d(out_feats=512,</span>
+<span class="sd">                          in_channels=3,</span>
+<span class="sd">                          encoder_style=&quot;vgg11_bn&quot;,</span>
+<span class="sd">                          pretrained=True,</span>
+<span class="sd">                          pool_style=&quot;avg-max-concat&quot;,</span>
+<span class="sd">                          fc_net_kwargs={&quot;hidden_sizes&quot;: (1024, 1024), &quot;hidden_dropout&quot;: 0.25})</span>
+
+
+<span class="sd">    Another potentially useful feature is the ability to *freeze* the encoder,</span>
+<span class="sd">    and take advantage of the available pretrained weights by doing transfer</span>
+<span class="sd">    learning.</span>
+
+<span class="sd">    &gt;&gt;&gt; from torch import rand</span>
+<span class="sd">    &gt;&gt;&gt; from torch_tools import ConvNet2d</span>
+<span class="sd">    &gt;&gt;&gt; model = ConvNet2d(out_feats=10, pretrained=True)</span>
+<span class="sd">    &gt;&gt;&gt; # Batch of 10 fake three-channel images of 256x256 pixels</span>
+<span class="sd">    &gt;&gt;&gt; mini_batch = rand(10, 3, 256, 256)</span>
+<span class="sd">    &gt;&gt;&gt; # With the encoder frozen</span>
+<span class="sd">    &gt;&gt;&gt; preds = model(mini_batch, frozen_encoder=True)</span>
+<span class="sd">    &gt;&gt;&gt; # Without the encoder frozen (default behaviour)</span>
+<span class="sd">    &gt;&gt;&gt; preds = model(mini_batch, frozen_encoder=False)</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    — Even if you load pretrained weights, but *don&#39;t* freeze the encoder, you</span>
+<span class="sd">    will likely end up finding better performance than you would by randomly</span>
+<span class="sd">    initialising the model—even if it doesn&#39;t make sense. Welcome to deep</span>
+<span class="sd">    learning.</span>
+
+<span class="sd">    — If you change the number of input channels, don&#39;t bother freezing the</span>
+<span class="sd">    encoder—the first convolutional layer is overloaded and randomly</span>
+<span class="sd">    initialised.</span>
+
+<span class="sd">    — See ``torch_tools.models._conv_net_2d.ConvNet2d`` for more info.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">out_feats</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">encoder_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;resnet34&quot;</span><span class="p">,</span>
+        <span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">pool_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;avg-max-concat&quot;</span><span class="p">,</span>
+        <span class="n">fc_net_kwargs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build `ConvNet2d`.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="p">,</span> <span class="n">num_feats</span><span class="p">,</span> <span class="n">pool_size</span> <span class="o">=</span> <span class="n">get_backbone</span><span class="p">(</span>
+            <span class="n">encoder_style</span><span class="p">,</span>
+            <span class="n">pretrained</span><span class="o">=</span><span class="n">pretrained</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_replace_first_conv_if_necessary</span><span class="p">(</span><span class="n">process_num_feats</span><span class="p">(</span><span class="n">in_channels</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">get_adaptive_pool</span><span class="p">(</span><span class="n">pool_style</span><span class="p">,</span> <span class="n">pool_size</span><span class="p">),</span>
+            <span class="n">Flatten</span><span class="p">(),</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">fc_net_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_forbidden_args_in_dn_kwargs</span><span class="p">(</span><span class="n">fc_net_kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_dn_args</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fc_net_kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dense_layers</span> <span class="o">=</span> <span class="n">FCNet</span><span class="p">(</span>
+            <span class="mi">2</span> <span class="o">*</span> <span class="n">num_feats</span> <span class="k">if</span> <span class="n">pool_style</span> <span class="o">==</span> <span class="s2">&quot;avg-max-concat&quot;</span> <span class="k">else</span> <span class="n">num_feats</span><span class="p">,</span>
+            <span class="n">process_num_feats</span><span class="p">(</span><span class="n">out_feats</span><span class="p">),</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_dn_args</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">_dn_args</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
+    <span class="n">_dn_args</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;hidden_sizes&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;input_bnorm&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;hidden_bnorm&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;input_dropout&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;hidden_dropout&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;negative_slope&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_replace_first_conv_if_necessary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_channels</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Replace the first conv layer if input channels don&#39;t match.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        in_channels : int</span>
+<span class="sd">            The number of input channels requested by the user.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="o">.</span><span class="n">named_children</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">Conv2d</span><span class="p">):</span>
+                <span class="n">config</span> <span class="o">=</span> <span class="n">_conv_config</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;in_channels&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">in_channels</span><span class="p">:</span>
+                    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;in_channels&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">in_channels</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">Conv2d</span><span class="p">(</span><span class="o">**</span><span class="n">config</span><span class="p">))</span>  <span class="c1"># type:ignore</span>
+                <span class="k">break</span>
+
+<div class="viewcode-block" id="ConvNet2d.forward">
+<a class="viewcode-back" href="../../../models.html#torch_tools.models._conv_net_2d.ConvNet2d.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">frozen_encoder</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pass `batch` through the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : Tensor</span>
+<span class="sd">            A mini-batch of inputs with shape (N, C, H, W), where N is the</span>
+<span class="sd">            batch-size, C the number of channels and (H, W) the input</span>
+<span class="sd">            size.</span>
+<span class="sd">        frozen_encoder : bool, optional</span>
+<span class="sd">            If ``True``, the gradients are disabled in the encoder. If</span>
+<span class="sd">            ``False``, the gradients are enabled in the encoder.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tensor</span>
+<span class="sd">            The result of passing ``batch`` through the model.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">set_grad_enabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">frozen_encoder</span><span class="p">):</span>
+            <span class="n">encoder_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">pool_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">(</span><span class="n">encoder_out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dense_layers</span><span class="p">(</span><span class="n">pool_out</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConvNet2d.get_features">
+<a class="viewcode-back" href="../../../models.html#torch_tools.models._conv_net_2d.ConvNet2d.get_features">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_features</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the features produced by the encoder and pool.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : Tensor</span>
+<span class="sd">            A mini-batch of image-like inputs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tensor</span>
+<span class="sd">            The encoded features for the items in ``batch``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">encoder_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">backbone</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">(</span><span class="n">encoder_out</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_conv_config</span><span class="p">(</span><span class="n">conv</span><span class="p">:</span> <span class="n">Conv2d</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a dictionary with the `conv`&#39;s instantiation arguments.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    conv : Conv2d</span>
+<span class="sd">        Two-dimensional convolutional layer.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;in_channels&quot;</span><span class="p">:</span> <span class="n">conv</span><span class="o">.</span><span class="n">in_channels</span><span class="p">,</span>
+        <span class="s2">&quot;out_channels&quot;</span><span class="p">:</span> <span class="n">conv</span><span class="o">.</span><span class="n">out_channels</span><span class="p">,</span>
+        <span class="s2">&quot;kernel_size&quot;</span><span class="p">:</span> <span class="n">conv</span><span class="o">.</span><span class="n">kernel_size</span><span class="p">,</span>
+        <span class="s2">&quot;stride&quot;</span><span class="p">:</span> <span class="n">conv</span><span class="o">.</span><span class="n">stride</span><span class="p">,</span>
+        <span class="s2">&quot;padding&quot;</span><span class="p">:</span> <span class="n">conv</span><span class="o">.</span><span class="n">padding</span><span class="p">,</span>
+        <span class="s2">&quot;dilation&quot;</span><span class="p">:</span> <span class="n">conv</span><span class="o">.</span><span class="n">dilation</span><span class="p">,</span>
+        <span class="s2">&quot;groups&quot;</span><span class="p">:</span> <span class="n">conv</span><span class="o">.</span><span class="n">groups</span><span class="p">,</span>
+        <span class="s2">&quot;bias&quot;</span><span class="p">:</span> <span class="ow">not</span> <span class="n">conv</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="s2">&quot;padding_mode&quot;</span><span class="p">:</span> <span class="n">conv</span><span class="o">.</span><span class="n">padding_mode</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_forbidden_args_in_dn_kwargs</span><span class="p">(</span><span class="n">user_dn_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check there are no forbidden arguments in ``user_dn_kwargs``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    user_dn_kwargs : Dict[str, Any]</span>
+<span class="sd">        The dense net kwargs supplied by the user.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If ``in_feats`` is in ``self._dn_args``, the user has tried to</span>
+<span class="sd">        set the number of input features to the fully connected final</span>
+<span class="sd">        layer, which is forbidden.</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If ``out_feats`` is in ``self._dn_args``, the user has tried to</span>
+<span class="sd">        set the number of input features to the fully connected final</span>
+<span class="sd">        layer, which is forbidden.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;in_feats&quot;</span> <span class="ow">in</span> <span class="n">user_dn_kwargs</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Do not supply &#39;in_feats&#39; in &#39;fc_net_kwargs&#39;. This &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;quantity is determined by the choice of encoder.&quot;</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;out_feats&quot;</span> <span class="ow">in</span> <span class="n">user_dn_kwargs</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Do not supply &#39;out_feats&#39; in &#39;fc_net_kwargs&#39;. Instead &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;set this quanitiy using the &#39;out_feats&#39; argument of &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s2">&quot;&#39;ConvNet2d&#39; at instantiation.&quot;</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, J. Denholm.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

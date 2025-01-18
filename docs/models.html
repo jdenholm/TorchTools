@@ -1,21 +1,21 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FCNet &mdash; TorchTools 0.2.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>FCNet &mdash; TorchTools 0.13.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=30f05f40" />
+
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
+      <script src="_static/documentation_options.js?v=dc0df7c6"></script>
+      <script src="_static/doctools.js?v=92e14aea"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -51,6 +51,7 @@
 <li class="toctree-l1"><a class="reference internal" href="#module-torch_tools.models._conv_net_2d">ConvNet2d</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#torch_tools.models._conv_net_2d.ConvNet2d"><code class="docutils literal notranslate"><span class="pre">ConvNet2d</span></code></a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#torch_tools.models._conv_net_2d.ConvNet2d.forward"><code class="docutils literal notranslate"><span class="pre">ConvNet2d.forward()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#torch_tools.models._conv_net_2d.ConvNet2d.get_features"><code class="docutils literal notranslate"><span class="pre">ConvNet2d.get_features()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -77,11 +78,28 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="#module-torch_tools.models._variational_autoencoder_2d">VAE2d</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#torch_tools.models._variational_autoencoder_2d.VAE2d"><code class="docutils literal notranslate"><span class="pre">VAE2d</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.decode"><code class="docutils literal notranslate"><span class="pre">VAE2d.decode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.deterministic_pred"><code class="docutils literal notranslate"><span class="pre">VAE2d.deterministic_pred()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.encode"><code class="docutils literal notranslate"><span class="pre">VAE2d.encode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.forward"><code class="docutils literal notranslate"><span class="pre">VAE2d.forward()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.get_features"><code class="docutils literal notranslate"><span class="pre">VAE2d.get_features()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.kl_divergence"><code class="docutils literal notranslate"><span class="pre">VAE2d.kl_divergence()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="#module-torch_tools.models._simple_conv_2d">SimpleConvNet2d</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#torch_tools.models._simple_conv_2d.SimpleConvNet2d"><code class="docutils literal notranslate"><span class="pre">SimpleConvNet2d</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#torch_tools.models._simple_conv_2d.SimpleConvNet2d"><code class="docutils literal notranslate"><span class="pre">SimpleConvNet2d</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#torch_tools.models._simple_conv_2d.SimpleConvNet2d.forward"><code class="docutils literal notranslate"><span class="pre">SimpleConvNet2d.forward()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#torch_tools.models._simple_conv_2d.SimpleConvNet2d.get_features"><code class="docutils literal notranslate"><span class="pre">SimpleConvNet2d.get_features()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">DataSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html#module-torch_tools.datasets._shapes_dataset">ShapesDataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">Misc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torch_utils.html">Torch utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="weight_init.html">Weight initialisation</a></li>
@@ -114,11 +132,11 @@
              
   <p>All models inherit from <code class="docutils literal notranslate"><span class="pre">torch.nn.Module</span></code>—either directly or through <code class="docutils literal notranslate"><span class="pre">torch.nn.Sequential</span></code>—and therefore function like standard <a class="reference external" href="https://pytorch.org/">PyTorch</a> models.</p>
 <section id="module-torch_tools.models._fc_net">
-<span id="fcnet"></span><h1>FCNet<a class="headerlink" href="#module-torch_tools.models._fc_net" title="Permalink to this heading"></a></h1>
+<span id="fcnet"></span><h1>FCNet<a class="headerlink" href="#module-torch_tools.models._fc_net" title="Link to this heading"></a></h1>
 <p>A fully connected neural network model.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="torch_tools.models._fc_net.FCNet">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._fc_net.</span></span><span class="sig-name descname"><span class="pre">FCNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_feats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_feats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_sizes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_bnorm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_dropout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hidden_bnorm</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negative_slope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_fc_net.html#FCNet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._fc_net.FCNet" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._fc_net.</span></span><span class="sig-name descname"><span class="pre">FCNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_fc_net.html#FCNet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._fc_net.FCNet" title="Link to this definition"></a></dt>
 <dd><p>Fully-connected neural network.</p>
 <p>An optional input block, which applies batch normalisation and dropout
 to the inputs, followed by a series of fully-connected blocks consisting
@@ -139,7 +157,7 @@ final <code class="docutils literal notranslate"><span class="pre">Linear</span>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch_tools</span> <span class="kn">import</span> <span class="n">DenseNetwork</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">FCNet</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">FCNet</span><span class="p">(</span><span class="n">in_feats</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span>
 <span class="go">          out_feats=2,</span>
 <span class="go">          hidden_sizes=(128, 64, 32),</span>
@@ -154,12 +172,12 @@ final <code class="docutils literal notranslate"><span class="pre">Linear</span>
 
 </section>
 <section id="module-torch_tools.models._conv_net_2d">
-<span id="convnet2d"></span><h1>ConvNet2d<a class="headerlink" href="#module-torch_tools.models._conv_net_2d" title="Permalink to this heading"></a></h1>
+<span id="convnet2d"></span><h1>ConvNet2d<a class="headerlink" href="#module-torch_tools.models._conv_net_2d" title="Link to this heading"></a></h1>
 <p>2D CNN model which wraps Torchvision’s ResNet and VGG models.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="torch_tools.models._conv_net_2d.ConvNet2d">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._conv_net_2d.</span></span><span class="sig-name descname"><span class="pre">ConvNet2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_feats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_channels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'resnet34'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pretrained</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'avg-max-concat'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fc_net_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_conv_net_2d.html#ConvNet2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._conv_net_2d.ConvNet2d" title="Permalink to this definition"></a></dt>
-<dd><p>CNN model which wraps Torchvision’s ResNet and VGG models.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._conv_net_2d.</span></span><span class="sig-name descname"><span class="pre">ConvNet2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_conv_net_2d.html#ConvNet2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._conv_net_2d.ConvNet2d" title="Link to this definition"></a></dt>
+<dd><p>CNN model which wraps Torchvision’s ResNet, VGG and Mobilenet_v3 models.</p>
 <dl>
 <dt>The model contains:</dt><dd><p>— An encoder, taken from Torchvision’s ResNet/VGG models.</p>
 <p>— An adaptive pooling layer.</p>
@@ -174,9 +192,10 @@ the number of classes).</p></li>
 <li><p><strong>in_channels</strong> (<em>int</em>) – Number of input channels the model should take. Warning: if you don’t
 use three input channels, the first conv layer is overwritten, which
 renders freezing the encoder pointless.</p></li>
-<li><p><strong>encoder_option</strong> (<em>str</em><em>, </em><em>optional</em>) – The encoder option to use. The encoders are loaded from torchvision’s
-models. Options include all of torchvision’s VGG and ResNET options
-(i.e. <code class="docutils literal notranslate"><span class="pre">&quot;vgg11&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;vgg11_bn&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;resnet18&quot;</span></code>, etc.).</p></li>
+<li><p><strong>encoder_style</strong> (<em>str</em><em>, </em><em>optional</em>) – The encoder option to use. The encoders are loaded from torchvision’s
+models. Options include all of torchvision’s VGG, ResNET and MOBILENET
+v3 options (i.e. <code class="docutils literal notranslate"><span class="pre">&quot;vgg11&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;vgg11_bn&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;resnet18&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">mobilenet_v3_small</span></code> etc.).</p></li>
 <li><p><strong>pretrained</strong> (<em>bool</em><em>, </em><em>optional</em>) – Determines whether the encoder is initialised with Torchvision’s
 pretrained weights. If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the model will load Torchvision’s most
 up-to-date image-net-trained weights.</p></li>
@@ -191,7 +210,7 @@ classification/regression part of the model.</p></li>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch_tools</span> <span class="kn">import</span> <span class="n">ConvNet2d</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConvNet2d</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ConvNet2d</span><span class="p">(</span><span class="n">out_feats</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span>
 <span class="go">                      in_channels=3,</span>
 <span class="go">                      encoder_style=&quot;vgg11_bn&quot;,</span>
@@ -203,8 +222,8 @@ classification/regression part of the model.</p></li>
 <p>Another potentially useful feature is the ability to <em>freeze</em> the encoder,
 and take advantage of the available pretrained weights by doing transfer
 learning.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">rand</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch_tools</span> <span class="kn">import</span> <span class="n">ConvNet2d</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">rand</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConvNet2d</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">ConvNet2d</span><span class="p">(</span><span class="n">out_feats</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">pretrained</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Batch of 10 fake three-channel images of 256x256 pixels</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mini_batch</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
@@ -225,7 +244,7 @@ initialised.</p>
 <p>— See <code class="docutils literal notranslate"><span class="pre">torch_tools.models._conv_net_2d.ConvNet2d</span></code> for more info.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="torch_tools.models._conv_net_2d.ConvNet2d.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_conv_net_2d.html#ConvNet2d.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._conv_net_2d.ConvNet2d.forward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_conv_net_2d.html#ConvNet2d.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._conv_net_2d.ConvNet2d.forward" title="Link to this definition"></a></dt>
 <dd><p>Pass <cite>batch</cite> through the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -246,16 +265,33 @@ size.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="torch_tools.models._conv_net_2d.ConvNet2d.get_features">
+<span class="sig-name descname"><span class="pre">get_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_conv_net_2d.html#ConvNet2d.get_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._conv_net_2d.ConvNet2d.get_features" title="Link to this definition"></a></dt>
+<dd><p>Return the features produced by the encoder and pool.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch</strong> (<em>Tensor</em>) – A mini-batch of image-like inputs.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The encoded features for the items in <code class="docutils literal notranslate"><span class="pre">batch</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
 <section id="module-torch_tools.models._unet">
-<span id="unet"></span><h1>UNet<a class="headerlink" href="#module-torch_tools.models._unet" title="Permalink to this heading"></a></h1>
+<span id="unet"></span><h1>UNet<a class="headerlink" href="#module-torch_tools.models._unet" title="Link to this heading"></a></h1>
 <p>UNet model for semantic segmentation.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="torch_tools.models._unet.UNet">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._unet.</span></span><span class="sig-name descname"><span class="pre">UNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_chans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_chans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'max'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bilinear</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_slope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_unet.html#UNet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._unet.UNet" title="Permalink to this definition"></a></dt>
-<dd><p>UNet model for semantic segmentation.</p>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._unet.</span></span><span class="sig-name descname"><span class="pre">UNet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_unet.html#UNet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._unet.UNet" title="Link to this definition"></a></dt>
+<dd><p>UNet for two-spatial-dimensional (image-like) semantic segmentation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -271,11 +307,15 @@ not. If <code class="docutils literal notranslate"><span class="pre">True</span>
 <li><p><strong>lr_slope</strong> (<em>float</em><em>, </em><em>optional</em>) – The negative slope argument for <code class="docutils literal notranslate"><span class="pre">LeakyReLU</span></code> layers.</p></li>
 <li><p><strong>kernel_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Linear size of the square convolutional kernel to use in the <code class="docutils literal notranslate"><span class="pre">Conv2d</span></code>
 layers. Should be a positive, odd, int.</p></li>
+<li><p><strong>block_style</strong> (<em>str</em>) – Type of convolutional blocks to use: <code class="docutils literal notranslate"><span class="pre">&quot;double_conv&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;conv_res&quot;</span></code>.</p></li>
+<li><p><strong>dropout</strong> (<em>float</em><em>, </em><em>optional</em>) – The dropout probability to apply at the output of each convolutional
+block.</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch_tools</span> <span class="kn">import</span> <span class="n">UNet</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">UNet</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">UNet</span><span class="p">(</span>
 <span class="go">                in_chans=3,</span>
 <span class="go">                out_chans=16,</span>
@@ -290,7 +330,7 @@ layers. Should be a positive, odd, int.</p></li>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="torch_tools.models._unet.UNet.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_unet.html#UNet.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._unet.UNet.forward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_unet.html#UNet.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._unet.UNet.forward" title="Link to this definition"></a></dt>
 <dd><p>Pass <code class="docutils literal notranslate"><span class="pre">batch</span></code> through the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -309,11 +349,11 @@ layers. Should be a positive, odd, int.</p></li>
 
 </section>
 <section id="module-torch_tools.models._encoder_2d">
-<span id="encoder2d"></span><h1>Encoder2d<a class="headerlink" href="#module-torch_tools.models._encoder_2d" title="Permalink to this heading"></a></h1>
+<span id="encoder2d"></span><h1>Encoder2d<a class="headerlink" href="#module-torch_tools.models._encoder_2d" title="Link to this heading"></a></h1>
 <p>Two-dimensional convolutional encoder moder.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="torch_tools.models._encoder_2d.Encoder2d">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._encoder_2d.</span></span><span class="sig-name descname"><span class="pre">Encoder2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_chans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_slope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_encoder_2d.html#Encoder2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._encoder_2d.Encoder2d" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._encoder_2d.</span></span><span class="sig-name descname"><span class="pre">Encoder2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_encoder_2d.html#Encoder2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._encoder_2d.Encoder2d" title="Link to this definition"></a></dt>
 <dd><p>Encoder model for image-like inputs.</p>
 <p>A <code class="docutils literal notranslate"><span class="pre">DoubleConvBlock</span></code> which produces <code class="docutils literal notranslate"><span class="pre">start_features</span></code> features, followed
 by <code class="docutils literal notranslate"><span class="pre">num_blocks</span> <span class="pre">-</span> <span class="pre">1</span></code> <code class="docutils literal notranslate"><span class="pre">DownBlock</span></code> blocks. The <code class="docutils literal notranslate"><span class="pre">DoubleConvBlock</span></code>
@@ -329,11 +369,17 @@ the spatial dimensions and doubles the number of channels.</p>
 <li><p><strong>lr_slope</strong> (<em>float</em>) – The negative slope argument to use in the <code class="docutils literal notranslate"><span class="pre">LeakyReLU</span></code> layers.</p></li>
 <li><p><strong>kernel_size</strong> (<em>int</em>) – Size of the square convolutional kernel to use in the <code class="docutils literal notranslate"><span class="pre">Conv2d</span></code>
 layers. Should be a positive, odd, int.</p></li>
+<li><p><strong>max_features</strong> – In each of the down-sampling blocks, the numbers of features is
+doubled. Optionally supplying <code class="docutils literal notranslate"><span class="pre">max_features</span></code> places a limit on this.</p></li>
+<li><p><strong>optional</strong> – In each of the down-sampling blocks, the numbers of features is
+doubled. Optionally supplying <code class="docutils literal notranslate"><span class="pre">max_features</span></code> places a limit on this.</p></li>
+<li><p><strong>block_style</strong> (<em>str</em><em>, </em><em>optional</em>) – Style of encoding block to use: <code class="docutils literal notranslate"><span class="pre">&quot;conv_block&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;conv_res&quot;</span></code>.</p></li>
+<li><p><strong>dropout</strong> (<em>float</em><em>, </em><em>optional</em>) – The dropout probability to apply at the output of each block.</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch_tools</span> <span class="kn">import</span> <span class="n">Encoder2d</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Encoder2d</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">Encoder2d</span><span class="p">(</span>
 <span class="go">                in_chans=3,</span>
 <span class="go">                start_features=64,</span>
@@ -341,6 +387,7 @@ layers. Should be a positive, odd, int.</p></li>
 <span class="go">                pool_style=&quot;max&quot;,</span>
 <span class="go">                lr_slope=0.123,</span>
 <span class="go">                kernel_size=3,</span>
+<span class="go">                max_feats=512,</span>
 <span class="go">            )</span>
 </pre></div>
 </div>
@@ -348,11 +395,11 @@ layers. Should be a positive, odd, int.</p></li>
 
 </section>
 <section id="module-torch_tools.models._decoder_2d">
-<span id="decoder2d"></span><h1>Decoder2d<a class="headerlink" href="#module-torch_tools.models._decoder_2d" title="Permalink to this heading"></a></h1>
+<span id="decoder2d"></span><h1>Decoder2d<a class="headerlink" href="#module-torch_tools.models._decoder_2d" title="Link to this heading"></a></h1>
 <p>Two-dimensional decoder model.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="torch_tools.models._decoder_2d.Decoder2d">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._decoder_2d.</span></span><span class="sig-name descname"><span class="pre">Decoder2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_chans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_chans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bilinear</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_slope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_decoder_2d.html#Decoder2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._decoder_2d.Decoder2d" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._decoder_2d.</span></span><span class="sig-name descname"><span class="pre">Decoder2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_decoder_2d.html#Decoder2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._decoder_2d.Decoder2d" title="Link to this definition"></a></dt>
 <dd><p>Simple decoder model for image-like inputs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -365,11 +412,15 @@ layers. Should be a positive, odd, int.</p></li>
 <li><p><strong>lr_slope</strong> (<em>float</em>) – The negative slope to use in the <code class="docutils literal notranslate"><span class="pre">LeakyReLU</span></code> layers.</p></li>
 <li><p><strong>kernel_size</strong> (<em>int</em>) – The size of the square convolutional kernel in the <code class="docutils literal notranslate"><span class="pre">Conv2d</span></code> layers.
 Should be an odd, positive, int.</p></li>
+<li><p><strong>min_up_feats</strong> (<em>int</em><em>, </em><em>optional</em>) – The minimum numbers features the up-sampling blocks are allowed to
+produce.</p></li>
+<li><p><strong>block_style</strong> (<em>str</em><em>, </em><em>optional</em>) – Style of decoding block to use: <code class="docutils literal notranslate"><span class="pre">&quot;conv_block&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;conv_res&quot;</span></code>.</p></li>
+<li><p><strong>dropout</strong> (<em>float</em><em>, </em><em>optional</em>) – Dropout probability to apply at the output of each block.</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch_tools</span> <span class="kn">import</span> <span class="n">Decoder2d</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decoder2d</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">Decoder2d</span><span class="p">(</span>
 <span class="go">                in_chans=128,</span>
 <span class="go">                out_chans=3,</span>
@@ -384,11 +435,11 @@ Should be an odd, positive, int.</p></li>
 
 </section>
 <section id="module-torch_tools.models._autoencoder_2d">
-<span id="autoencoder2d"></span><h1>AutoEncoder2d<a class="headerlink" href="#module-torch_tools.models._autoencoder_2d" title="Permalink to this heading"></a></h1>
+<span id="autoencoder2d"></span><h1>AutoEncoder2d<a class="headerlink" href="#module-torch_tools.models._autoencoder_2d" title="Link to this heading"></a></h1>
 <p>A simple image encoder-decoder model.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="torch_tools.models._autoencoder_2d.AutoEncoder2d">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._autoencoder_2d.</span></span><span class="sig-name descname"><span class="pre">AutoEncoder2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_chans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_chans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_slope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pool_style</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'max'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bilinear</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_autoencoder_2d.html#AutoEncoder2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._autoencoder_2d.AutoEncoder2d" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._autoencoder_2d.</span></span><span class="sig-name descname"><span class="pre">AutoEncoder2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_autoencoder_2d.html#AutoEncoder2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._autoencoder_2d.AutoEncoder2d" title="Link to this definition"></a></dt>
 <dd><p>A simple encoder-decoder pair for image-like inputs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -404,6 +455,10 @@ Should be an odd, positive, int.</p></li>
 <code class="docutils literal notranslate"><span class="pre">ConvTranspose2d</span></code> ( <code class="docutils literal notranslate"><span class="pre">False</span></code> ).</p></li>
 <li><p><strong>kernel_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of the square convolutional kernel to use on the <code class="docutils literal notranslate"><span class="pre">Conv2d</span></code>
 layers. Must be a positive, odd, int.</p></li>
+<li><p><strong>block_style</strong> (<em>str</em><em>, </em><em>optional</em>) – Style of convolutional blocks to use in the encoding and decoding
+blocks.  Use either <code class="docutils literal notranslate"><span class="pre">&quot;double_conv&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;conv_res&quot;</span></code>.</p></li>
+<li><p><strong>dropout</strong> (<em>float</em><em>, </em><em>optional</em>) – The dropout probability to apply at the output of the convolutional
+blocks.</p></li>
 </ul>
 </dd>
 </dl>
@@ -413,8 +468,8 @@ and then use it for transfer learning—hence the <code class="docutils literal 
 <code class="docutils literal notranslate"><span class="pre">frozen_decoder</span></code> arguments in the <code class="docutils literal notranslate"><span class="pre">forward</span></code> method. There are no
 pretrained weights available, however.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch_tools</span> <span class="kn">import</span> <span class="n">Encoder2d</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">Encoder2d</span><span class="p">(</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoEncoder2d</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">AutoEncoder2d</span><span class="p">(</span>
 <span class="go">                in_chans=3,</span>
 <span class="go">                start_features=64,</span>
 <span class="go">                num_blocks=4,</span>
@@ -426,11 +481,11 @@ pretrained weights available, however.</p>
 <p>Another (potentially) useful feature (if you want to do transfer learning)
 if the ability to <em>freeze</em>—i.e. fix—the parameters of either the encoder
 or the decoder:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">rand</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch_tools</span> <span class="kn">import</span> <span class="n">EncoderDecoder2d</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">rand</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoEncoder2d</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Mini-batch of ten, three-channel images of 64 by 64 pixels</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">mini_batch</span> <span class="o">=</span> <span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">EncoderDecoder2d</span><span class="p">(</span><span class="n">in_chans</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">out_chans</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">AutoEncoder2d</span><span class="p">(</span><span class="n">in_chans</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">out_chans</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># With nothing frozen (default behaviour)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">pred</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">mini_batch</span><span class="p">,</span> <span class="n">frozen_encoder</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">frozen_decoder</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># With the encoder frozen:</span>
@@ -441,7 +496,7 @@ or the decoder:</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="torch_tools.models._autoencoder_2d.AutoEncoder2d.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen_decoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_autoencoder_2d.html#AutoEncoder2d.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._autoencoder_2d.AutoEncoder2d.forward" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen_decoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_autoencoder_2d.html#AutoEncoder2d.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._autoencoder_2d.AutoEncoder2d.forward" title="Link to this definition"></a></dt>
 <dd><p>Pass <code class="docutils literal notranslate"><span class="pre">batch</span></code> through the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -465,12 +520,170 @@ enabled or disabled (useful for transfer learning).</p></li>
 </dd></dl>
 
 </section>
+<section id="module-torch_tools.models._variational_autoencoder_2d">
+<span id="vae2d"></span><h1>VAE2d<a class="headerlink" href="#module-torch_tools.models._variational_autoencoder_2d" title="Link to this heading"></a></h1>
+<p>2D convolutional variational autoencoder.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="torch_tools.models._variational_autoencoder_2d.VAE2d">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._variational_autoencoder_2d.</span></span><span class="sig-name descname"><span class="pre">VAE2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_variational_autoencoder_2d.html#VAE2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._variational_autoencoder_2d.VAE2d" title="Link to this definition"></a></dt>
+<dd><p>2D convolutional variational autoencoder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_chans</strong> (<em>int</em>) – The number of input channels the model should take.</p></li>
+<li><p><strong>out_chans</strong> (<em>int</em>) – The number of output channels the model should produce.</p></li>
+<li><p><strong>input_dims</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – The <code class="docutils literal notranslate"><span class="pre">(height,</span> <span class="pre">width)</span></code> of the input images (only necessary if
+<code class="docutils literal notranslate"><span class="pre">mean_var_nets</span> <span class="pre">==</span> <span class="pre">&quot;linear&quot;</span></code>).</p></li>
+<li><p><strong>start_features</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of features the first double conv block should produce.</p></li>
+<li><p><strong>num_layers</strong> (<em>int</em><em>, </em><em>optional</em>) – The number of layers in the U-like architecture.</p></li>
+<li><p><strong>down_pool</strong> (<em>str</em><em>, </em><em>optional</em>) – The type of pooling to use in the down-sampling layers: <code class="docutils literal notranslate"><span class="pre">&quot;avg&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">&quot;max&quot;</span></code>.</p></li>
+<li><p><strong>bilinear</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, we use bilinear interpolation in the upsampling. If
+<code class="docutils literal notranslate"><span class="pre">False</span></code>, we use <code class="docutils literal notranslate"><span class="pre">ConvTranspose2d</span></code>.</p></li>
+<li><p><strong>lr_slope</strong> (<em>float</em><em>, </em><em>optional</em>) – Negative slope to use in the leaky relu layers.</p></li>
+<li><p><strong>kernel_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Linear size of the square convolutional kernels to use.</p></li>
+<li><p><strong>max_down_feats</strong> (<em>int</em><em>, </em><em>optional</em>) – Upper limit on the number of features that can be produced by the
+down-sampling blocks.</p></li>
+<li><p><strong>min_up_feats</strong> (<em>int</em><em>, </em><em>optional</em>) – Minimum number of features the up-sampling blocks can produce.</p></li>
+<li><p><strong>block_style</strong> (<em>str</em>) – Block style to use in the down and up blocks.</p></li>
+<li><p><strong>mean_var_net</strong> (<em>str</em>) – The style of the networks for which learn the mean and variances:
+<code class="docutils literal notranslate"><span class="pre">&quot;linear&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;conv&quot;</span></code>.</p></li>
+<li><p><strong>dropout</strong> (<em>float</em><em>, </em><em>optional</em>) – Dropout probability to apply at the output of the convolutional blocks.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="torch_tools.models._variational_autoencoder_2d.VAE2d.decode">
+<span class="sig-name descname"><span class="pre">decode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen_decoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_variational_autoencoder_2d.html#VAE2d.decode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.decode" title="Link to this definition"></a></dt>
+<dd><p>Decode the latent <code class="docutils literal notranslate"><span class="pre">features</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>Tensor</em>) – VA-encoded features.</p></li>
+<li><p><strong>frozen_decoder</strong> (<em>bool</em>) – Should the decoder’s weights be frozen, or not?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The decoded <code class="docutils literal notranslate"><span class="pre">features</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="torch_tools.models._variational_autoencoder_2d.VAE2d.deterministic_pred">
+<span class="sig-name descname"><span class="pre">deterministic_pred</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_variational_autoencoder_2d.html#VAE2d.deterministic_pred"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.deterministic_pred" title="Link to this definition"></a></dt>
+<dd><p>Make a deterministic prediction from <code class="docutils literal notranslate"><span class="pre">batch</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch</strong> (<em>Tensor</em>) – A mini-batch of inputs.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An autoencoded version of <code class="docutils literal notranslate"><span class="pre">batch</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>To make the prediction deterministic, we decode the predicted means.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="torch_tools.models._variational_autoencoder_2d.VAE2d.encode">
+<span class="sig-name descname"><span class="pre">encode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/torch_tools/models/_variational_autoencoder_2d.html#VAE2d.encode"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.encode" title="Link to this definition"></a></dt>
+<dd><p>Encode the inputs in <code class="docutils literal notranslate"><span class="pre">batch</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Tensor</em>) – Mini-batch of inputs.</p></li>
+<li><p><strong>frozen_encoder</strong> (<em>bool</em>) – Shoould the encoder’s weights be frozen, or not?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>feats</strong> (<em>Tensor</em>) – The encoded features.</p></li>
+<li><p><em>Tensor</em> – The KL divergence between the features and N(0, 1).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="torch_tools.models._variational_autoencoder_2d.VAE2d.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen_decoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">torch.Tensor</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/torch_tools/models/_variational_autoencoder_2d.html#VAE2d.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.forward" title="Link to this definition"></a></dt>
+<dd><p>Pass <code class="docutils literal notranslate"><span class="pre">batch</span></code> through the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Tensor</em>) – A mini-batch of image-like inputs.</p></li>
+<li><p><strong>frozen_encoder</strong> (<em>bool</em><em>, </em><em>optional</em>) – Should the encoder’s parameters be fixed?</p></li>
+<li><p><strong>frozen_decoder</strong> (<em>bool</em><em>, </em><em>optional</em>) – Should the decoder’s weights be fixed?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>decoded</strong> (<em>Tensor</em>) – The predicted version of <code class="docutils literal notranslate"><span class="pre">batch</span></code>.</p></li>
+<li><p><strong>kl_div</strong> (<em>Tensor</em>) – The KL divergence between <code class="docutils literal notranslate"><span class="pre">features</span></code> and N(0, 1).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="torch_tools.models._variational_autoencoder_2d.VAE2d.get_features">
+<span class="sig-name descname"><span class="pre">get_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">means</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logvar</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_variational_autoencoder_2d.html#VAE2d.get_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.get_features" title="Link to this definition"></a></dt>
+<dd><p>Get the features using the reparam trick.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>means</strong> (<em>Tensor</em>) – The feature means.</p></li>
+<li><p><strong>logvar</strong> (<em>Tensor</em>) – The log variance.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The feature dist.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="torch_tools.models._variational_autoencoder_2d.VAE2d.kl_divergence">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">kl_divergence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">means</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_var</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_variational_autoencoder_2d.html#VAE2d.kl_divergence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._variational_autoencoder_2d.VAE2d.kl_divergence" title="Link to this definition"></a></dt>
+<dd><p>Compute the KL divergence between the dists and a unit normal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>means</strong> (<em>Tensor</em>) – Samples from the mean distributions.</p></li>
+<li><p><strong>log_var</strong> (<em>Tensor</em>) – The logarithm of the variances.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Kullback-Leibler divergence between the feature dists and unit
+normals.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-torch_tools.models._simple_conv_2d">
-<span id="simpleconvnet2d"></span><h1>SimpleConvNet2d<a class="headerlink" href="#module-torch_tools.models._simple_conv_2d" title="Permalink to this heading"></a></h1>
+<span id="simpleconvnet2d"></span><h1>SimpleConvNet2d<a class="headerlink" href="#module-torch_tools.models._simple_conv_2d" title="Link to this heading"></a></h1>
 <p>A simple two-dimensional convolutional neural network.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="torch_tools.models._simple_conv_2d.SimpleConvNet2d">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._simple_conv_2d.</span></span><span class="sig-name descname"><span class="pre">SimpleConvNet2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">in_chans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_feats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">features_start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_blocks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">downsample_pool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'max'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">adaptive_pool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'avg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr_slope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kernel_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fc_net_kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_simple_conv_2d.html#SimpleConvNet2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._simple_conv_2d.SimpleConvNet2d" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">torch_tools.models._simple_conv_2d.</span></span><span class="sig-name descname"><span class="pre">SimpleConvNet2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/torch_tools/models/_simple_conv_2d.html#SimpleConvNet2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._simple_conv_2d.SimpleConvNet2d" title="Link to this definition"></a></dt>
 <dd><p>A very simple 2D CNN with an encoder, pool, and fully-connected layer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -488,11 +701,13 @@ enabled or disabled (useful for transfer learning).</p></li>
 layers. Must be an odd, positive, int.</p></li>
 <li><p><strong>fc_net_kwargs</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – Keyword arguments for <code class="docutils literal notranslate"><span class="pre">torch_tools.models.fc_net.FCNet</span></code> which serves
 as the classification/regression part of the model.</p></li>
+<li><p><strong>block_style</strong> (<em>str</em><em>, </em><em>optional</em>) – Style of encoding blocks to use: choose from <code class="docutils literal notranslate"><span class="pre">&quot;double_conv&quot;</span></code> or
+<code class="docutils literal notranslate"><span class="pre">conv_res</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch_tools</span> <span class="kn">import</span> <span class="n">SimpleConvNet2d</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleConvNet2d</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">SimpleConvNet2d</span><span class="p">(</span>
 <span class="go">        in_chans=3,</span>
 <span class="go">        out_feats=128,</span>
@@ -505,6 +720,44 @@ as the classification/regression part of the model.</p></li>
 <span class="go">    )</span>
 </pre></div>
 </div>
+<dl class="py method">
+<dt class="sig sig-object py" id="torch_tools.models._simple_conv_2d.SimpleConvNet2d.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frozen_encoder</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_simple_conv_2d.html#SimpleConvNet2d.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._simple_conv_2d.SimpleConvNet2d.forward" title="Link to this definition"></a></dt>
+<dd><p>Pass <code class="docutils literal notranslate"><span class="pre">batch</span></code> through the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Tensor</em>) – A mini-batch of inputs.</p></li>
+<li><p><strong>frozen_encoder</strong> (<em>bool</em><em>, </em><em>optional</em>) – Should the encoder’s weights be frozen (i.e. have no grad) during
+the forward pass?</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The result of passing <code class="docutils literal notranslate"><span class="pre">batch</span></code> through the model.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="torch_tools.models._simple_conv_2d.SimpleConvNet2d.get_features">
+<span class="sig-name descname"><span class="pre">get_features</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="reference internal" href="_modules/torch_tools/models/_simple_conv_2d.html#SimpleConvNet2d.get_features"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#torch_tools.models._simple_conv_2d.SimpleConvNet2d.get_features" title="Link to this definition"></a></dt>
+<dd><p>Get the features produced by the encoder and adaptive poool.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>batch</strong> (<em>Tensor</em>) – A mini-batch of image-like inputs.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The features for each item in <code class="docutils literal notranslate"><span class="pre">batch</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>

@@ -1,20 +1,20 @@
+
+
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; TorchTools 0.2.0 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
+  <title>Index &mdash; TorchTools 0.13.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=30f05f40" />
+
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
+      <script src="_static/documentation_options.js?v=dc0df7c6"></script>
+      <script src="_static/doctools.js?v=92e14aea"></script>
+      <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -47,8 +47,10 @@
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._encoder_2d">Encoder2d</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._decoder_2d">Decoder2d</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._autoencoder_2d">AutoEncoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._variational_autoencoder_2d">VAE2d</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html#module-torch_tools.models._simple_conv_2d">SimpleConvNet2d</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dataset.html">DataSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dataset.html#module-torch_tools.datasets._shapes_dataset">ShapesDataset</a></li>
 <li class="toctree-l1"><a class="reference internal" href="misc.html">Misc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="torch_utils.html">Torch utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="weight_init.html">Weight initialisation</a></li>
@@ -87,7 +89,9 @@
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
@@ -95,6 +99,7 @@
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  
 </div>
 <h2 id="A">A</h2>
@@ -118,9 +123,15 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="dataset.html#torch_tools.datasets._dataset.DataSet">DataSet (class in torch_tools.datasets._dataset)</a>
 </li>
+      <li><a href="models.html#torch_tools.models._variational_autoencoder_2d.VAE2d.decode">decode() (torch_tools.models._variational_autoencoder_2d.VAE2d method)</a>
+</li>
+      <li><a href="models.html#torch_tools.models._decoder_2d.Decoder2d">Decoder2d (class in torch_tools.models._decoder_2d)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="models.html#torch_tools.models._decoder_2d.Decoder2d">Decoder2d (class in torch_tools.models._decoder_2d)</a>
+      <li><a href="models.html#torch_tools.models._variational_autoencoder_2d.VAE2d.deterministic_pred">deterministic_pred() (torch_tools.models._variational_autoencoder_2d.VAE2d method)</a>
+</li>
+      <li><a href="torch_utils.html#torch_tools.torch_utils.disable_biases">disable_biases() (in module torch_tools.torch_utils)</a>
 </li>
       <li><a href="misc.html#torch_tools.misc.divides_by_two_check">divides_by_two_check() (in module torch_tools.misc)</a>
 </li>
@@ -129,6 +140,10 @@
 
 <h2 id="E">E</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models.html#torch_tools.models._variational_autoencoder_2d.VAE2d.encode">encode() (torch_tools.models._variational_autoencoder_2d.VAE2d method)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#torch_tools.models._encoder_2d.Encoder2d">Encoder2d (class in torch_tools.models._encoder_2d)</a>
 </li>
@@ -145,7 +160,25 @@
       <ul>
         <li><a href="models.html#torch_tools.models._conv_net_2d.ConvNet2d.forward">(torch_tools.models._conv_net_2d.ConvNet2d method)</a>
 </li>
+        <li><a href="models.html#torch_tools.models._simple_conv_2d.SimpleConvNet2d.forward">(torch_tools.models._simple_conv_2d.SimpleConvNet2d method)</a>
+</li>
         <li><a href="models.html#torch_tools.models._unet.UNet.forward">(torch_tools.models._unet.UNet method)</a>
+</li>
+        <li><a href="models.html#torch_tools.models._variational_autoencoder_2d.VAE2d.forward">(torch_tools.models._variational_autoencoder_2d.VAE2d method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models.html#torch_tools.models._conv_net_2d.ConvNet2d.get_features">get_features() (torch_tools.models._conv_net_2d.ConvNet2d method)</a>
+
+      <ul>
+        <li><a href="models.html#torch_tools.models._simple_conv_2d.SimpleConvNet2d.get_features">(torch_tools.models._simple_conv_2d.SimpleConvNet2d method)</a>
+</li>
+        <li><a href="models.html#torch_tools.models._variational_autoencoder_2d.VAE2d.get_features">(torch_tools.models._variational_autoencoder_2d.VAE2d method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -155,6 +188,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="torch_utils.html#torch_tools.torch_utils.img_batch_dims_power_of_2">img_batch_dims_power_of_2() (in module torch_tools.torch_utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="K">K</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models.html#torch_tools.models._variational_autoencoder_2d.VAE2d.kl_divergence">kl_divergence() (torch_tools.models._variational_autoencoder_2d.VAE2d static method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -176,6 +217,8 @@
       <ul>
         <li><a href="dataset.html#module-torch_tools.datasets._dataset">torch_tools.datasets._dataset</a>
 </li>
+        <li><a href="dataset.html#module-torch_tools.datasets._shapes_dataset">torch_tools.datasets._shapes_dataset</a>
+</li>
         <li><a href="file_utils.html#module-torch_tools.file_utils">torch_tools.file_utils</a>
 </li>
         <li><a href="misc.html#module-torch_tools.misc">torch_tools.misc</a>
@@ -193,6 +236,8 @@
         <li><a href="models.html#module-torch_tools.models._simple_conv_2d">torch_tools.models._simple_conv_2d</a>
 </li>
         <li><a href="models.html#module-torch_tools.models._unet">torch_tools.models._unet</a>
+</li>
+        <li><a href="models.html#module-torch_tools.models._variational_autoencoder_2d">torch_tools.models._variational_autoencoder_2d</a>
 </li>
         <li><a href="torch_utils.html#module-torch_tools.torch_utils">torch_tools.torch_utils</a>
 </li>
@@ -221,6 +266,10 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="dataset.html#torch_tools.datasets._shapes_dataset.ShapesDataset">ShapesDataset (class in torch_tools.datasets._shapes_dataset)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#torch_tools.models._simple_conv_2d.SimpleConvNet2d">SimpleConvNet2d (class in torch_tools.models._simple_conv_2d)</a>
 </li>
   </ul></td>
@@ -231,11 +280,20 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="torch_utils.html#torch_tools.torch_utils.target_from_mask_img">target_from_mask_img() (in module torch_tools.torch_utils)</a>
 </li>
+      <li><a href="dataset.html#torch_tools.datasets._shapes_dataset.ShapesDataset.target_names">target_names (torch_tools.datasets._shapes_dataset.ShapesDataset property)</a>
+</li>
       <li>
     torch_tools.datasets._dataset
 
       <ul>
         <li><a href="dataset.html#module-torch_tools.datasets._dataset">module</a>
+</li>
+      </ul></li>
+      <li>
+    torch_tools.datasets._shapes_dataset
+
+      <ul>
+        <li><a href="dataset.html#module-torch_tools.datasets._shapes_dataset">module</a>
 </li>
       </ul></li>
       <li>
@@ -304,6 +362,13 @@
 </li>
       </ul></li>
       <li>
+    torch_tools.models._variational_autoencoder_2d
+
+      <ul>
+        <li><a href="models.html#module-torch_tools.models._variational_autoencoder_2d">module</a>
+</li>
+      </ul></li>
+      <li>
     torch_tools.torch_utils
 
       <ul>
@@ -317,6 +382,8 @@
         <li><a href="weight_init.html#module-torch_tools.weight_init">module</a>
 </li>
       </ul></li>
+      <li><a href="torch_utils.html#torch_tools.torch_utils.total_image_variation">total_image_variation() (in module torch_tools.torch_utils)</a>
+</li>
       <li><a href="file_utils.html#torch_tools.file_utils.traverse_directory_tree">traverse_directory_tree() (in module torch_tools.file_utils)</a>
 </li>
   </ul></td>
@@ -326,6 +393,14 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#torch_tools.models._unet.UNet">UNet (class in torch_tools.models._unet)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="models.html#torch_tools.models._variational_autoencoder_2d.VAE2d">VAE2d (class in torch_tools.models._variational_autoencoder_2d)</a>
 </li>
   </ul></td>
 </tr></table>

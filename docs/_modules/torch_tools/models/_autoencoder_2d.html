@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>torch_tools.models._autoencoder_2d &mdash; TorchTools 0.13.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=30f05f40" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
+      <script src="../../../_static/documentation_options.js?v=dc0df7c6"></script>
+      <script src="../../../_static/doctools.js?v=92e14aea"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            TorchTools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">FCNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._conv_net_2d">ConvNet2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._unet">UNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._encoder_2d">Encoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._decoder_2d">Decoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._autoencoder_2d">AutoEncoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._variational_autoencoder_2d">VAE2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html#module-torch_tools.models._simple_conv_2d">SimpleConvNet2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dataset.html">DataSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../dataset.html#module-torch_tools.datasets._shapes_dataset">ShapesDataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../misc.html">Misc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../torch_utils.html">Torch utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../weight_init.html">Weight initialisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../file_utils.html">File utilities</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">TorchTools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">torch_tools.models._autoencoder_2d</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for torch_tools.models._autoencoder_2d</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;A simple image encoder-decoder model.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">Module</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">set_grad_enabled</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._encoder_2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Encoder2d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._decoder_2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Decoder2d</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch_tools.models._argument_processing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">process_num_feats</span><span class="p">,</span>
+    <span class="n">process_u_architecture_layers</span><span class="p">,</span>
+    <span class="n">process_str_arg</span><span class="p">,</span>
+    <span class="n">process_negative_slope_arg</span><span class="p">,</span>
+    <span class="n">process_boolean_arg</span><span class="p">,</span>
+    <span class="n">process_2d_kernel_size</span><span class="p">,</span>
+    <span class="n">process_2d_block_style_arg</span><span class="p">,</span>
+    <span class="n">process_dropout_prob</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># pylint:disable=too-many-arguments, too-many-positional-arguments</span>
+
+
+<div class="viewcode-block" id="AutoEncoder2d">
+<a class="viewcode-back" href="../../../models.html#torch_tools.models._autoencoder_2d.AutoEncoder2d">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AutoEncoder2d</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A simple encoder-decoder pair for image-like inputs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    in_chans : int</span>
+<span class="sd">        The number of input channels.</span>
+<span class="sd">    out_chans : int</span>
+<span class="sd">        The number of output layers the model should produce.</span>
+<span class="sd">    num_layers : int, optional</span>
+<span class="sd">        The number of layers in the encoder/decoder.</span>
+<span class="sd">    features_start : int, optional</span>
+<span class="sd">        The number of features produced by the first conv block.</span>
+<span class="sd">    lr_slope : float, optional</span>
+<span class="sd">        The negative slope to use in the ``LeakyReLU`` layers.</span>
+<span class="sd">    pool_style : str, optional</span>
+<span class="sd">        The pool style to use in the downsampling blocks</span>
+<span class="sd">        ( ``&quot;avg&quot;`` or ``&quot;max&quot;`` ).</span>
+<span class="sd">    bilinear : bool, optional</span>
+<span class="sd">        Whether or not to upsample with bilinear interpolation ( ``True`` ) or</span>
+<span class="sd">        ``ConvTranspose2d`` ( ``False`` ).</span>
+<span class="sd">    kernel_size : int, optional</span>
+<span class="sd">        Size of the square convolutional kernel to use on the ``Conv2d``</span>
+<span class="sd">        layers. Must be a positive, odd, int.</span>
+<span class="sd">    block_style : str, optional</span>
+<span class="sd">        Style of convolutional blocks to use in the encoding and decoding</span>
+<span class="sd">        blocks.  Use either ``&quot;double_conv&quot;`` or ``&quot;conv_res&quot;``.</span>
+<span class="sd">    dropout : float, optional</span>
+<span class="sd">        The dropout probability to apply at the output of the convolutional</span>
+<span class="sd">        blocks.</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    — Depending on the application, it may be convenient to pretrain this model</span>
+<span class="sd">    and then use it for transfer learning—hence the ``frozen_encoder`` and</span>
+<span class="sd">    ``frozen_decoder`` arguments in the ``forward`` method. There are no</span>
+<span class="sd">    pretrained weights available, however.</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from torch_tools import AutoEncoder2d</span>
+<span class="sd">    &gt;&gt;&gt; model = AutoEncoder2d(</span>
+<span class="sd">                    in_chans=3,</span>
+<span class="sd">                    start_features=64,</span>
+<span class="sd">                    num_blocks=4,</span>
+<span class="sd">                    pool_style=&quot;max&quot;,</span>
+<span class="sd">                    lr_slope=0.123,</span>
+<span class="sd">                )</span>
+
+<span class="sd">    Another (potentially) useful feature (if you want to do transfer learning)</span>
+<span class="sd">    if the ability to *freeze*—i.e. fix—the parameters of either the encoder</span>
+<span class="sd">    or the decoder:</span>
+
+<span class="sd">    &gt;&gt;&gt; from torch import rand</span>
+<span class="sd">    &gt;&gt;&gt; from torch_tools import AutoEncoder2d</span>
+<span class="sd">    &gt;&gt;&gt; # Mini-batch of ten, three-channel images of 64 by 64 pixels</span>
+<span class="sd">    &gt;&gt;&gt; mini_batch = rand(10, 3, 64, 64)</span>
+<span class="sd">    &gt;&gt;&gt; model = AutoEncoder2d(in_chans=3, out_chans=3)</span>
+<span class="sd">    &gt;&gt;&gt; # With nothing frozen (default behaviour)</span>
+<span class="sd">    &gt;&gt;&gt; pred = model(mini_batch, frozen_encoder=False, frozen_decoder=False)</span>
+<span class="sd">    &gt;&gt;&gt; # With the encoder frozen:</span>
+<span class="sd">    &gt;&gt;&gt; pred = model(mini_batch, frozen_encoder=True, frozen_decoder=False)</span>
+<span class="sd">    &gt;&gt;&gt; # With both the encoder and decoder frozen:</span>
+<span class="sd">    &gt;&gt;&gt; pred = model(mini_batch, frozen_encoder=True, frozen_decoder=True)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_chans</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">out_chans</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="n">features_start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">64</span><span class="p">,</span>
+        <span class="n">lr_slope</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">pool_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;max&quot;</span><span class="p">,</span>
+        <span class="n">bilinear</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">kernel_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">block_style</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;double_conv&quot;</span><span class="p">,</span>
+        <span class="n">dropout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build ``EncoderDecoder2d``.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span> <span class="o">=</span> <span class="n">Encoder2d</span><span class="p">(</span>
+            <span class="n">process_num_feats</span><span class="p">(</span><span class="n">in_chans</span><span class="p">),</span>
+            <span class="n">process_num_feats</span><span class="p">(</span><span class="n">features_start</span><span class="p">),</span>
+            <span class="n">process_u_architecture_layers</span><span class="p">(</span><span class="n">num_layers</span><span class="p">),</span>
+            <span class="n">process_str_arg</span><span class="p">(</span><span class="n">pool_style</span><span class="p">),</span>
+            <span class="n">process_negative_slope_arg</span><span class="p">(</span><span class="n">lr_slope</span><span class="p">),</span>
+            <span class="n">process_2d_kernel_size</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">),</span>
+            <span class="n">block_style</span><span class="o">=</span><span class="n">process_2d_block_style_arg</span><span class="p">(</span><span class="n">block_style</span><span class="p">),</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">process_dropout_prob</span><span class="p">(</span><span class="n">dropout</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">Decoder2d</span><span class="p">(</span>
+            <span class="n">process_num_feats</span><span class="p">((</span><span class="mi">2</span> <span class="o">**</span> <span class="p">(</span><span class="n">num_layers</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">features_start</span><span class="p">),</span>
+            <span class="n">process_num_feats</span><span class="p">(</span><span class="n">out_chans</span><span class="p">),</span>
+            <span class="n">process_u_architecture_layers</span><span class="p">(</span><span class="n">num_layers</span><span class="p">),</span>
+            <span class="n">process_boolean_arg</span><span class="p">(</span><span class="n">bilinear</span><span class="p">),</span>
+            <span class="n">process_negative_slope_arg</span><span class="p">(</span><span class="n">lr_slope</span><span class="p">),</span>
+            <span class="n">process_2d_kernel_size</span><span class="p">(</span><span class="n">kernel_size</span><span class="p">),</span>
+            <span class="n">block_style</span><span class="o">=</span><span class="n">process_2d_block_style_arg</span><span class="p">(</span><span class="n">block_style</span><span class="p">),</span>
+            <span class="n">dropout</span><span class="o">=</span><span class="n">process_dropout_prob</span><span class="p">(</span><span class="n">dropout</span><span class="p">),</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="AutoEncoder2d.forward">
+<a class="viewcode-back" href="../../../models.html#torch_tools.models._autoencoder_2d.AutoEncoder2d.forward">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">frozen_encoder</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">frozen_decoder</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pass ``batch`` through the model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        batch : Tensor</span>
+<span class="sd">            A mini-batch of inputs.</span>
+<span class="sd">        frozen_encoder : bool, optional</span>
+<span class="sd">            Boolean switch controlling whether the encoder&#39;s gradients are</span>
+<span class="sd">            enabled or disabled (useful for transfer learning).</span>
+<span class="sd">        frozen_decoder : bool, optional</span>
+<span class="sd">            Boolean switch controlling whether the decoder&#39;s gradients are</span>
+<span class="sd">            enabled or disabled (useful for transfer learning).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Tensor</span>
+<span class="sd">            The result of passing ``batch`` through the model.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">set_grad_enabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">frozen_encoder</span><span class="p">):</span>
+            <span class="n">encoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="n">set_grad_enabled</span><span class="p">(</span><span class="ow">not</span> <span class="n">frozen_decoder</span><span class="p">):</span>
+            <span class="n">decoded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">decoded</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, J. Denholm.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

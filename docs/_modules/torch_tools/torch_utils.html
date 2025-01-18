@@ -1,0 +1,414 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>torch_tools.torch_utils &mdash; TorchTools 0.13.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=92fd9be5" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=30f05f40" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=bbec6902"></script>
+      <script src="../../_static/documentation_options.js?v=dc0df7c6"></script>
+      <script src="../../_static/doctools.js?v=92e14aea"></script>
+      <script src="../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            TorchTools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">FCNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html#module-torch_tools.models._conv_net_2d">ConvNet2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html#module-torch_tools.models._unet">UNet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html#module-torch_tools.models._encoder_2d">Encoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html#module-torch_tools.models._decoder_2d">Decoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html#module-torch_tools.models._autoencoder_2d">AutoEncoder2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html#module-torch_tools.models._variational_autoencoder_2d">VAE2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html#module-torch_tools.models._simple_conv_2d">SimpleConvNet2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dataset.html">DataSet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../dataset.html#module-torch_tools.datasets._shapes_dataset">ShapesDataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../misc.html">Misc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../torch_utils.html">Torch utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../weight_init.html">Weight initialisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../file_utils.html">File utilities</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TorchTools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">torch_tools.torch_utils</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for torch_tools.torch_utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;PyTorch utilities.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">chain</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>  <span class="c1"># pylint: disable=no-name-in-module</span>
+    <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">eye</span><span class="p">,</span>
+    <span class="n">concat</span><span class="p">,</span>
+    <span class="n">log2</span><span class="p">,</span>
+    <span class="n">as_tensor</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">Module</span>
+
+
+<div class="viewcode-block" id="target_from_mask_img">
+<a class="viewcode-back" href="../../torch_utils.html#torch_tools.torch_utils.target_from_mask_img">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">target_from_mask_img</span><span class="p">(</span><span class="n">mask_img</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert 1-channel image to a target tensor for semantic segmentation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mask_img : Tensor</span>
+<span class="sd">        An image holding the segmentation mask. Should be on [0, num_classes)</span>
+<span class="sd">        with shape ``(H, W)``, where ``H`` is the image height and ``W`` the</span>
+<span class="sd">        width.</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Tensor</span>
+<span class="sd">        Target Tensor of shape ``(num_classes, H, W)``. Each element,</span>
+<span class="sd">        ``target[:, i, j]`` is a one-hot-encoded vector.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``mask_img`` is not a ``Tensor``.</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``num_classes`` is not an ``int``.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If any of the values in ``mask_img`` cannot be cast as int.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``num_classes &lt; 2``.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``mask_img`` has values less than zero, or greater than/equal to</span>
+<span class="sd">        ``num_classes``.</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If ``mask_img`` is not two-dimensional.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask_img</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;mask_img&#39; should be a Tensor. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mask_img</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;num_classes&#39; should be an int. Got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">mask_img</span> <span class="o">%</span> <span class="mi">1</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;mask_img&#39; values should have no remainder when dividing by &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;1. Got values &#39;</span><span class="si">{</span><span class="n">mask_img</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_classes</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;There should be a minimum of two classes (foreground and &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;background). Got &#39;</span><span class="si">{</span><span class="n">num_classes</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mask_img</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">mask_img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="n">num_classes</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;mask_img&#39; values should be on [0, </span><span class="si">{</span><span class="n">num_classes</span><span class="si">}</span><span class="s2">). Got &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;values on [</span><span class="si">{</span><span class="n">mask_img</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">mask_img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">}</span><span class="s2">].&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mask_img</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;mask_img&#39; should have two dimensions. Got </span><span class="si">{</span><span class="n">mask_img</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">eye</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)[</span><span class="n">mask_img</span><span class="o">.</span><span class="n">long</span><span class="p">()]</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_img_batch_check</span><span class="p">(</span><span class="n">img_batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run checks on ``img_batch``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img_batch : Tensor</span>
+<span class="sd">        A mini-batch of image-like.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If mini-batch is not a ``Tensor``.</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If ``img_batch`` is not four-dimensional.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img_batch</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;img_batch&#39; should be Tensor. Got &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">img_batch</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">img_batch</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;img_batch&#39; should be 4D. Got &#39;</span><span class="si">{</span><span class="n">img_batch</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39; dimensions.&quot;</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_patch_size_check</span><span class="p">(</span><span class="n">img_batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">patch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run checks on ``patch_size``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img_batch : Tensor</span>
+<span class="sd">        A mini-batch of images.</span>
+<span class="sd">    patch_size : int</span>
+<span class="sd">        Size of the square mini-patches to split the images into.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``patch_size`` is not an int.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``patch_size &lt;= 0``.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``patch_size`` does evenly divide the image height or width.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">patch_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;patch_size&#39; should be int. Got &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">patch_size</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">patch_size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;patch_size&#39; should exceed zero. Got &#39;</span><span class="si">{</span><span class="n">patch_size</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">img_batch</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">height</span> <span class="o">%</span> <span class="n">patch_size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">width</span> <span class="o">%</span> <span class="n">patch_size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;patch_size&#39; &#39;</span><span class="si">{</span><span class="n">patch_size</span><span class="si">}</span><span class="s2">&#39; should divide image height and &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;width &#39;</span><span class="si">{</span><span class="p">(</span><span class="n">height</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="patchify_img_batch">
+<a class="viewcode-back" href="../../torch_utils.html#torch_tools.torch_utils.patchify_img_batch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">patchify_img_batch</span><span class="p">(</span><span class="n">img_batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">patch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn ``img_batch`` into a collection of patches.</span>
+
+<span class="sd">    Note: gradient flow works through this function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img : Tensor</span>
+<span class="sd">        Convert ``img_batch`` into a batch of sub-patches. Should have size</span>
+<span class="sd">        ``(N, C, H, W)``, where ``N`` is the batch size, ``C`` is the number</span>
+<span class="sd">        of channels, ``H`` is the image height and ``W`` the width.</span>
+<span class="sd">    patch_size : int</span>
+<span class="sd">        Size of the square patches to break the images in ``img_batch`` into.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Tensor</span>
+<span class="sd">        ``img_batch`` as a collection of small patches. The returned</span>
+<span class="sd">        ``Tensor`` has size</span>
+<span class="sd">        ``(N * H / patch_size * W / patch_size, C, patch_size, patch_size)``.</span>
+<span class="sd">        For example: using a batch of 10 RGB images of size 16x16, and a patch</span>
+<span class="sd">        size of 4, will return a ``Tensor`` of shape ``(160, 3, 4, 4)``.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_img_batch_check</span><span class="p">(</span><span class="n">img_batch</span><span class="p">)</span>
+    <span class="n">_patch_size_check</span><span class="p">(</span><span class="n">img_batch</span><span class="p">,</span> <span class="n">patch_size</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">img_batch</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">unfolded</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">concat</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">img_batch</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">unfold</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">channels</span><span class="p">,</span> <span class="n">channels</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">unfold</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">patch_size</span><span class="p">,</span> <span class="n">patch_size</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">unfold</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">patch_size</span><span class="p">,</span> <span class="n">patch_size</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">unfolded_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">unfolded</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">concat</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">unfolded_list</span><span class="p">)),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="img_batch_dims_power_of_2">
+<a class="viewcode-back" href="../../torch_utils.html#torch_tools.torch_utils.img_batch_dims_power_of_2">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">img_batch_dims_power_of_2</span><span class="p">(</span><span class="n">batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check height and width of ``batch`` are powers of 2.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    batch : Tensor</span>
+<span class="sd">        A mini-batch of image-like inputs.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``batch`` is not a ``Tensor``.</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If ``batch`` does not have four dimensions.</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If the ``batch``&#39;s images&#39; heights are not a power of 2.</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If the ``batch``&#39;s images&#39; heights are not a power of 2.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;batch&#39; should be a &#39;Tensor&#39;. Got &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">batch</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Mini-batch of images should have 4 dims. Got &#39;</span><span class="si">{</span><span class="n">batch</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">batch</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">height</span><span class="p">))</span> <span class="o">%</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Mini-batch of image-like&#39;s height should be power of 2. Got &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">height</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">width</span><span class="p">))</span> <span class="o">%</span> <span class="mi">1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Mini-batch of image-like&#39;s width should be power of 2. Got &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">width</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="disable_biases">
+<a class="viewcode-back" href="../../torch_utils.html#torch_tools.torch_utils.disable_biases">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">disable_biases</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Module</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Disable all ``bias`` parameters in model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : Module</span>
+<span class="sd">        The model to disable biases in.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">Module</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&#39;disable_biases&#39; function should only be applied to &quot;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&#39;torch.nn.Module&#39;. Got &#39;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;bias&quot;</span><span class="p">):</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore</span></div>
+
+
+
+<div class="viewcode-block" id="total_image_variation">
+<a class="viewcode-back" href="../../torch_utils.html#torch_tools.torch_utils.total_image_variation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">total_image_variation</span><span class="p">(</span>
+    <span class="n">img_batch</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">mean_reduce</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the total variation of ``img_batch``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    img_batch : Tensor</span>
+<span class="sd">        A mini-batch of image-like inputs.</span>
+<span class="sd">    mean_reduce : bool, optional</span>
+<span class="sd">        If ``True``, the returned value is normalised by the number of</span>
+<span class="sd">        elements in ``img_batch``. If ``False``, no division is performed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Tensor</span>
+<span class="sd">        The total variation measure.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``img_batch`` is not a ``Tensor``.</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If ``mean_reduce`` is not a ``bool``.</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If ``img_batch`` is not a 4D ``Tensor``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Heavily inspired by the TensorFlow code:</span>
+<span class="sd">    https://github.com/tensorflow/tensorflow/blob/v2.14.0/tensorflow/python/ops/image_ops_impl.py#L3322-L3391</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img_batch</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;img_batch&#39; should be &#39;Tensor&#39;, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">img_batch</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mean_reduce</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;mean_reduce&#39; should be &#39;bool&#39;, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">mean_reduce</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">img_batch</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&#39;img_batch&#39; should be 4D, but got </span><span class="si">{</span><span class="n">img_batch</span><span class="o">.</span><span class="n">ndim</span><span class="si">}</span><span class="s2">D instead.&quot;</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    <span class="c1"># pylint: disable=no-member</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">img_batch</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">img_batch</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="c1"># pylint: disable=no-member</span>
+    <span class="n">col</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">img_batch</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">img_batch</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="n">total</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span> <span class="o">+</span> <span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">total</span> <span class="o">/</span> <span class="n">img_batch</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="k">if</span> <span class="n">mean_reduce</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="n">total</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, J. Denholm.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
