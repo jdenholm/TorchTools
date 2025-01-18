@@ -22,26 +22,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
           channels: defaults
 
-      # - name: Install Python with conda
-      #   run: |
-      #     conda create -n testing python=${{ matrix.python-version }}
-
-      # - uses: actions/checkout@v4
-      # - name: Torch versions
-      #   run: |
-      #     pip index versions torch
-
-      # - name: Install TorchTools
-      #   run: |
-      #     python -m pip install .
-
-      # - uses: actions/checkout@v4
-      # - name: Torch versions
-      #   run: |
-      #     python -m pip index versions torch
-
-      - uses: actions/checkout@v4
       - name: Install TorchTools
+        shell: bash -l {0}
         run : |
           pip install .
 
