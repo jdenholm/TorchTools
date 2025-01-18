@@ -21,11 +21,11 @@ jobs:
           auto-activate-base: true
           python-version: ${{ matrix.python-version }}
           channels: defaults
-
-      - name: Install TorchTools
-        shell: bash -l {0}
-        run : |
-          pip install git+https://github.com/jdenholm/TorchTools.git@v0.1.0
+      - run: pip install .
+      # - name: Install TorchTools
+      #   shell: bash -l {0}
+      #   run : |
+      #     pip install git+https://github.com/jdenholm/TorchTools.git@v0.1.0
 
 # jobs:
 #   build:
