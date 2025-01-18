@@ -19,7 +19,7 @@ jobs:
         with:
           auto-update-conda: true
           activate-environment: test-install
-          auto-activate-base: false
+          auto-activate-base: true
           python-version: ${{ matrix.python-version }}
           channels: anaconda, defaults
 
@@ -34,7 +34,7 @@ jobs:
 
       - name: Install TorchTools
         run: |
-          conda install python==${{ matrix.python-version }}; python -m pip install .
+          python -m pip install .
 
       # - uses: actions/checkout@v4
       # - name: Torch versions
