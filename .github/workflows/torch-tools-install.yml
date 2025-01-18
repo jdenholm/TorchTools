@@ -31,19 +31,19 @@ jobs:
       #   run: |
       #     pip index versions torch
 
-      - name: Install TorchTools
-        run: |
-          python -m pip install .
+      # - name: Install TorchTools
+      #   run: |
+      #     python -m pip install .
 
       # - uses: actions/checkout@v4
       # - name: Torch versions
       #   run: |
       #     python -m pip index versions torch
 
-      # - uses: actions/checkout@v4
-      # - name: Install TorchTools
-      #   run : |
-      #     python -m pip install .
+      - uses: actions/checkout@v4
+      - name: Install TorchTools
+        run : |
+          python -m pip install .
 
 # jobs:
 #   build:
