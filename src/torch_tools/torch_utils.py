@@ -1,4 +1,5 @@
 """PyTorch utilities."""
+
 from itertools import chain
 
 
@@ -274,8 +275,9 @@ def total_image_variation(
     if not img_batch.ndim == 4:
         msg = f"'img_batch' should be 4D, but got {img_batch.ndim}D instead."
         raise RuntimeError(msg)
-
+    # pylint: disable=no-member
     row = torch.abs(img_batch[:, :, 1:, :] - img_batch[:, :, :-1, :]).sum()
+    # pylint: disable=no-member
     col = torch.abs(img_batch[:, :, :, 1:] - img_batch[:, :, :, :-1]).sum()
 
     total = (row + col).sum()
