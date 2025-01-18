@@ -347,6 +347,31 @@ class VAE2d(Module):  # pylint: disable=too-many-instance-attributes
         with set_grad_enabled(not frozen_decoder):
             return self.decoder(features)
 
+    def deterministic_pred(self, batch: Tensor) -> Tensor:
+        """Make a deterministic prediction from ``batch``.
+
+        Parameters
+        ----------
+        batch : Tensor
+            A mini-batch of inputs.
+
+        Returns
+        -------
+        Tensor
+            An autoencoded version of ``batch``.
+
+
+        Notes
+        -----
+        To make the prediction deterministic, we decode the predicted means.
+
+        """
+        latent = self.encoder(batch)
+
+        means, _ = self._mean_var_funcs[self._mean_var_style](latent)
+
+        return self.decoder(means)
+
     def forward(
         self,
         batch: Tensor,
