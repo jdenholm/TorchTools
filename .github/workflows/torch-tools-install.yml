@@ -23,11 +23,11 @@ jobs:
           channels: defaults
 
       - name: Install Python
-        shell: bash -l
+        shell: bash -l {0}
         run: |
           conda install python==${{ matrix.python-version }}
 
       - name: Install TorchTools
-        shell: bash -l
+        shell: bash -l {0}
         run: |
           pip install git+https://github.com/jdenholm/TorchTools.git@${{ github.sha }}
