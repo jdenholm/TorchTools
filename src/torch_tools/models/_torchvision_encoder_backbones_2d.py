@@ -66,7 +66,7 @@ def get_backbone(
         full_resnet = _encoder_options[option](weights=weights)
         # The resnet encoder is everything bar the final two children,
         # which are the pool and classification layers.
-        encoder = Sequential(*list(full_resnet.children()))[:-2]
+        encoder = Sequential(*list(full_resnet.children())[:-2])
         num_feats = full_resnet.fc.in_features
         pool_size = full_resnet.avgpool.output_size
     if "mobile" in option:
