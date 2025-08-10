@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: conda-incubator/setup-miniconda@v3
         with:
-          auto-update-conda: true
+          auto-update-conda: false
           auto-activate-base: true
           python-version: ${{ matrix.python-version }}
           channels: defaults
