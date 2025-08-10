@@ -1,3 +1,7 @@
+## Version 0.13.1
+  - Tweaked demos.
+  - Fixed some mypy warnings.
+
 ## Version 0.13.0
   - Added deterministic prediction function to ``VAE2d``.
   - Updated ``VAE2d`` demo.

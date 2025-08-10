@@ -3,7 +3,7 @@
 from typing import Tuple
 
 from torchvision import models  # type: ignore
-from torch.nn import Module, Sequential
+from torch.nn import Sequential
 
 from torch_tools.models._argument_processing import process_boolean_arg
 
@@ -29,7 +29,7 @@ _encoder_options = {
 
 def get_backbone(
     option: str, pretrained: bool = True
-) -> Tuple[Module, int, Tuple[int, int]]:
+) -> Tuple[Sequential, int, Tuple[int, int]]:
     """Return an encoder backbone.
 
     Parameters
@@ -41,7 +41,7 @@ def get_backbone(
 
     Returns
     -------
-    encoder : Module
+    encoder : Sequential
         The encoder part of the architecture (without pool).
     num_feats : int
         The number of features the encoder produces.
@@ -66,7 +66,7 @@ def get_backbone(
         full_resnet = _encoder_options[option](weights=weights)
         # The resnet encoder is everything bar the final two children,
         # which are the pool and classification layers.
-        encoder = Sequential(*list(full_resnet.children()))[:-2]
+        encoder = Sequential(*list(full_resnet.children())[:-2])
         num_feats = full_resnet.fc.in_features
         pool_size = full_resnet.avgpool.output_size
     if "mobile" in option:

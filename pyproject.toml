@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "torch_tools"
-version = "0.13.0"
+version = "0.13.1"
 requires-python = ">=3.9,<3.13"
 description = "PyTorch and other tools"
 authors = [
