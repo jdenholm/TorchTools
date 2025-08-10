@@ -23,6 +23,6 @@ jobs:
           channels: defaults
 
       - name: Install TorchTools
-        shell: bash -l {0}
-        run : |
-          pip install git+https://github.com/jdenholm/TorchTools.git@${{ github.ref_name }}
+        run: |
+          bash -l
+          pip install git+https://github.com/jdenholm/TorchTools.git@${{ github.event.push.event_name }}
