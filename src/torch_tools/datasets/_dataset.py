@@ -243,13 +243,13 @@ class DataSet(_BaseDataset):
 
         if y_item is None:
             if self._mixup is True:
-                other_x = self._prepare_one_item(rand_idx)
+                other_x = self._prepare_one_item(int(rand_idx))
                 x_item = (frac * x_item) + ((1.0 - frac) * other_x)  # type: ignore
 
             return x_item
 
         if self._mixup is True:
-            other_x, other_y = self._prepare_one_item(rand_idx)
+            other_x, other_y = self._prepare_one_item(int(rand_idx))
             x_item = (frac * x_item) + ((1.0 - frac) * other_x)
             y_item = (frac * y_item) + ((1.0 - frac) * other_y)
 
