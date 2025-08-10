@@ -3,7 +3,7 @@
 from typing import Tuple
 
 from torchvision import models  # type: ignore
-from torch.nn import Module, Sequential
+from torch.nn import Sequential
 
 from torch_tools.models._argument_processing import process_boolean_arg
 
