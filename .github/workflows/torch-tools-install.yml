@@ -1,5 +1,4 @@
 name: Install TorchTools
-
 on:
   push:
     branches: [ dev ]
@@ -14,30 +13,18 @@ jobs:
       fail-fast: false
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
-        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Install base Python environment
-        run: |
-          conda info --version
-          conda create --name base --channel conda-forge python=${{ matrix.python-version }}
-          conda activate base
-
-      - name: Install conda
-        uses: conda-incubator/setup-miniconda@v3
+      - uses: conda-incubator/setup-miniconda@v3
         with:
-          auto-update-conda: true
-          auto-activate-base: false
+          auto-update-conda: false
+          auto-activate-base: true
           python-version: ${{ matrix.python-version }}
           channels: defaults
 
-      - name: Activate base Python environment
-        run: |
-          conda activate base
-
       - name: Install TorchTools
         run: |
+          conda info --version
+          conda create --name py${{ matrix.python-version }} python=${{ matrix.python-version }}
+          conda activate py${{ matrix.python-version }}
           pip install git+https://github.com/jdenholm/TorchTools.git
