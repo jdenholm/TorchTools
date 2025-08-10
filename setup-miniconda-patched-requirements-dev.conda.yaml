@@ -1,0 +1,22 @@
+name: torch-tools
+channels:
+  - main
+dependencies:
+  - python<3.13
+  - pip
+  - pip:
+      - sphinx
+      - sphinx_rtd_theme
+      - ipykernel
+      - scikit-learn
+      - pandas
+      - matplotlib
+      - palmerpenguins
+      - black
+      - black-nb
+      - mypy
+      - pytest
+      - pydocstyle
+      - pylint
+      - '-e .'
+  - python=3.10
