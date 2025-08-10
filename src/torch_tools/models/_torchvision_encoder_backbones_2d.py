@@ -29,7 +29,7 @@ _encoder_options = {
 
 def get_backbone(
     option: str, pretrained: bool = True
-) -> Tuple[Module, int, Tuple[int, int]]:
+) -> Tuple[Sequential, int, Tuple[int, int]]:
     """Return an encoder backbone.
 
     Parameters
@@ -41,7 +41,7 @@ def get_backbone(
 
     Returns
     -------
-    encoder : Module
+    encoder : Sequential
         The encoder part of the architecture (without pool).
     num_feats : int
         The number of features the encoder produces.
