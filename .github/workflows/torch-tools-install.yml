@@ -24,6 +24,5 @@ jobs:
 
       - name: Install TorchTools
         run: |
-          conda create --name py${{ matrix.python-version }} python=${{ matrix.python-version }}
           conda activate py${{ matrix.python-version }}
           pip install git+https://github.com/jdenholm/TorchTools.git
