@@ -14,7 +14,6 @@ jobs:
       matrix:
         os: ["ubuntu-latest", "macos-latest", "windows-latest"]
         python-version: ["3.9", "3.10", "3.11", "3.12"]
-
     steps:
       - uses: conda-incubator/setup-miniconda@v3
         with:
@@ -22,3 +21,13 @@ jobs:
           auto-activate-base: true
           python-version: ${{ matrix.python-version }}
           channels: defaults
+
+      - name Install Python
+        shell: bash -l
+        run : |
+          conda install python==${{ matrix.python-version }}
+
+      - name: Install TorchTools
+        shell: bash -l
+        run : |
+          pip install git+https://github.com/jdenholm/TorchTools.git@${{ github.ref_name }}
